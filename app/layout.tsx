@@ -1,0 +1,22 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+export const metadata: Metadata = {
+  title: "IMG Outreach — AI-Personalized Physician Outreach for Medical Students",
+  description:
+    "Send 50–500 tailored cold emails to physicians in your specialty. Our AI researches each doctor and writes personalized outreach — so you get more replies.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
+      </body>
+    </html>
+  );
+}
