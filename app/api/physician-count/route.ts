@@ -38,10 +38,8 @@ export async function GET(req: NextRequest) {
 
     const { count, error } = await q;
     if (error) {
-      console.error("Supabase error full:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-      console.error("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-      console.error("Supabase key prefix:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 20));
-      return NextResponse.json({ error: error.message, code: (error as any).code, hint: (error as any).hint, details: (error as any).details }, { status: 500 });
+      console.error("physician-count error:", error.message);
+      return NextResponse.json({ count: 0 }, { status: 500 });
     }
 
     return NextResponse.json({ count: count ?? 0 });
