@@ -12,10 +12,19 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simple mailto fallback — replace with a real API route or Resend call when ready
-    await new Promise(r => setTimeout(r, 800));
-    setSubmitted(true);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error();
+      setSubmitted(true);
+    } catch {
+      alert("Failed to send. Please email us directly at contact@imgoutreach.com");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,8 +50,8 @@ export default function ContactPage() {
                   <p className="font-semibold text-gray-900 mb-1">Email us</p>
                   <p className="text-sm text-gray-600 leading-relaxed">
                     Send your question to{" "}
-                    <a href="mailto:support@medreach.ai" className="text-blue-800 hover:underline font-medium">
-                      support@medreach.ai
+                    <a href="mailto:contact@imgoutreach.com" className="text-blue-800 hover:underline font-medium">
+                      contact@imgoutreach.com
                     </a>
                   </p>
                 </div>
@@ -141,7 +150,7 @@ export default function ContactPage() {
                   </button>
                   <p className="text-xs text-gray-400 text-center">
                     Or email us directly at{" "}
-                    <a href="mailto:support@medreach.ai" className="text-blue-800 hover:underline">support@medreach.ai</a>
+                    <a href="mailto:contact@imgoutreach.com" className="text-blue-800 hover:underline">contact@imgoutreach.com</a>
                   </p>
                 </form>
               )}
