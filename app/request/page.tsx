@@ -187,18 +187,25 @@ function RequestForm() {
     setLoading(true);
     setError("");
     try {
+      const studentFolder = `students/${form.email.replace(/[^a-z0-9]/gi, "_")}_${Date.now()}`;
+
       const cvData = new FormData();
       cvData.append("file", form.cvFile!);
       cvData.append("bucket", "cvs");
+      cvData.append("folder", studentFolder);
+      cvData.append("filename", "cv." + (form.cvFile!.name.split(".").pop() || "pdf"));
       const cvRes = await fetch("/api/upload", { method: "POST", body: cvData });
       if (!cvRes.ok) throw new Error("CV upload failed");
       const { url: cvUrl } = await cvRes.json();
 
       const extraUrls: string[] = [];
-      for (const f of form.extraFiles) {
+      for (let i = 0; i < form.extraFiles.length; i++) {
+        const f = form.extraFiles[i];
         const fd = new FormData();
         fd.append("file", f);
         fd.append("bucket", "cvs");
+        fd.append("folder", studentFolder);
+        fd.append("filename", `doc_${i + 1}.${f.name.split(".").pop() || "pdf"}`);
         const r = await fetch("/api/upload", { method: "POST", body: fd });
         if (r.ok) { const { url } = await r.json(); extraUrls.push(url); }
       }

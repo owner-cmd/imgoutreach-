@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const ext = file.name.split(".").pop();
-    const path = `uploads/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const folder = (formData.get("folder") as string) || `uploads/${Date.now()}`;
+    const filename = (formData.get("filename") as string) || `file_${Date.now()}.${ext}`;
+    const path = `${folder}/${filename}`;
 
     const admin = getAdmin();
     const { error } = await admin.storage.from(bucket).upload(path, buffer, {
