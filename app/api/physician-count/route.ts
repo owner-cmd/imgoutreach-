@@ -37,11 +37,14 @@ export async function GET(req: NextRequest) {
     }
 
     const { count, error } = await q;
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error:", JSON.stringify(error));
+      return NextResponse.json({ error: error.message, details: error }, { status: 500 });
+    }
 
     return NextResponse.json({ count: count ?? 0 });
   } catch (e) {
-    console.error("physician-count error:", e);
-    return NextResponse.json({ count: 0 }, { status: 500 });
+    console.error("physician-count error:", String(e));
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
