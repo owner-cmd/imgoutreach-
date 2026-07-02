@@ -487,13 +487,23 @@ function RequestForm() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Letter of interest</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  This is not the email itself — it&apos;s context our AI uses to understand your genuine interests so each email sounds authentically like you. Write freely about why this specialty interests you and what you&apos;re hoping to gain.
+                  This is not the email itself — it&apos;s the raw material our AI uses to write something that sounds like you. The more specific you are, the better each email will be.
                 </p>
+                <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-sm text-blue-900 space-y-1.5">
+                  <p className="font-semibold">What makes emails get replies:</p>
+                  <ul className="space-y-1 text-blue-800 text-xs leading-relaxed">
+                    <li>• <span className="font-medium">A case you saw</span> — a patient or situation during a rotation that stuck with you and made you curious about this field</li>
+                    <li>• <span className="font-medium">A specific question you have</span> — something you read or learned that you don&apos;t fully understand yet</li>
+                    <li>• <span className="font-medium">What you&apos;ve done</span> — research projects, thesis work, presentations, anything relevant</li>
+                    <li>• <span className="font-medium">Why this specialty</span> — not "I&apos;m passionate about it" but the actual moment or reason it clicked</li>
+                  </ul>
+                  <p className="text-blue-600 text-xs">The more you write, the more our AI has to connect you genuinely to each physician&apos;s specific work.</p>
+                </div>
               </div>
               <div>
                 <label className="label">Your letter of interest <span className="text-red-500">*</span></label>
                 <textarea className="input min-h-[220px] resize-none"
-                  placeholder="I've been drawn to geriatrics since my third-year internal medicine rotation…"
+                  placeholder="During my internal medicine rotation I saw a patient in her 80s who was discharged stable and back within two weeks — and nobody could explain why she deteriorated so fast. That made me want to understand how to predict who's actually high-risk at discharge. I'm also interested in frailty assessment and polypharmacy in older adults…"
                   value={form.letterOfInterest} onChange={e => set("letterOfInterest", e.target.value)} />
                 <p className={`text-xs mt-1 ${form.letterOfInterest.length < 50 ? "text-gray-400" : "text-blue-800 font-medium"}`}>
                   {form.letterOfInterest.length} characters {form.letterOfInterest.length < 50 ? "(minimum 50)" : "✓"}
