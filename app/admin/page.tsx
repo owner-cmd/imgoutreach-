@@ -29,6 +29,7 @@ type Draft = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
+  pending_payment: "bg-gray-100 text-gray-600",
   processing: "bg-yellow-100 text-yellow-800",
   drafts_ready: "bg-blue-100 text-blue-800",
   approved: "bg-purple-100 text-purple-800",
@@ -44,6 +45,8 @@ export default function AdminPage() {
   const [drafts, setDrafts] = useState<Record<string, Draft[]>>({});
   const [approving, setApproving] = useState<string | null>(null);
   const [approved, setApproved] = useState<string[]>([]);
+  const [running, setRunning] = useState<string | null>(null);
+  const [ran, setRan] = useState<string[]>([]);
 
   const storedPw = typeof window !== "undefined" ? sessionStorage.getItem("admin_pw") || "" : "";
 
@@ -82,6 +85,23 @@ export default function AdminPage() {
       loadDrafts(expanded, pw);
     }
   }, [expanded, authed, loadDrafts]);
+
+  async function runWorkflow(sessionId: string) {
+    setRunning(sessionId);
+    const pw = sessionStorage.getItem("admin_pw") || "";
+    const res = await fetch("/api/admin/run-workflow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${pw}` },
+      body: JSON.stringify({ stripe_session_id: sessionId }),
+    });
+    setRunning(null);
+    if (res.ok) {
+      setRan(prev => [...prev, sessionId]);
+      setOrders(prev => prev.map(o => o.stripe_session_id === sessionId ? { ...o, status: "processing" } : o));
+    } else {
+      alert("Failed to trigger workflow — check n8n");
+    }
+  }
 
   async function approve(sessionId: string) {
     setApproving(sessionId);
@@ -175,6 +195,26 @@ export default function AdminPage() {
                 {/* Drafts list */}
                 {isExpanded && (
                   <div className="border-t border-gray-100">
+                    {/* Run Workflow button */}
+                    {(order.status === "pending_payment" || order.status === "processing") && !ran.includes(order.stripe_session_id) && (
+                      <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100 flex items-center justify-between">
+                        <p className="text-sm text-yellow-800 font-medium">
+                          {order.status === "pending_payment" ? "Payment received — workflow not started" : "Workflow running or paused"}
+                        </p>
+                        <button
+                          className="bg-yellow-700 hover:bg-yellow-600 text-white text-sm px-4 py-2 rounded-lg font-semibold transition-colors"
+                          onClick={() => runWorkflow(order.stripe_session_id)}
+                          disabled={running === order.stripe_session_id}
+                        >
+                          {running === order.stripe_session_id ? "Starting…" : "Run Workflow"}
+                        </button>
+                      </div>
+                    )}
+                    {ran.includes(order.stripe_session_id) && (
+                      <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100">
+                        <p className="text-sm text-yellow-800 font-medium">Workflow triggered — check back in ~30 minutes</p>
+                      </div>
+                    )}
                     {/* Approve button */}
                     {order.status === "drafts_ready" && !isApproved && (
                       <div className="px-5 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
