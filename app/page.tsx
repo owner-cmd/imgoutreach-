@@ -12,13 +12,13 @@ const steps = [
   { icon: <Mail className="w-6 h-6 text-blue-800" />, title: "Tell us about yourself", desc: "Select your target specialty, location, and purpose. Upload your CV and write a brief letter of interest." },
   { icon: <Search className="w-6 h-6 text-blue-800" />, title: "We research every physician", desc: "Our AI scans PubMed, physician directories, and institutional pages to find real research interests and verified emails." },
   { icon: <Zap className="w-6 h-6 text-blue-800" />, title: "Emails are written for each doctor", desc: "Each draft references the physician's published work and connects it to your genuine interests — not a template." },
-  { icon: <Star className="w-6 h-6 text-blue-800" />, title: "You get ready-to-send drafts", desc: "Receive your full list of personalized email drafts in under 24 hours. Review, attach your CV, and send." },
+  { icon: <Star className="w-6 h-6 text-blue-800" />, title: "Drafts appear in your Gmail", desc: "Your personalized emails land directly in your Gmail Drafts — one per physician, ready to send with one click." },
 ];
 
 const emailExample = {
   from: "Nour Mansour <n.mansour@alexmed.edu.eg>",
   to: "Dr. Claire Bennett, MD — Mayo Clinic Neurology",
-  subject: "neurology observership — Alexandria MS4, Step 1 passed",
+  subject: "Neurology Observership — Alexandria MS4, Step 1 Passed",
   date: "Mon, Jun 30, 2026, 8:47 AM",
   body: `I'm an MS4 at Alexandria University interested in neurology. During my neurology rotation I saw a stroke patient who regained arm movement weeks after everyone had stopped expecting it — and I couldn't find a good explanation for why. I came across your 2024 paper on constraint-induced movement therapy and it was the first thing that actually explained what I saw. I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
   signoff: "Nour Mansour | Alexandria University Faculty of Medicine",

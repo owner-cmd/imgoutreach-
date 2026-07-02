@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Check, ArrowRight, Mail } from "lucide-react";
-import { PLANS } from "@/lib/stripe";
+import { PLANS, SHARED_FEATURES } from "@/lib/stripe";
 
 export default function PricingPage() {
   return (
@@ -14,7 +14,7 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5 mb-20 items-start">
+        <div className="grid md:grid-cols-3 gap-5 mb-20">
           {PLANS.map((plan) => (
             <div
               key={plan.id}
@@ -31,11 +31,11 @@ export default function PricingPage() {
                   <span className="text-3xl font-bold text-gray-900">${plan.price}</span>
                   <span className="text-gray-500 mb-1 text-sm">one-time</span>
                 </div>
-                <p className="text-lg font-semibold text-gray-800 mb-1">{plan.count} drafts</p>
+                <p className="text-lg font-semibold text-gray-800 mb-1">{plan.count} personalized drafts</p>
                 <p className="text-xs text-gray-500 leading-relaxed">{plan.description}</p>
               </div>
               <ul className="space-y-2.5 mb-7 flex-1">
-                {plan.features.map((f) => (
+                {SHARED_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-gray-700">
                     <Check className="w-4 h-4 text-blue-800 shrink-0 mt-0.5" />
                     {f}
@@ -56,26 +56,17 @@ export default function PricingPage() {
           ))}
 
           {/* Custom / Contact card */}
-          <div className="card p-7 flex flex-col border-2 border-dashed border-gray-300 bg-white">
+          <div className="card p-7 flex flex-col">
             <div className="mb-5">
               <p className="text-sm font-semibold text-blue-800 uppercase tracking-widest mb-2">Custom</p>
               <div className="flex items-end gap-1.5 mb-2">
                 <span className="text-3xl font-bold text-gray-900">Custom</span>
               </div>
-              <p className="text-lg font-semibold text-gray-800 mb-1">500+ drafts</p>
+              <p className="text-lg font-semibold text-gray-800 mb-1">500+ personalized drafts</p>
               <p className="text-xs text-gray-500 leading-relaxed">Full national sweep or bulk orders for programs and advisors</p>
             </div>
             <ul className="space-y-2.5 mb-7 flex-1">
-              {[
-                "500+ personalized email drafts",
-                "AI physician research (PubMed + web)",
-                "Quality score filter",
-                "Specialty, state & ethnicity targeting",
-                "Delivered in 24–48hrs",
-                "Custom prompt tuning for your background",
-                "Sample email review before full run",
-                "Dedicated support",
-              ].map((f) => (
+              {[...SHARED_FEATURES, "Custom prompt tuning for your background", "Sample email review before full run", "Dedicated support"].map((f) => (
                 <li key={f} className="flex items-start gap-2.5 text-sm text-gray-700">
                   <Check className="w-4 h-4 text-blue-800 shrink-0 mt-0.5" />
                   {f}
@@ -102,7 +93,7 @@ export default function PricingPage() {
               },
               {
                 q: "How are the emails personalized?",
-                a: "Our AI searches PubMed for each physician's publications, scans their institutional page, and identifies their research focus. It then writes an email that references their specific work — not just their specialty.",
+                a: "Our AI searches PubMed for each physician's publications, scans their institutional page, and identifies their research focus. It then combines that with what you wrote about yourself — your cases, interests, and background — and writes an email using the best available AI models. The result references their specific work and connects it to your genuine story, not just your specialty.",
               },
               {
                 q: "How long does it take?",
@@ -110,7 +101,7 @@ export default function PricingPage() {
               },
               {
                 q: "What do I do with the drafts?",
-                a: "You'll get a Google Sheet with all your drafts — subject line and full email body for each physician. Review them, attach your CV, and send from your own email.",
+                a: "Nothing — the drafts are delivered directly into your Gmail Drafts folder, one per physician, ready to send. Just open Gmail and hit send.",
               },
               {
                 q: "I'm an IMG — does this work for me?",

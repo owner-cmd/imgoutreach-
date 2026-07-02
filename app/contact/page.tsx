@@ -116,7 +116,7 @@ export default function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label className="label">Your name</label>
-                      <input className="input" placeholder="Omar Saad" value={form.name} onChange={e => set("name", e.target.value)} required />
+                      <input className="input" placeholder="Your name" value={form.name} onChange={e => set("name", e.target.value)} required />
                     </div>
                     <div>
                       <label className="label">Email address</label>

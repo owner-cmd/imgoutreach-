@@ -18,7 +18,7 @@ const examples = [
       email: "d.saleh@cu.edu.eg",
       year: "MS4",
     },
-    subject: "neurology observership — Cairo MS4, Step 1 passed",
+    subject: "Neurology Observership — Cairo MS4, Step 1 Passed",
     body: `I'm an MS4 at Cairo University interested in neurology. During my neurology rotation I had a patient who had a stroke three months earlier and was still showing small improvements — my attending said it was unusual but didn't explain why. I came across your 2023 paper on how the brain reorganizes after stroke and it answered exactly what I'd been wondering about.
 
 I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — would an observership be possible, or would a quick call make more sense?`,
@@ -45,7 +45,7 @@ I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — w
       email: "f.alrashidi@ku.edu.kw",
       year: "Medical Graduate",
     },
-    subject: "psychiatry research — Kuwait grad, Step 1 passed, Step 2 253",
+    subject: "Psychiatry Research — Kuwait Grad, Step 1 Passed, Step 2 253",
     body: `I graduated from Kuwait University last year and I'm interested in psychiatry. During my rotation I saw a patient who had been on three different antidepressants over two years with no real improvement — and the team didn't have a clear next step. I came across your 2024 paper on ketamine and it was the first time I understood why some patients need a completely different approach.
 
 I'm ECFMG certified, Step 1 passed, Step 2 253, and interested in your research. CV attached — would a short call work?`,
@@ -72,7 +72,7 @@ I'm ECFMG certified, Step 1 passed, Step 2 253, and interested in your research.
       email: "v.cruz@unam.mx",
       year: "Medical Graduate",
     },
-    subject: "thyroid cancer research — UNAM grad, Step 1 passed, Step 2 249",
+    subject: "Thyroid Cancer Research — UNAM Grad, Step 1 Passed, Step 2 249",
     body: `I'm a UNAM graduate and did a research project on thyroid cancer recurrence during medical school. One pattern we kept seeing was patients who responded to radioiodine the first time and then didn't — we couldn't explain it from the data we had. I came across your 2023 paper on BRAF mutations and resistance and it was the explanation we were missing.
 
 I'm ECFMG certified, Step 1 passed, Step 2 249, available from October. CV and research summary attached — would you be open to a call?`,

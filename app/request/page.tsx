@@ -65,6 +65,7 @@ interface FormData {
   extraFiles: File[];
   // Step 4
   plan: string;
+  termsAccepted: boolean;
 }
 
 function RequestForm() {
@@ -93,6 +94,7 @@ function RequestForm() {
     cvFile: null,
     extraFiles: [],
     plan: searchParams.get("plan") || "standard",
+    termsAccepted: false,
   });
 
   const set = (field: keyof FormData, value: unknown) =>
@@ -171,7 +173,7 @@ function RequestForm() {
     if (step === 1) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
     if (step === 2) return form.letterOfInterest.trim().length >= 50;
     if (step === 3) return !!form.cvFile;
-    if (step === 4) return !!form.plan;
+    if (step === 4) return !!form.plan && form.termsAccepted;
     return true;
   };
 
@@ -619,6 +621,20 @@ function RequestForm() {
                   <span>Total</span><span>${selectedPlan?.price}</span>
                 </div>
               </div>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 w-4 h-4 accent-blue-800 shrink-0"
+                  checked={form.termsAccepted}
+                  onChange={e => set("termsAccepted", e.target.checked)}
+                />
+                <span className="text-sm text-gray-600">
+                  I have read and agree to the{" "}
+                  <a href="/terms" target="_blank" className="text-blue-800 hover:underline font-medium">Terms of Service</a>.
+                  I understand that IMG Outreach delivers email drafts and cannot guarantee physician replies.
+                </span>
+              </label>
 
               {error && <p className="text-red-700 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</p>}
             </div>
