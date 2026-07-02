@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle, Mail, Search, Star, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle, Mail, Paperclip, Reply, Search, Star, Zap } from "lucide-react";
 
 const stats = [
   { value: "3×", label: "more replies vs generic emails" },
@@ -16,10 +16,18 @@ const steps = [
 ];
 
 const emailExample = {
-  to: "Dr. Sarah Chen, MD — Northwestern Medicine Geriatrics",
-  subject: "geriatrics observership — Rush MS3, Step 1 passed",
-  body: `I'm finishing my third year at Rush and just came off an inpatient medicine month where about half our consults were patients over 75 on 8+ medications — most of the discharge planning felt like guesswork on who'd actually do okay at home. Your 2023 paper on frailty phenotyping explained the pattern I kept seeing: the phenotype score predicted readmission better than diagnosis count alone. I'm ECFMG-eligible, available January–March, and attached my CV. Would an observership work, or would a quick call be easier?`,
-  from: "A.Karimi <a.karimi@rush.edu>",
+  from: "Rania Haddad <r.haddad@ju.edu.jo>",
+  to: "Dr. James Whitfield, MD — Duke University Hematology/Oncology",
+  subject: "hematology research — Jordan grad, Step 1 passed, Step 2 258",
+  date: "Mon, Jun 30, 2026, 9:14 AM",
+  body: `I graduated from the University of Jordan last spring and spent six months on a hematology ward where almost every AML patient we tried to consolidate ended up back in with neutropenic fever — the timing felt arbitrary rather than guided by anything predictive. Your 2023 paper on MRD-guided consolidation timing is exactly what our team needed; the MFC cutoff you used made the decision logic clearer than anything in our local protocol. I'm ECFMG certified, Step 1 passed, Step 2 258, available from August. CV attached — would it make sense to get on a call?`,
+  signoff: "Rania Haddad | University of Jordan Faculty of Medicine",
+  attachments: ["CV_Rania_Haddad.pdf"],
+  reply: {
+    from: "Dr. James Whitfield",
+    text: "Rania — the MRD framing you described is exactly what we're building on. Send me a few times next week.",
+    date: "Tue, Jul 1, 2026, 11:38 AM",
+  },
 };
 
 export default function Home() {
@@ -99,30 +107,50 @@ export default function Home() {
           <p className="text-gray-600 max-w-xl mx-auto">Not a merge-field template. Our AI reads the physician&apos;s actual research and writes something you&apos;d actually send.</p>
         </div>
         <div className="card max-w-2xl mx-auto overflow-hidden">
-          <div className="bg-gray-50 border-b border-gray-200 px-5 py-3 flex items-center gap-3">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-            </div>
-            <p className="text-xs text-gray-400 mx-auto">New Message</p>
-          </div>
+          {/* Email header */}
           <div className="divide-y divide-gray-100">
             <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-10 shrink-0 pt-0.5">From</span>
+              <span className="text-gray-400 w-12 shrink-0 pt-0.5">From</span>
               <span className="text-gray-700">{emailExample.from}</span>
+              <span className="text-gray-400 text-xs ml-auto shrink-0 pt-0.5">{emailExample.date}</span>
             </div>
             <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-10 shrink-0 pt-0.5">To</span>
+              <span className="text-gray-400 w-12 shrink-0 pt-0.5">To</span>
               <span className="text-gray-700">{emailExample.to}</span>
             </div>
             <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-10 shrink-0 pt-0.5">Subject</span>
+              <span className="text-gray-400 w-12 shrink-0 pt-0.5">Subject</span>
               <span className="text-gray-900 font-semibold">{emailExample.subject}</span>
             </div>
             <div className="px-5 py-6">
               <p className="text-gray-700 leading-relaxed text-sm">{emailExample.body}</p>
-              <p className="text-gray-500 text-sm mt-4">— A. Karimi, MS3 | Rush Medical College</p>
+              <div className="mt-4 text-sm text-gray-500">
+                <p className="text-gray-700 font-medium">{emailExample.signoff}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {emailExample.attachments.map((file) => (
+                    <span key={file} className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1">
+                      <Paperclip size={11} />
+                      {file}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Physician reply */}
+          <div className="border-t-2 border-emerald-100 bg-emerald-50 px-5 py-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-semibold shrink-0">JW</div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {emailExample.reply.from}{" "}
+                    <span className="text-xs text-emerald-600 font-medium ml-1">↩ replied</span>
+                  </p>
+                  <p className="text-xs text-gray-400">{emailExample.reply.date}</p>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">{emailExample.reply.text}</p>
+              </div>
             </div>
           </div>
         </div>

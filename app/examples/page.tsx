@@ -145,16 +145,12 @@ export default function ExamplesPage() {
                   </div>
                 </div>
 
-                <div className="ml-13 space-y-1">
+                <div className="ml-13">
                   <div className="flex gap-2 text-xs">
                     <span className="w-14 text-gray-400 shrink-0">To</span>
                     <span className="text-gray-700">
                       {ex.physician.name} — {ex.physician.title}, {ex.physician.institution}, {ex.physician.city}
                     </span>
-                  </div>
-                  <div className="flex gap-2 text-xs">
-                    <span className="w-14 text-gray-400 shrink-0">Creds</span>
-                    <span className="text-gray-500">{ex.student.credentials}</span>
                   </div>
                 </div>
               </div>
@@ -172,8 +168,7 @@ export default function ExamplesPage() {
                   </p>
                 ))}
                 <div className="mt-4 text-sm text-gray-500">
-                  <p>Best regards,</p>
-                  <p className="text-gray-700 font-medium mt-0.5">{ex.student.name}</p>
+                  <p className="text-gray-700 font-medium">{ex.student.name}</p>
                   <p className="text-gray-400">{ex.student.year} · {ex.student.school}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {ex.attachments.map((file, k) => (
