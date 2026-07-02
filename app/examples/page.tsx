@@ -19,7 +19,7 @@ const examples = [
       year: "MS4",
     },
     subject: "neurology observership — Cairo MS4, Step 1 passed",
-    body: `I'm an MS4 at Cairo University interested in neuroplasticity — specifically what drives meaningful motor recovery in some stroke patients and not others. I came across your 2023 paper on cortical remapping after ischemic stroke and the finding that reorganization window is widest in the first 90 days was new to me; I hadn't seen that framed so precisely anywhere else.
+    body: `I'm an MS4 at Cairo University interested in neuroplasticity — specifically what drives motor recovery after stroke in some patients and not others. I came across your 2023 paper on cortical remapping after ischemic stroke and the finding that the reorganization window is widest in the first 90 days was new to me.
 
 I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — would an observership be possible, or would a quick call make more sense?`,
     attachments: ["CV_Dina_Saleh.pdf"],
@@ -73,9 +73,9 @@ I'm ECFMG certified, Step 2 253, and interested in your outcomes research. CV at
       year: "Medical Graduate",
     },
     subject: "thyroid cancer research — UNAM grad, Step 1 passed, Step 2 249",
-    body: `I'm a UNAM graduate who spent a year on an endocrinology research project looking at recurrence patterns in differentiated thyroid cancer. The cases that stayed with me were patients who responded to initial radioiodine but then didn't on the second course — nobody had a good framework for predicting that shift. Your 2023 paper on BRAF V600E as a resistance predictor is exactly what was missing from our analysis; I've been following your group's work since.
+    body: `I'm a UNAM graduate interested in thyroid cancer — specifically radioiodine resistance and why some patients stop responding after initial treatment. I published a research project on recurrence patterns in differentiated thyroid cancer and came across your 2023 paper on BRAF V600E as a resistance predictor; it addresses the gap our analysis couldn't explain.
 
-I'm ECFMG certified, Step 2 249, available from October. CV and a research summary attached — would you be open to a call?`,
+I'm ECFMG certified, Step 2 249, available from October. CV and research summary attached — would you be open to a call?`,
     attachments: ["CV_Valentina_Cruz.pdf", "Research_Summary.pdf"],
     date: "Wed, Jul 1, 2026, 8:33 AM",
     reply: {
