@@ -77,28 +77,46 @@ function RequestForm() {
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
 
+  const SAVE_KEY = "imgoutreach_form_draft";
+
+  const getSaved = () => {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  };
+
+  const saved = getSaved();
+
   const [form, setForm] = useState<FormData>({
-    selectedSpecialties: [],
-    selectedSubspecialties: [],
-    stateMode: "all",
-    selectedStates: [],
-    ethnicity: "any",
-    fullName: "",
-    email: "",
-    medicalSchool: "",
-    year: "MS3",
-    purpose: "",
-    city: "",
-    letterOfInterest: "",
-    customPrompt: "",
+    selectedSpecialties: saved?.selectedSpecialties ?? [],
+    selectedSubspecialties: saved?.selectedSubspecialties ?? [],
+    stateMode: saved?.stateMode ?? "all",
+    selectedStates: saved?.selectedStates ?? [],
+    ethnicity: saved?.ethnicity ?? "any",
+    fullName: saved?.fullName ?? "",
+    email: saved?.email ?? "",
+    medicalSchool: saved?.medicalSchool ?? "",
+    year: saved?.year ?? "MS3",
+    purpose: saved?.purpose ?? "",
+    city: saved?.city ?? "",
+    letterOfInterest: saved?.letterOfInterest ?? "",
+    customPrompt: saved?.customPrompt ?? "",
     cvFile: null,
     extraFiles: [],
-    plan: searchParams.get("plan") || "standard",
+    plan: searchParams.get("plan") || saved?.plan || "standard",
     termsAccepted: false,
   });
 
   const set = (field: keyof FormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  // Autosave to localStorage on every form change (skip files — not serializable)
+  useEffect(() => {
+    const { cvFile, extraFiles, termsAccepted, ...saveable } = form;
+    void cvFile; void extraFiles; void termsAccepted;
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveable)); } catch { /* ignore */ }
+  }, [form]);
 
   // Instant count from hardcoded data; switches to live API when ethnicity filter is active
   const hardcodedCount = computeCount(
@@ -246,6 +264,7 @@ function RequestForm() {
       });
       if (!checkoutRes.ok) throw new Error("Could not create checkout session");
       const { url } = await checkoutRes.json();
+      try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ }
       window.location.href = url;
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
