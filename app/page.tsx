@@ -17,9 +17,9 @@ const steps = [
 
 const emailExample = {
   to: "Dr. Sarah Chen, MD — Northwestern Medicine Geriatrics",
-  subject: "curious about your frailty research",
-  body: `I've been drawn to geriatrics after my inpatient medicine rotation — your work on frailty assessment in older adults with multiple chronic conditions stood out to me in a way that felt personal rather than just academic. I'm an MS3 at Rush and have been thinking seriously about geriatrics as a fellowship direction, and I'd genuinely value your perspective on the field. Would you have 15 minutes to connect at your convenience?`,
-  from: "Omar Saad <omar.saad@rush.edu>",
+  subject: "geriatrics observership — Rush MS3, Step 1 passed",
+  body: `I'm finishing my third year at Rush and just came off an inpatient medicine month where about half our consults were patients over 75 on 8+ medications — most of the discharge planning felt like guesswork on who'd actually do okay at home. Your 2023 paper on frailty phenotyping explained the pattern I kept seeing: the phenotype score predicted readmission better than diagnosis count alone. I'm ECFMG-eligible, available January–March, and attached my CV. Would an observership work, or would a quick call be easier?`,
+  from: "A.Karimi <a.karimi@rush.edu>",
 };
 
 export default function Home() {
@@ -122,7 +122,7 @@ export default function Home() {
             </div>
             <div className="px-5 py-6">
               <p className="text-gray-700 leading-relaxed text-sm">{emailExample.body}</p>
-              <p className="text-gray-500 text-sm mt-4">— Omar Saad, MS3 | Rush Medical College</p>
+              <p className="text-gray-500 text-sm mt-4">— A. Karimi, MS3 | Rush Medical College</p>
             </div>
           </div>
         </div>
