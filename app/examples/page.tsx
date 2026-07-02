@@ -19,7 +19,7 @@ const examples = [
       year: "MS4",
     },
     subject: "neurology observership — Cairo MS4, Step 1 passed",
-    body: `I'm an MS4 at Cairo University interested in neuroplasticity — specifically what drives motor recovery after stroke in some patients and not others. I came across your 2023 paper on cortical remapping after ischemic stroke and the finding that the reorganization window is widest in the first 90 days was new to me.
+    body: `I'm an MS4 at Cairo University interested in neurology and stroke recovery. I came across your 2023 paper on brain recovery after stroke and didn't realize the brain's ability to reorganize was most active in the first 90 days — I found that more specific than anything I'd read before.
 
 I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — would an observership be possible, or would a quick call make more sense?`,
     attachments: ["CV_Dina_Saleh.pdf"],
@@ -46,9 +46,9 @@ I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — w
       year: "Medical Graduate",
     },
     subject: "psychiatry research — Kuwait grad, Step 1 passed, Step 2 253",
-    body: `I graduated from Kuwait University last year and I'm interested in treatment-resistant depression — specifically why some patients stop responding to antidepressants entirely. I've been reading into ketamine and your 2024 paper on glutamate rebound suppression was the clearest explanation I've found for why the response timeline is so different from conventional antidepressants.
+    body: `I graduated from Kuwait University last year and I'm interested in psychiatry, particularly patients who don't respond to standard antidepressants. I came across your 2024 paper on ketamine and finally understood why it works so much faster than regular antidepressants — that wasn't something my pharmacology course covered well.
 
-I'm ECFMG certified, Step 2 253, and interested in your outcomes research. CV attached — would a short call work?`,
+I'm ECFMG certified, Step 1 passed, Step 2 253, and interested in your research. CV attached — would a short call work?`,
     attachments: ["CV_Fatima_AlRashidi.pdf"],
     date: "Mon, Jun 30, 2026, 10:18 AM",
     reply: {
@@ -73,9 +73,9 @@ I'm ECFMG certified, Step 2 253, and interested in your outcomes research. CV at
       year: "Medical Graduate",
     },
     subject: "thyroid cancer research — UNAM grad, Step 1 passed, Step 2 249",
-    body: `I'm a UNAM graduate interested in thyroid cancer — specifically radioiodine resistance and why some patients stop responding after initial treatment. I published a research project on recurrence patterns in differentiated thyroid cancer and came across your 2023 paper on BRAF V600E as a resistance predictor; it addresses the gap our analysis couldn't explain.
+    body: `I'm a UNAM graduate interested in thyroid cancer and did a research project on recurrence patterns during medical school. I came across your 2023 paper on why some patients stop responding to radioiodine — I hadn't seen the BRAF mutation connected to resistance before and it changed how I was thinking about the cases in our dataset.
 
-I'm ECFMG certified, Step 2 249, available from October. CV and research summary attached — would you be open to a call?`,
+I'm ECFMG certified, Step 1 passed, Step 2 249, available from October. CV and research summary attached — would you be open to a call?`,
     attachments: ["CV_Valentina_Cruz.pdf", "Research_Summary.pdf"],
     date: "Wed, Jul 1, 2026, 8:33 AM",
     reply: {

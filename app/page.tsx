@@ -20,7 +20,7 @@ const emailExample = {
   to: "Dr. Claire Bennett, MD — Mayo Clinic Neurology",
   subject: "neurology observership — Alexandria MS4, Step 1 passed",
   date: "Mon, Jun 30, 2026, 8:47 AM",
-  body: `I'm an MS4 at Alexandria University with a strong interest in neuroplasticity and recovery after brain injury. I came across your 2024 paper on constraint-induced movement therapy outcomes after stroke and found the correlation between early cortical reorganization and long-term motor gains genuinely surprising — I hadn't expected the effect size to hold at 12 months. I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
+  body: `I'm an MS4 at Alexandria University interested in neurology, specifically recovery after stroke. I came across your 2024 paper on constraint-induced movement therapy and was surprised that the motor gains held at 12 months — I didn't expect the improvement to last that long. I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
   signoff: "Nour Mansour | Alexandria University Faculty of Medicine",
   attachments: ["CV_Nour_Mansour.pdf"],
   reply: {
