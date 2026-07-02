@@ -19,14 +19,14 @@ const examples = [
       year: "MS3",
       credentials: "Step 2 CK: 248 · ECFMG certified · Completed internal medicine rotation at UIC",
     },
-    subject: "MS3, Step 2 248 — observership interest in geriatrics",
-    body: `I'm finishing my MS3 year at Aga Khan University and recently completed an internal medicine rotation at UIC. During that rotation I kept running into the same problem: elderly patients on 8 or 10 medications would be medically stable but still end up readmitted within two weeks because no one had a reliable way to flag them as high-risk at discharge. Your 2023 paper identifying frailty phenotype as the strongest predictor of 30-day readmission in polypharmacy patients — stronger than number of diagnoses or labs — was the clearest answer I found to something I'd seen firsthand but couldn't explain.
+    subject: "observership — Aga Khan MS3, Step 2 248",
+    body: `I'm an MS3 at Aga Khan who just finished an internal medicine rotation at UIC. I kept seeing the same thing: elderly patients on 10 medications, medically stable at discharge, back within two weeks. Nobody on the team had a good answer for who was actually high-risk. I found your 2023 paper on frailty phenotyping afterward and it explained exactly what I'd been watching happen — the phenotype score predicted readmission better than diagnosis count or lab values alone.
 
-I'm ECFMG certified and available January through March 2027. I've attached my CV. Would you be open to an observership, or a brief call to see if it's a fit?`,
+I'm ECFMG certified, available January–March 2027, and attached my CV. Would a short call work, or would you be open to an observership directly?`,
     attachments: ["CV_Aisha_Karimi.pdf"],
     date: "Tue, Jul 1, 2026, 8:42 AM",
     reply: {
-      text: "Hi Aisha — I looked through your CV, the UIC rotation is a good sign. February works on my end. Let's find 15 minutes to talk before then.",
+      text: "Aisha — saw your CV, the UIC rotation helps. February works. Send me a few times that work for a call.",
       date: "Wed, Jul 2, 2026, 2:15 PM",
     },
   },
@@ -47,14 +47,14 @@ I'm ECFMG certified and available January through March 2027. I've attached my C
       year: "Medical Graduate",
       credentials: "Step 1: 252 · Step 2 CK: 261 · ECFMG certified · J-1 visa · 2 first-author publications in cardiology",
     },
-    subject: "IMG graduate, Step 2 261 — your TAVR risk stratification work",
-    body: `I graduated from the University of Jordan last year and have two first-author publications in cardiology, including a case series on management of severe aortic stenosis in patients who were declined for surgery. In writing that paper, the hardest part was justifying why TAVR was chosen over continued medical management for each patient — your 2024 study identifying low albumin and STS score above 8 as the two strongest independent predictors of 30-day mortality post-TAVR gave me the clearest framework I found in the literature, and I cited it directly in my discussion.
+    subject: "cardiology research — U of Jordan grad, Step 2 261",
+    body: `I graduated from the University of Jordan last year and published a case series on severe aortic stenosis in surgical-risk patients. Writing the discussion was harder than I expected — deciding when TAVR was the right call versus ongoing medical management wasn't straightforward. I came across your 2024 paper on 30-day mortality predictors post-TAVR and ended up citing it; the albumin and STS score combination made more clinical sense than anything else I'd found.
 
-I'm ECFMG certified and currently in New York on a J-1 visa. I'm looking for a research observership where I can contribute — I'm comfortable with data extraction, chart review, and manuscript support. I've attached my CV and publication list. Would a 10-minute call work?`,
+I'm ECFMG certified, in New York on a J-1 visa, and genuinely interested in getting involved in your outcomes work. CV and publication list attached — would a quick call work?`,
     attachments: ["CV_Tariq_AlMansouri.pdf", "Publications_List.pdf"],
     date: "Mon, Jun 30, 2026, 11:03 AM",
     reply: {
-      text: "Tariq — I looked at your CV and the aortic stenosis paper. The STS score framing in your discussion was well done. We have a TAVR outcomes project that could use help. Let's talk.",
+      text: "Tariq — read your paper. The way you handled the STS framing was solid. We have something you could contribute to. Let's talk this week.",
       date: "Tue, Jul 1, 2026, 9:47 AM",
     },
   },
@@ -75,14 +75,14 @@ I'm ECFMG certified and currently in New York on a J-1 visa. I'm looking for a r
       year: "Medical Graduate",
       credentials: "Step 1: 247 · Step 2 CK: 255 · ECFMG certified · Published in Movement Disorders journal · B2 visa, no sponsorship needed",
     },
-    subject: "Charité graduate, Step 2 255 — alpha-synuclein biomarker research",
-    body: `I graduated from Charité Berlin and published a study in Movement Disorders measuring cerebrospinal fluid alpha-synuclein levels in patients with REM sleep behavior disorder — a group considered high-risk for eventually developing Parkinson's. The main limitation of our study was that CSF collection requires a lumbar puncture, which most patients decline for routine screening. Your 2024 paper showing that serum phosphorylated alpha-synuclein levels correlate with the CSF findings in the same prodromal population is directly relevant to that limitation — a blood test would make early detection actually scalable.
+    subject: "Parkinson's biomarker research — Charité grad, Step 2 255",
+    body: `I'm a Charité Berlin graduate with a published study in Movement Disorders on CSF alpha-synuclein in REM sleep behavior disorder patients. The frustrating part of that work was the lumbar puncture — most patients we wanted to follow longitudinally just wouldn't do it repeatedly. Your 2024 paper on serum phosphorylated alpha-synuclein correlating with CSF findings in the same prodromal group is the direction that study needed to go, and I've been thinking about it since.
 
-I'm ECFMG certified, on a B2 visa with no sponsorship needed for an observership, and available from September 2026. I've attached my CV and the Movement Disorders paper. Would you be open to a research observership or a brief call?`,
+I'm ECFMG certified, on a B2 visa, available from September. CV and the paper attached — would you be open to a call?`,
     attachments: ["CV_Lena_Hoffmann.pdf", "Hoffmann_MovementDisorders_2025.pdf"],
     date: "Wed, Jul 1, 2026, 7:58 AM",
     reply: {
-      text: "Lena — the REM sleep behavior disorder cohort is exactly the population we're recruiting for our biomarker validation study. I'll have my coordinator reach out this week.",
+      text: "Lena — we're actually recruiting that exact REM behavior disorder population right now for a validation cohort. Let's talk. My coordinator will reach out.",
       date: "Thu, Jul 2, 2026, 11:22 AM",
     },
   },
