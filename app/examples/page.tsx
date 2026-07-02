@@ -46,7 +46,7 @@ I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — w
       year: "Medical Graduate",
     },
     subject: "psychiatry research — Kuwait grad, Step 1 passed, Step 2 253",
-    body: `I graduated from Kuwait University last year and became interested in treatment-resistant depression during my psychiatry rotation — we had a patient who had failed four antidepressants over two years and nobody had a clear next step. I've been reading into ketamine since and your 2024 paper on glutamate rebound suppression was the first explanation I found for why the response timeline is so different from conventional antidepressants.
+    body: `I graduated from Kuwait University last year and I'm interested in treatment-resistant depression — specifically why some patients stop responding to antidepressants entirely. I've been reading into ketamine and your 2024 paper on glutamate rebound suppression was the clearest explanation I've found for why the response timeline is so different from conventional antidepressants.
 
 I'm ECFMG certified, Step 2 253, and interested in your outcomes research. CV attached — would a short call work?`,
     attachments: ["CV_Fatima_AlRashidi.pdf"],
