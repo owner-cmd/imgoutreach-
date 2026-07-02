@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle, Mail, Paperclip, Reply, Search, Star, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle, Forward, Mail, Paperclip, Reply, Search, Star, Zap } from "lucide-react";
 
 const stats = [
   { value: "3×", label: "more replies vs generic emails" },
@@ -107,35 +107,58 @@ export default function Home() {
           <p className="text-gray-600 max-w-xl mx-auto">Not a merge-field template. Our AI reads the physician&apos;s actual research and writes something you&apos;d actually send.</p>
         </div>
         <div className="card max-w-2xl mx-auto overflow-hidden">
-          {/* Email header */}
-          <div className="divide-y divide-gray-100">
-            <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-12 shrink-0 pt-0.5">From</span>
-              <span className="text-gray-700">{emailExample.from}</span>
-              <span className="text-gray-400 text-xs ml-auto shrink-0 pt-0.5">{emailExample.date}</span>
-            </div>
-            <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-12 shrink-0 pt-0.5">To</span>
-              <span className="text-gray-700">{emailExample.to}</span>
-            </div>
-            <div className="px-5 py-3 flex gap-3 text-sm">
-              <span className="text-gray-400 w-12 shrink-0 pt-0.5">Subject</span>
-              <span className="text-gray-900 font-semibold">{emailExample.subject}</span>
-            </div>
-            <div className="px-5 py-6">
-              <p className="text-gray-700 leading-relaxed text-sm">{emailExample.body}</p>
-              <div className="mt-4 text-sm text-gray-500">
-                <p className="text-gray-700 font-medium">{emailExample.signoff}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {emailExample.attachments.map((file) => (
-                    <span key={file} className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1">
-                      <Paperclip size={11} />
-                      {file}
-                    </span>
-                  ))}
+          {/* Specialty bar */}
+          <div className="bg-blue-50 border-b border-blue-100 px-5 py-2.5 flex items-center gap-3">
+            <span className="text-xs font-semibold text-blue-800 uppercase tracking-widest">Neurology — Neuroplasticity</span>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">MS4 · IMG</span>
+          </div>
+          {/* Sender row */}
+          <div className="px-5 pt-5 pb-3 border-b border-gray-100">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-semibold shrink-0">NM</div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">
+                    Nour Mansour <span className="text-gray-400 font-normal">&lt;{emailExample.from.match(/<(.+)>/)?.[1]}&gt;</span>
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">to {emailExample.to}</p>
                 </div>
               </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <p className="text-xs text-gray-400 hidden sm:block">{emailExample.date}</p>
+                <Star size={15} className="text-gray-300" />
+                <Reply size={15} className="text-gray-300" />
+                <Forward size={15} className="text-gray-300" />
+              </div>
             </div>
+          </div>
+          {/* Subject */}
+          <div className="px-5 py-3 border-b border-gray-100">
+            <p className="text-base font-semibold text-gray-900">{emailExample.subject}</p>
+          </div>
+          {/* Body */}
+          <div className="px-5 py-5">
+            <p className="text-gray-700 leading-relaxed text-sm">{emailExample.body}</p>
+            <div className="mt-4 text-sm">
+              <p className="text-gray-700 font-medium">{emailExample.signoff}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {emailExample.attachments.map((file) => (
+                  <span key={file} className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1">
+                    <Paperclip size={11} />
+                    {file}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Reply / Forward buttons */}
+          <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex gap-3">
+            <button className="flex items-center gap-1.5 text-xs text-gray-500 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-white transition-colors">
+              <Reply size={12} /> Reply
+            </button>
+            <button className="flex items-center gap-1.5 text-xs text-gray-500 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-white transition-colors">
+              <Forward size={12} /> Forward
+            </button>
           </div>
           {/* Physician reply */}
           <div className="border-t-2 border-emerald-100 bg-emerald-50 px-5 py-4">
