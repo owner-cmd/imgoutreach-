@@ -22,7 +22,7 @@ const examples = [
     subject: "MS3, Step 2 248 — observership interest in geriatrics",
     body: `I'm finishing my MS3 year at Aga Khan University and recently completed an internal medicine rotation at UIC. During that rotation I kept running into the same problem: elderly patients on 8 or 10 medications would be medically stable but still end up readmitted within two weeks because no one had a reliable way to flag them as high-risk at discharge. Your 2023 paper identifying frailty phenotype as the strongest predictor of 30-day readmission in polypharmacy patients — stronger than number of diagnoses or labs — was the clearest answer I found to something I'd seen firsthand but couldn't explain.
 
-I'm ECFMG certified, fully vaccinated, and available January through March 2027. I've attached my CV. Would you be open to an observership, or a brief call to see if it's a fit?`,
+I'm ECFMG certified and available January through March 2027. I've attached my CV. Would you be open to an observership, or a brief call to see if it's a fit?`,
     attachments: ["CV_Aisha_Karimi.pdf"],
     date: "Tue, Jul 1, 2026, 8:42 AM",
     reply: {
@@ -50,7 +50,7 @@ I'm ECFMG certified, fully vaccinated, and available January through March 2027.
     subject: "IMG graduate, Step 2 261 — your TAVR risk stratification work",
     body: `I graduated from the University of Jordan last year and have two first-author publications in cardiology, including a case series on management of severe aortic stenosis in patients who were declined for surgery. In writing that paper, the hardest part was justifying why TAVR was chosen over continued medical management for each patient — your 2024 study identifying low albumin and STS score above 8 as the two strongest independent predictors of 30-day mortality post-TAVR gave me the clearest framework I found in the literature, and I cited it directly in my discussion.
 
-I'm ECFMG certified, currently in New York on a J-1 visa, fully vaccinated. I'm looking for a research observership where I can contribute — I'm comfortable with data extraction, chart review, and manuscript support. I've attached my CV and publication list. Would a 10-minute call work?`,
+I'm ECFMG certified and currently in New York on a J-1 visa. I'm looking for a research observership where I can contribute — I'm comfortable with data extraction, chart review, and manuscript support. I've attached my CV and publication list. Would a 10-minute call work?`,
     attachments: ["CV_Tariq_AlMansouri.pdf", "Publications_List.pdf"],
     date: "Mon, Jun 30, 2026, 11:03 AM",
     reply: {
@@ -78,7 +78,7 @@ I'm ECFMG certified, currently in New York on a J-1 visa, fully vaccinated. I'm 
     subject: "Charité graduate, Step 2 255 — alpha-synuclein biomarker research",
     body: `I graduated from Charité Berlin and published a study in Movement Disorders measuring cerebrospinal fluid alpha-synuclein levels in patients with REM sleep behavior disorder — a group considered high-risk for eventually developing Parkinson's. The main limitation of our study was that CSF collection requires a lumbar puncture, which most patients decline for routine screening. Your 2024 paper showing that serum phosphorylated alpha-synuclein levels correlate with the CSF findings in the same prodromal population is directly relevant to that limitation — a blood test would make early detection actually scalable.
 
-I'm ECFMG certified, on a B2 visa with no sponsorship needed for an observership, fully vaccinated, and available from September 2026. I've attached my CV and the Movement Disorders paper. Would you be open to a research observership or a brief call?`,
+I'm ECFMG certified, on a B2 visa with no sponsorship needed for an observership, and available from September 2026. I've attached my CV and the Movement Disorders paper. Would you be open to a research observership or a brief call?`,
     attachments: ["CV_Lena_Hoffmann.pdf", "Hoffmann_MovementDisorders_2025.pdf"],
     date: "Wed, Jul 1, 2026, 7:58 AM",
     reply: {
