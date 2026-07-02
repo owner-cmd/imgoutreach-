@@ -117,8 +117,8 @@ export default function PricingPage() {
                 a: "Yes — the majority of our customers are IMGs. The emails are written to reflect your background authentically, whether you're seeking observerships, research opportunities, or clinical exposure before residency.",
               },
               {
-                q: "What if a physician doesn't have a verified email?",
-                a: "We only include physicians with a verified or likely-deliverable email address. Physicians without a findable email are filtered out and replaced with others from your specialty.",
+                q: "Will the emails make false claims about me?",
+                a: "No. Every claim in the email either comes directly from what you wrote about yourself, or is something you can make true before you send it. If the email says you came across a physician's paper — you can read that paper before sending, and the claim becomes true. We never fabricate clinical experiences or credentials. The AI only works with what you give it.",
               },
               {
                 q: "What documents should I upload?",
