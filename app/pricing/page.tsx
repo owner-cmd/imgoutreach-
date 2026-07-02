@@ -118,7 +118,7 @@ export default function PricingPage() {
               },
               {
                 q: "Will the emails make false claims about me?",
-                a: "No. Every claim in the email either comes directly from what you wrote about yourself, or is something you can make true before you send it. If the email says you came across a physician's paper — you can read that paper before sending, and the claim becomes true. We never fabricate clinical experiences or credentials. The AI only works with what you give it.",
+                a: "No. Every claim in the email either comes directly from what you wrote about yourself, or is something you can make true before you meet the physician. If the email says you came across their paper — you can read that paper before your meeting, and by the time you meet them it will be true. We never fabricate clinical experiences or credentials. The AI only works with what you give it.",
               },
               {
                 q: "What documents should I upload?",
