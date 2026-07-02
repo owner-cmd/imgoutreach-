@@ -16,17 +16,17 @@ const steps = [
 ];
 
 const emailExample = {
-  from: "Rania Haddad <r.haddad@ju.edu.jo>",
-  to: "Dr. James Whitfield, MD — Duke University Hematology/Oncology",
-  subject: "hematology research — Jordan grad, Step 1 passed, Step 2 258",
-  date: "Mon, Jun 30, 2026, 9:14 AM",
-  body: `I graduated from the University of Jordan last spring and spent six months on a hematology ward where almost every AML patient we tried to consolidate ended up back in with neutropenic fever — the timing felt arbitrary rather than guided by anything predictive. Your 2023 paper on MRD-guided consolidation timing is exactly what our team needed; the MFC cutoff you used made the decision logic clearer than anything in our local protocol. I'm ECFMG certified, Step 1 passed, Step 2 258, available from August. CV attached — would it make sense to get on a call?`,
-  signoff: "Rania Haddad | University of Jordan Faculty of Medicine",
-  attachments: ["CV_Rania_Haddad.pdf"],
+  from: "Nour Mansour <n.mansour@alexmed.edu.eg>",
+  to: "Dr. Claire Bennett, MD — Mayo Clinic Neurology",
+  subject: "neurology observership — Alexandria MS4, Step 1 passed",
+  date: "Mon, Jun 30, 2026, 8:47 AM",
+  body: `I'm an MS4 at Alexandria University with a strong interest in neuroplasticity and recovery after brain injury. I came across your 2024 paper on constraint-induced movement therapy outcomes after stroke and found the correlation between early cortical reorganization and long-term motor gains genuinely surprising — I hadn't expected the effect size to hold at 12 months. I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
+  signoff: "Nour Mansour | Alexandria University Faculty of Medicine",
+  attachments: ["CV_Nour_Mansour.pdf"],
   reply: {
-    from: "Dr. James Whitfield",
-    text: "Rania — the MRD framing you described is exactly what we're building on. Send me a few times next week.",
-    date: "Tue, Jul 1, 2026, 11:38 AM",
+    from: "Dr. Claire Bennett",
+    text: "Nour — February works. Let's do a quick call first. Send me a couple of times that work for you.",
+    date: "Tue, Jul 1, 2026, 10:22 AM",
   },
 };
 
@@ -140,7 +140,7 @@ export default function Home() {
           {/* Physician reply */}
           <div className="border-t-2 border-emerald-100 bg-emerald-50 px-5 py-4">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-semibold shrink-0">JW</div>
+              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-semibold shrink-0">CB</div>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-semibold text-gray-900">
