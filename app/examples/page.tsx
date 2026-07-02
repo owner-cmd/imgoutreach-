@@ -10,23 +10,23 @@ const examples = [
       title: "Associate Professor of Medicine, Division of Geriatrics",
       institution: "University of Illinois at Chicago",
       city: "Chicago, IL",
-      research: "Frailty phenotyping, polypharmacy in older adults, care transitions",
+      research: "Frailty and 30-day readmission risk in older adults on 5+ medications",
     },
     student: {
       name: "Aisha Karimi",
       school: "Aga Khan University",
       email: "a.karimi@aku.edu",
       year: "MS3",
-      credentials: "Step 2 CK: 248 · ECFMG certified · US rotations at UIC (Internal Medicine)",
+      credentials: "Step 2 CK: 248 · ECFMG certified · Completed internal medicine rotation at UIC",
     },
-    subject: "MS3, Step 2 248 — observership in geriatrics?",
-    body: `I'm finishing my MS3 year at Aga Khan University with a strong focus on internal medicine and have completed a rotation at UIC's internal medicine service. Your 2023 paper on frailty phenotyping in patients with polypharmacy directly connects to cases I saw during that rotation — the gap between frailty screening in theory and what actually happens at discharge was striking, and your framework gave me a cleaner way to think about it.
+    subject: "MS3, Step 2 248 — observership interest in geriatrics",
+    body: `I'm finishing my MS3 year at Aga Khan University and recently completed an internal medicine rotation at UIC. During that rotation I kept running into the same problem: elderly patients on 8 or 10 medications would be medically stable but still end up readmitted within two weeks because no one had a reliable way to flag them as high-risk at discharge. Your 2023 paper identifying frailty phenotype as the strongest predictor of 30-day readmission in polypharmacy patients — stronger than number of diagnoses or labs — was the clearest answer I found to something I'd seen firsthand but couldn't explain.
 
-I'm ECFMG certified, fully vaccinated, and available January–March 2027. I'd aim to be a low-burden observer — no compensation needed. Would you be open to a brief observership, or even a 10-minute call first?`,
+I'm ECFMG certified, fully vaccinated, and available January through March 2027. I've attached my CV. Would you be open to an observership, or a brief call to see if it's a fit?`,
     attachments: ["CV_Aisha_Karimi.pdf"],
     date: "Tue, Jul 1, 2026, 8:42 AM",
     reply: {
-      text: "Hi Aisha, thanks for reaching out — your background looks strong. I have a few slots opening in February. Let's find a time to talk.",
+      text: "Hi Aisha — I looked through your CV, the UIC rotation is a good sign. February works on my end. Let's find 15 minutes to talk before then.",
       date: "Wed, Jul 2, 2026, 2:15 PM",
     },
   },
@@ -38,23 +38,23 @@ I'm ECFMG certified, fully vaccinated, and available January–March 2027. I'd a
       title: "Director of Interventional Cardiology",
       institution: "Mount Sinai Hospital",
       city: "New York, NY",
-      research: "TAVR outcomes, coronary microvascular disease, structural heart interventions",
+      research: "Predicting 30-day mortality after TAVR in patients too high-risk for open surgery",
     },
     student: {
       name: "Tariq Al-Mansouri",
       school: "University of Jordan Faculty of Medicine",
       email: "t.almansouri@ju.edu.jo",
       year: "Medical Graduate",
-      credentials: "Step 1: 252 · Step 2 CK: 261 · ECFMG certified · J-1 visa holder · 2 first-author publications",
+      credentials: "Step 1: 252 · Step 2 CK: 261 · ECFMG certified · J-1 visa · 2 first-author publications in cardiology",
     },
-    subject: "IMG, Step 2 261 — research interest in your TAVR outcomes work",
-    body: `I graduated from the University of Jordan last year and am currently preparing for residency match with a focus on internal medicine leading to cardiology. Your 2024 analysis of 30-day mortality predictors post-TAVR in high-surgical-risk patients is something I've referenced repeatedly — I co-authored a case series on aortic stenosis management in our institution and your risk stratification model influenced how I framed the discussion.
+    subject: "IMG graduate, Step 2 261 — your TAVR risk stratification work",
+    body: `I graduated from the University of Jordan last year and have two first-author publications in cardiology, including a case series on management of severe aortic stenosis in patients who were declined for surgery. In writing that paper, the hardest part was justifying why TAVR was chosen over continued medical management for each patient — your 2024 study identifying low albumin and STS score above 8 as the two strongest independent predictors of 30-day mortality post-TAVR gave me the clearest framework I found in the literature, and I cited it directly in my discussion.
 
-I hold a J-1 visa and am currently in New York, ECFMG certified, fully vaccinated. I'm looking for a research observership where I can contribute meaningfully — I'm comfortable with data extraction, literature review, and manuscript support. Would a 10-minute call work to see if there's a fit?`,
+I'm ECFMG certified, currently in New York on a J-1 visa, fully vaccinated. I'm looking for a research observership where I can contribute — I'm comfortable with data extraction, chart review, and manuscript support. I've attached my CV and publication list. Would a 10-minute call work?`,
     attachments: ["CV_Tariq_AlMansouri.pdf", "Publications_List.pdf"],
     date: "Mon, Jun 30, 2026, 11:03 AM",
     reply: {
-      text: "Tariq — impressive profile. We do take motivated IMGs for research projects. Send me your CV directly and let's set something up.",
+      text: "Tariq — I looked at your CV and the aortic stenosis paper. The STS score framing in your discussion was well done. We have a TAVR outcomes project that could use help. Let's talk.",
       date: "Tue, Jul 1, 2026, 9:47 AM",
     },
   },
@@ -66,23 +66,23 @@ I hold a J-1 visa and am currently in New York, ECFMG certified, fully vaccinate
       title: "Assistant Professor of Neurology, Movement Disorders Program",
       institution: "Johns Hopkins Hospital",
       city: "Baltimore, MD",
-      research: "Alpha-synuclein pathology, DBS programming, prodromal Parkinson's biomarkers",
+      research: "Blood-based biomarkers for detecting Parkinson's disease before symptoms appear",
     },
     student: {
       name: "Lena Hoffmann",
       school: "Charité – Universitätsmedizin Berlin",
       email: "l.hoffmann@charite.de",
       year: "Medical Graduate",
-      credentials: "Step 1: 247 · Step 2 CK: 255 · ECFMG certified · Published in Movement Disorders journal · B2 visa",
+      credentials: "Step 1: 247 · Step 2 CK: 255 · ECFMG certified · Published in Movement Disorders journal · B2 visa, no sponsorship needed",
     },
-    subject: "Charité graduate, Step 2 255 — your alpha-synuclein biomarker work",
-    body: `I graduated from Charité Berlin and published a research article in Movement Disorders on cerebrospinal fluid alpha-synuclein levels in prodromal PD — your 2024 paper on serum biomarker correlates was the most cited piece in my discussion section. The overlap between your work on early detection and my research background is specific enough that I wanted to reach out directly rather than through a general inquiry.
+    subject: "Charité graduate, Step 2 255 — alpha-synuclein biomarker research",
+    body: `I graduated from Charité Berlin and published a study in Movement Disorders measuring cerebrospinal fluid alpha-synuclein levels in patients with REM sleep behavior disorder — a group considered high-risk for eventually developing Parkinson's. The main limitation of our study was that CSF collection requires a lumbar puncture, which most patients decline for routine screening. Your 2024 paper showing that serum phosphorylated alpha-synuclein levels correlate with the CSF findings in the same prodromal population is directly relevant to that limitation — a blood test would make early detection actually scalable.
 
-I'm ECFMG certified, on a B2 visa (no sponsorship needed for observership), fully vaccinated, and available from September 2026. I'd contribute as a research observer — I have experience with biomarker assay protocols and longitudinal cohort data. Would you be open to a brief conversation?`,
+I'm ECFMG certified, on a B2 visa with no sponsorship needed for an observership, fully vaccinated, and available from September 2026. I've attached my CV and the Movement Disorders paper. Would you be open to a research observership or a brief call?`,
     attachments: ["CV_Lena_Hoffmann.pdf", "Hoffmann_MovementDisorders_2025.pdf"],
     date: "Wed, Jul 1, 2026, 7:58 AM",
     reply: {
-      text: "Lena, your publication in Movement Disorders is exactly the kind of background we look for. I'll have my coordinator reach out to arrange a call.",
+      text: "Lena — the REM sleep behavior disorder cohort is exactly the population we're recruiting for our biomarker validation study. I'll have my coordinator reach out this week.",
       date: "Thu, Jul 2, 2026, 11:22 AM",
     },
   },
@@ -108,7 +108,7 @@ export default function ExamplesPage() {
           <p className="text-blue-800 font-semibold text-sm uppercase tracking-widest mb-3">Real examples</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-5">What your emails look like</h1>
           <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Each email is written from scratch based on the physician's actual research. No templates, no merge fields — and physicians reply.
+            Each email references the physician's actual research and explains why it connects to what the student has already done. Physicians notice the difference.
           </p>
         </div>
 
@@ -121,7 +121,7 @@ export default function ExamplesPage() {
                   <span className="text-xs font-semibold text-blue-800 uppercase tracking-widest">{ex.specialty}</span>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">{ex.tag}</span>
                 </div>
-                <span className="text-xs text-gray-400 hidden sm:block">Research: {ex.physician.research}</span>
+                <span className="text-xs text-gray-400 hidden sm:block italic">{ex.physician.research}</span>
               </div>
 
               {/* Email header */}
@@ -146,7 +146,7 @@ export default function ExamplesPage() {
                 </div>
 
                 <div className="ml-13 space-y-1">
-                  <div className="flex gap-2 text-xs text-gray-500">
+                  <div className="flex gap-2 text-xs">
                     <span className="w-14 text-gray-400 shrink-0">To</span>
                     <span className="text-gray-700">
                       {ex.physician.name} — {ex.physician.title}, {ex.physician.institution}, {ex.physician.city}
@@ -174,9 +174,7 @@ export default function ExamplesPage() {
                 <div className="mt-4 text-sm text-gray-500">
                   <p>Best regards,</p>
                   <p className="text-gray-700 font-medium mt-0.5">{ex.student.name}</p>
-                  <p className="text-gray-400">
-                    {ex.student.year} · {ex.student.school}
-                  </p>
+                  <p className="text-gray-400">{ex.student.year} · {ex.student.school}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {ex.attachments.map((file, k) => (
                       <span
@@ -202,7 +200,7 @@ export default function ExamplesPage() {
               </div>
 
               {/* Physician reply */}
-              <div className="border-t-2 border-blue-100 bg-blue-50">
+              <div className="border-t-2 border-emerald-100 bg-emerald-50">
                 <div className="px-5 py-4">
                   <div className="flex items-start gap-3">
                     <Avatar name={ex.physician.name} size="sm" />
@@ -210,7 +208,7 @@ export default function ExamplesPage() {
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-semibold text-gray-900">
                           {ex.physician.name}{" "}
-                          <span className="text-xs text-blue-600 font-medium ml-1">replied</span>
+                          <span className="text-xs text-emerald-600 font-medium ml-1">↩ replied</span>
                         </p>
                         <p className="text-xs text-gray-400">{ex.reply.date}</p>
                       </div>
@@ -226,10 +224,7 @@ export default function ExamplesPage() {
 
         <div className="text-center mt-14">
           <p className="text-gray-500 mb-6 text-lg">Ready to get emails like these written for you?</p>
-          <Link
-            href="/request"
-            className="btn-primary inline-flex items-center gap-2 text-base px-8 py-4"
-          >
+          <Link href="/request" className="btn-primary inline-flex items-center gap-2 text-base px-8 py-4">
             Start your request <ArrowRight size={18} />
           </Link>
         </div>
