@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    await supabase.from("pending_submissions").upsert({
+    const { error: supabaseError } = await supabase.from("pending_submissions").upsert({
       stripe_session_id: session.id,
       student_email: metadata.student_email,
       student_name: metadata.student_name,
@@ -76,6 +76,10 @@ export async function POST(req: NextRequest) {
       amount_paid: plan.price * 100,
       created_at: new Date().toISOString(),
     }, { onConflict: "stripe_session_id" });
+
+    if (supabaseError) {
+      console.error("Supabase pending_submissions error:", supabaseError);
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (e: unknown) {
