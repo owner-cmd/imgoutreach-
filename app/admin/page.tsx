@@ -26,6 +26,8 @@ type Draft = {
   pub_count: number;
   cv_drive_link: string;
   status: string;
+  replied: boolean;
+  replied_at: string | null;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -186,7 +188,14 @@ export default function AdminPage() {
                   <div className="flex items-center gap-6">
                     <div className="text-right hidden sm:block">
                       <p className="text-sm font-medium text-gray-900">{order.drafts_completed} / {order.physician_count} drafts</p>
-                      <p className="text-xs text-gray-400">${(order.amount_paid / 100).toFixed(0)} · {order.tier}</p>
+                      <p className="text-xs text-gray-400">
+                        {drafts[order.stripe_session_id]?.filter(d => d.replied).length > 0 && (
+                          <span className="text-emerald-600 font-medium mr-2">
+                            {drafts[order.stripe_session_id].filter(d => d.replied).length} repl{drafts[order.stripe_session_id].filter(d => d.replied).length === 1 ? "y" : "ies"}
+                          </span>
+                        )}
+                        ${(order.amount_paid / 100).toFixed(0)} · {order.tier}
+                      </p>
                     </div>
                     {isExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                   </div>
@@ -243,7 +252,14 @@ export default function AdminPage() {
                           <div key={i} className="px-5 py-4">
                             <div className="flex items-start justify-between gap-4 mb-2">
                               <div>
-                                <p className="text-sm font-semibold text-gray-900">{draft.doctor_name}</p>
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <p className="text-sm font-semibold text-gray-900">{draft.doctor_name}</p>
+                                  {draft.replied && (
+                                    <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                                      <CheckCircle size={10} /> Replied
+                                    </span>
+                                  )}
+                                </div>
                                 <p className="text-xs text-gray-400">{draft.doctor_email} · {draft.specialty} · {draft.state}</p>
                               </div>
                               <div className="flex items-center gap-3 shrink-0">

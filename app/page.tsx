@@ -16,16 +16,16 @@ const steps = [
 ];
 
 const emailExample = {
-  from: "Nour Mansour <n.mansour@alexmed.edu.eg>",
-  to: "Dr. Claire Bennett, MD — Mayo Clinic Neurology",
-  subject: "Neurology Observership — Alexandria MS4, Step 1 Passed",
+  from: "Rohan Mehta <r.mehta@aiims.edu>",
+  to: "Dr. Sandra Collins, MD — Johns Hopkins Internal Medicine",
+  subject: "Internal Medicine Observership — AIIMS Grad, Step 2 251",
   date: "Mon, Jun 30, 2026, 8:47 AM",
-  body: `I'm an MS4 at Alexandria University interested in neurology. During my neurology rotation I saw a stroke patient who regained arm movement weeks after everyone had stopped expecting it — and I couldn't find a good explanation for why. I came across your 2024 paper on constraint-induced movement therapy and it was the first thing that actually explained what I saw. I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
-  signoff: "Nour Mansour | Alexandria University Faculty of Medicine",
-  attachments: ["CV_Nour_Mansour.pdf"],
+  body: `I'm an AIIMS graduate with an interest in internal medicine. I came across your 2023 paper on early warning score implementation in general wards and your findings on reducing preventable deterioration in hospitalized patients interested me. I'm ECFMG certified, Step 1 passed, Step 2 251, available from January 2027. CV attached — would an observership be possible?`,
+  signoff: "Rohan Mehta | All India Institute of Medical Sciences",
+  attachments: ["CV_Rohan_Mehta.pdf"],
   reply: {
-    from: "Dr. Claire Bennett",
-    text: "Nour — February works. Let's do a quick call first. Send me a couple of times that work for you.",
+    from: "Dr. Sandra Collins",
+    text: "Rohan — January works. Let's do a quick call first. Send me a couple of times that work for you.",
     date: "Tue, Jul 1, 2026, 10:22 AM",
   },
 };
@@ -40,8 +40,8 @@ export default function Home() {
             Built for US medical students and IMGs
           </div>
           <h1 className="text-4xl sm:text-6xl font-bold leading-tight tracking-tight text-gray-900 mb-6">
-            Stop sending generic emails.<br />
-            <span className="text-blue-900">Start getting replies.</span>
+            Your path to US clinical<br />
+            <span className="text-blue-900">experience starts here.</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
             Whether you&apos;re an IMG seeking observerships and research, or a US student exploring a specialty — our AI researches each physician and writes a personalized cold email in your voice.
@@ -70,7 +70,7 @@ export default function Home() {
       </section>
 
       {/* IMG callout */}
-      <section className="bg-blue-900 border-b border-blue-800">
+      <section className="hidden md:block bg-blue-900 border-b border-blue-800">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -109,8 +109,8 @@ export default function Home() {
         <div className="card max-w-2xl mx-auto overflow-hidden">
           {/* Specialty bar */}
           <div className="bg-blue-50 border-b border-blue-100 px-5 py-2.5 flex items-center gap-3">
-            <span className="text-xs font-semibold text-blue-800 uppercase tracking-widest">Neurology — Neuroplasticity</span>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">MS4 · IMG</span>
+            <span className="text-xs font-semibold text-blue-800 uppercase tracking-widest">Internal Medicine — Hospital Medicine</span>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">IMG Graduate · India</span>
           </div>
           {/* Sender row */}
           <div className="px-5 pt-5 pb-3 border-b border-gray-100">
@@ -205,7 +205,7 @@ export default function Home() {
       </section>
 
       {/* Why it works */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-24">
+      <section className="hidden md:block max-w-5xl mx-auto px-4 sm:px-6 py-24">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Why physicians actually reply</h2>

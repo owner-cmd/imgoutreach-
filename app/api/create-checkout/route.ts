@@ -48,12 +48,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Save full submission to Supabase immediately — includes untruncated letter
+    // Save full data (including untruncated letter) to pending_submissions.
+    // The Stripe webhook moves it to student_submissions after payment is confirmed.
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    await supabase.from("student_submissions").upsert({
+    await supabase.from("pending_submissions").upsert({
       stripe_session_id: session.id,
       student_email: metadata.student_email,
       student_name: metadata.student_name,
@@ -73,28 +74,8 @@ export async function POST(req: NextRequest) {
       physician_count: parseInt(metadata.physician_count || "25"),
       tier: metadata.tier || plan.id,
       amount_paid: plan.price * 100,
-      status: "pending_payment",
-      submitted_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     }, { onConflict: "stripe_session_id" });
-
-    // Send confirmation email to student
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "IMG Outreach <noreply@sales.imgoutreach.com>",
-        to: metadata.student_email,
-        subject: "We received your order — drafts coming within 24 hours",
-        html: `<p>Hi ${metadata.student_name?.split(" ")[0] || "there"},</p>
-<p>We received your order for ${metadata.physician_count || 25} personalized email drafts in <strong>${metadata.specialty}</strong>.</p>
-<p>We'll have your drafts ready and delivered directly to your Gmail Drafts folder within 24 hours. You'll get another email when they're ready.</p>
-<p>Questions? Reply to this email or contact us at <a href="mailto:contact@imgoutreach.com">contact@imgoutreach.com</a>.</p>
-<p>— IMG Outreach</p>`,
-      }),
-    }).catch(() => null); // don't fail checkout if email fails
 
     return NextResponse.json({ url: session.url });
   } catch (e: unknown) {

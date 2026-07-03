@@ -3,35 +3,35 @@ import { ArrowRight, Reply, Forward, Star, Paperclip } from "lucide-react";
 
 const examples = [
   {
-    specialty: "Neurology — Stroke & Neuroplasticity",
-    tag: "MS4 · IMG",
+    specialty: "General Surgery — Minimally Invasive",
+    tag: "MS4 · IMG · Middle East",
     physician: {
-      name: "Dr. Elena Vasquez, MD, PhD",
-      title: "Associate Professor of Neurology, Stroke Program",
-      institution: "University of Michigan Health",
-      city: "Ann Arbor, MI",
-      research: "Cortical reorganization and motor recovery after ischemic stroke",
+      name: "Dr. James Holloway, MD, FACS",
+      title: "Associate Professor of Surgery, MIS Program",
+      institution: "Cleveland Clinic",
+      city: "Cleveland, OH",
+      research: "Laparoscopic versus robotic outcomes in complex abdominal wall repair",
     },
     student: {
-      name: "Dina Saleh",
-      school: "Cairo University Faculty of Medicine",
-      email: "d.saleh@cu.edu.eg",
+      name: "Karim Nasser",
+      school: "Ain Shams University Faculty of Medicine",
+      email: "k.nasser@med.asu.edu.eg",
       year: "MS4",
     },
-    subject: "Neurology Observership — Cairo MS4, Step 1 Passed",
-    body: `I'm an MS4 at Cairo University interested in neurology. During my neurology rotation I had a patient who had a stroke three months earlier and was still showing small improvements — my attending said it was unusual but didn't explain why. I came across your 2023 paper on how the brain reorganizes after stroke and it answered exactly what I'd been wondering about.
+    subject: "General Surgery Observership — Ain Shams MS4, Step 1 Passed",
+    body: `I'm a fourth-year student at Ain Shams University with an interest in general surgery, particularly minimally invasive techniques. I came across your 2023 paper comparing laparoscopic and robotic approaches in complex abdominal wall repair and your findings on recurrence rates and operative time interested me.
 
-I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — would an observership be possible, or would a quick call make more sense?`,
-    attachments: ["CV_Dina_Saleh.pdf"],
+I'm ECFMG certified, Step 1 passed, available from February 2027. CV attached — would an observership be possible?`,
+    attachments: ["CV_Karim_Nasser.pdf"],
     date: "Tue, Jul 1, 2026, 9:05 AM",
     reply: {
-      text: "Dina — March works. Let's do a call first. Send me two or three times that work for you.",
+      text: "Karim — February works. Come by for a week and scrub in. I'll have my assistant send you the details.",
       date: "Wed, Jul 2, 2026, 3:40 PM",
     },
   },
   {
     specialty: "Psychiatry — Mood Disorders",
-    tag: "IMG Graduate · Competitive Specialty",
+    tag: "IMG Graduate · Africa",
     physician: {
       name: "Dr. Marcus Webb, MD",
       title: "Director, Treatment-Resistant Depression Program",
@@ -40,47 +40,47 @@ I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — w
       research: "Ketamine and rapid antidepressant mechanisms in treatment-resistant depression",
     },
     student: {
-      name: "Fatima Al-Rashidi",
-      school: "Kuwait University College of Medicine",
-      email: "f.alrashidi@ku.edu.kw",
+      name: "Amara Diallo",
+      school: "Cheikh Anta Diop University Faculty of Medicine",
+      email: "a.diallo@ucad.edu.sn",
       year: "Medical Graduate",
     },
-    subject: "Psychiatry Research — Kuwait Grad, Step 1 Passed, Step 2 253",
-    body: `I graduated from Kuwait University last year and I'm interested in psychiatry. During my rotation I saw a patient who had been on three different antidepressants over two years with no real improvement — and the team didn't have a clear next step. I came across your 2024 paper on ketamine and it was the first time I understood why some patients need a completely different approach.
+    subject: "Psychiatry Research — Dakar Grad, ECFMG Certified, Step 2 241",
+    body: `I graduated from Cheikh Anta Diop University in Dakar with a focus on mood disorders and I'm interested in treatment-resistant depression. I came across your 2024 paper on ketamine mechanisms and your findings on rapid antidepressant response in non-responders interested me.
 
-I'm ECFMG certified, Step 1 passed, Step 2 253, and interested in your research. CV attached — would a short call work?`,
-    attachments: ["CV_Fatima_AlRashidi.pdf"],
+I'm ECFMG certified, Step 1 passed, Step 2 241, and looking to get involved in research. CV attached — would a short call work?`,
+    attachments: ["CV_Amara_Diallo.pdf"],
     date: "Mon, Jun 30, 2026, 10:18 AM",
     reply: {
-      text: "Fatima — good timing, we're starting a new ketamine cohort in the fall. Let's talk. I'll have my coordinator reach out.",
+      text: "Amara — good timing, we're starting a new cohort in the fall. Let's talk. I'll have my coordinator reach out.",
       date: "Tue, Jul 1, 2026, 2:05 PM",
     },
   },
   {
-    specialty: "Endocrinology — Thyroid Cancer",
-    tag: "IMG Graduate · Research Experience",
+    specialty: "Emergency Medicine — Trauma & Critical Care",
+    tag: "MS4 · IMG · South America",
     physician: {
-      name: "Dr. Jonathan Park, MD, FACE",
-      title: "Chief of Endocrinology",
-      institution: "MD Anderson Cancer Center",
-      city: "Houston, TX",
-      research: "Radioiodine resistance mechanisms in differentiated thyroid cancer",
+      name: "Dr. Lisa Harmon, MD, FACEP",
+      title: "Associate Professor of Emergency Medicine",
+      institution: "Massachusetts General Hospital",
+      city: "Boston, MA",
+      research: "Point-of-care ultrasound in undifferentiated hypotension in the ED",
     },
     student: {
-      name: "Valentina Cruz",
-      school: "Universidad Nacional Autónoma de México",
-      email: "v.cruz@unam.mx",
-      year: "Medical Graduate",
+      name: "Isabella Rodrigues",
+      school: "Universidade de São Paulo Faculty of Medicine",
+      email: "i.rodrigues@usp.br",
+      year: "MS4",
     },
-    subject: "Thyroid Cancer Research — UNAM Grad, Step 1 Passed, Step 2 249",
-    body: `I'm a UNAM graduate and did a research project on thyroid cancer recurrence during medical school. One pattern we kept seeing was patients who responded to radioiodine the first time and then didn't — we couldn't explain it from the data we had. I came across your 2023 paper on BRAF mutations and resistance and it was the explanation we were missing.
+    subject: "Emergency Medicine Observership — USP MS4, Step 1 Passed",
+    body: `I'm a fourth-year student at the University of São Paulo with an interest in emergency medicine, particularly resuscitation and point-of-care diagnostics. I came across your 2023 paper on POCUS in undifferentiated hypotension and your findings on time-to-diagnosis and clinical outcomes interested me.
 
-I'm ECFMG certified, Step 1 passed, Step 2 249, available from October. CV and research summary attached — would you be open to a call?`,
-    attachments: ["CV_Valentina_Cruz.pdf", "Research_Summary.pdf"],
-    date: "Wed, Jul 1, 2026, 8:33 AM",
+I'm ECFMG certified, Step 1 passed, available from March 2027. CV attached — would an observership be possible?`,
+    attachments: ["CV_Isabella_Rodrigues.pdf"],
+    date: "Thu, Jul 2, 2026, 11:14 AM",
     reply: {
-      text: "Valentina — the BRAF work is central to what we're doing now. Send your CV directly and let's find a time.",
-      date: "Thu, Jul 2, 2026, 10:55 AM",
+      text: "Isabella — March works. Come spend a few shifts with us. I'll have my coordinator send you the details.",
+      date: "Fri, Jul 3, 2026, 9:30 AM",
     },
   },
 ];
@@ -105,7 +105,7 @@ export default function ExamplesPage() {
           <p className="text-blue-800 font-semibold text-sm uppercase tracking-widest mb-3">Real examples</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-5">What your emails look like</h1>
           <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Each email references the physician's actual research and explains why it connects to what the student has already done. Physicians notice the difference.
+            Each email references the physician&apos;s actual research and explains why it connects to what the student is pursuing. Physicians notice the difference.
           </p>
         </div>
 
