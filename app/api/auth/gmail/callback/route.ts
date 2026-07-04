@@ -3,16 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const sessionId = req.nextUrl.searchParams.get("state") || "";
+  const preauthId = req.nextUrl.searchParams.get("state") || "";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   if (!code) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id=${sessionId}&gmail=error`
-    );
+    return NextResponse.redirect(`${siteUrl}/request?gmail=error`);
   }
 
   try {
-    // Exchange code for tokens
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -20,7 +18,7 @@ export async function GET(req: NextRequest) {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/gmail/callback`,
+        redirect_uri: `${siteUrl}/api/auth/gmail/callback`,
         grant_type: "authorization_code",
       }),
     });
@@ -28,27 +26,20 @@ export async function GET(req: NextRequest) {
     const tokens = await tokenRes.json();
     if (!tokens.refresh_token) throw new Error("No refresh token returned");
 
-    // Store refresh token in Supabase against the student's submission
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    await supabase
-      .from("student_submissions")
-      .update({
-        gmail_refresh_token: tokens.refresh_token,
-        gmail_connected_at: new Date().toISOString(),
-      })
-      .eq("stripe_session_id", sessionId);
+    await supabase.from("gmail_preauth").upsert({
+      preauth_id: preauthId,
+      refresh_token: tokens.refresh_token,
+      created_at: new Date().toISOString(),
+    }, { onConflict: "preauth_id" });
 
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id=${sessionId}&gmail=connected`
-    );
+    return NextResponse.redirect(`${siteUrl}/request?gmail=connected`);
   } catch (e) {
     console.error("Gmail OAuth callback error:", e);
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id=${sessionId}&gmail=error`
-    );
+    return NextResponse.redirect(`${siteUrl}/request?gmail=error`);
   }
 }

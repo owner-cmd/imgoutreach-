@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
         tier: metadata.tier || plan.id,
         cv_url: (metadata.cv_url || "").slice(0, 490),
         extra_doc_urls: (metadata.extra_doc_urls || "").slice(0, 490),
+        preauth_id: (metadata.preauth_id || "").slice(0, 490),
       },
     });
 
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
       custom_prompt: metadata.custom_prompt || "",
       cv_url: metadata.cv_url,
       extra_doc_urls: metadata.extra_doc_urls,
+      preauth_id: metadata.preauth_id || "",
       physician_count: parseInt(metadata.physician_count || "25"),
       tier: metadata.tier || plan.id,
       amount_paid: plan.price * 100,

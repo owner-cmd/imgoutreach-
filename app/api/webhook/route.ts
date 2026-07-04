@@ -69,6 +69,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Copy Gmail refresh token from preauth table if available
+  if (pending.preauth_id) {
+    const { data: preauth } = await supabase
+      .from("gmail_preauth")
+      .select("refresh_token")
+      .eq("preauth_id", pending.preauth_id)
+      .single();
+
+    if (preauth?.refresh_token) {
+      await supabase
+        .from("student_submissions")
+        .update({
+          gmail_refresh_token: preauth.refresh_token,
+          gmail_connected_at: new Date().toISOString(),
+        })
+        .eq("stripe_session_id", sessionId);
+
+      await supabase.from("gmail_preauth").delete().eq("preauth_id", pending.preauth_id);
+    }
+  }
+
   // Clean up pending
   await supabase.from("pending_submissions").delete().eq("stripe_session_id", sessionId);
 

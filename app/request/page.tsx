@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle, Mail } from "lucide-react";
 import { PLANS } from "@/lib/stripe";
 import { SPECIALTIES, SUBSPECIALTIES, computeCount } from "@/lib/specialties";
 
@@ -41,7 +41,7 @@ const ETHNICITIES = [
   { value: "hispanic", label: "Hispanic / Latino" },
 ];
 
-const STEPS = ["Find Physicians", "Your Info", "Letter", "Documents", "Package"];
+const STEPS = ["Find Physicians", "Your Info", "Letter", "Documents", "Package", "Connect Gmail"];
 
 interface FormData {
   // Step 0
@@ -68,45 +68,97 @@ interface FormData {
   termsAccepted: boolean;
 }
 
+const PREAUTH_KEY = "imgoutreach_preauth_id";
+
+function getPreauthId(): string {
+  try {
+    const existing = localStorage.getItem(PREAUTH_KEY);
+    if (existing) return existing;
+    const id = crypto.randomUUID();
+    localStorage.setItem(PREAUTH_KEY, id);
+    return id;
+  } catch { return crypto.randomUUID(); }
+}
+
 function RequestForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [stateSearch, setStateSearch] = useState("");
+  const [gmailConnected, setGmailConnected] = useState(false);
+  const [preauthId, setPreauthId] = useState("");
+  const [triedToAdvance, setTriedToAdvance] = useState(false);
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
 
   const SAVE_KEY = "imgoutreach_form_draft";
 
-  const getSaved = () => {
-    try {
-      const raw = localStorage.getItem(SAVE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
-  };
-
-  const saved = getSaved();
-
   const [form, setForm] = useState<FormData>({
-    selectedSpecialties: saved?.selectedSpecialties ?? [],
-    selectedSubspecialties: saved?.selectedSubspecialties ?? [],
-    stateMode: saved?.stateMode ?? "all",
-    selectedStates: saved?.selectedStates ?? [],
-    ethnicity: saved?.ethnicity ?? "any",
-    fullName: saved?.fullName ?? "",
-    email: saved?.email ?? "",
-    medicalSchool: saved?.medicalSchool ?? "",
-    year: saved?.year ?? "MS3",
-    purpose: saved?.purpose ?? "",
-    city: saved?.city ?? "",
-    letterOfInterest: saved?.letterOfInterest ?? "",
-    customPrompt: saved?.customPrompt ?? "",
+    selectedSpecialties: [],
+    selectedSubspecialties: [],
+    stateMode: "all",
+    selectedStates: [],
+    ethnicity: "any",
+    fullName: "",
+    email: "",
+    medicalSchool: "",
+    year: "MS3",
+    purpose: "",
+    city: "",
+    letterOfInterest: "",
+    customPrompt: "",
     cvFile: null,
     extraFiles: [],
-    plan: searchParams.get("plan") || saved?.plan || "standard",
+    plan: "standard",
     termsAccepted: false,
   });
+
+  // Load localStorage after mount to avoid hydration mismatch
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      const saved = raw ? JSON.parse(raw) : null;
+      if (saved) {
+        setForm(prev => ({
+          ...prev,
+          selectedSpecialties: saved.selectedSpecialties ?? prev.selectedSpecialties,
+          selectedSubspecialties: saved.selectedSubspecialties ?? prev.selectedSubspecialties,
+          stateMode: saved.stateMode ?? prev.stateMode,
+          selectedStates: saved.selectedStates ?? prev.selectedStates,
+          ethnicity: saved.ethnicity ?? prev.ethnicity,
+          fullName: saved.fullName ?? prev.fullName,
+          email: saved.email ?? prev.email,
+          medicalSchool: saved.medicalSchool ?? prev.medicalSchool,
+          year: saved.year ?? prev.year,
+          purpose: saved.purpose ?? prev.purpose,
+          city: saved.city ?? prev.city,
+          letterOfInterest: saved.letterOfInterest ?? prev.letterOfInterest,
+          customPrompt: saved.customPrompt ?? prev.customPrompt,
+          plan: searchParams.get("plan") || saved.plan || prev.plan,
+        }));
+      } else {
+        const planParam = searchParams.get("plan");
+        if (planParam) setForm(prev => ({ ...prev, plan: planParam }));
+      }
+    } catch { /* ignore */ }
+
+    // Initialize preauth ID and detect Gmail OAuth return
+    const id = getPreauthId();
+    setPreauthId(id);
+    const gmailParam = searchParams.get("gmail");
+    if (gmailParam === "connected") {
+      setGmailConnected(true);
+      setStep(5);
+      router.replace("/request");
+    } else if (gmailParam === "error") {
+      setError("Gmail connection failed — please try again.");
+      setStep(5);
+      router.replace("/request");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const set = (field: keyof FormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -192,6 +244,7 @@ function RequestForm() {
     if (step === 2) return form.letterOfInterest.trim().length >= 50;
     if (step === 3) return !!form.cvFile;
     if (step === 4) return !!form.plan && form.termsAccepted;
+    if (step === 5) return gmailConnected;
     return true;
   };
 
@@ -259,6 +312,7 @@ function RequestForm() {
             physician_count: String(selectedPlan.count),
             tier: form.plan,
             amount_paid: String(selectedPlan.price * 100),
+            preauth_id: preauthId,
           },
         }),
       });
@@ -659,21 +713,94 @@ function RequestForm() {
             </div>
           )}
 
+          {/* ── STEP 5: Connect Gmail ── */}
+          {step === 5 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">Connect your Gmail</h2>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  We need access to place your 50 email drafts directly into your Gmail Drafts folder with your CV already attached. Without this we can&apos;t deliver your order.
+                </p>
+              </div>
+
+              <div className={`rounded-xl border-2 p-6 ${gmailConnected ? "border-emerald-400 bg-emerald-50" : "border-blue-300 bg-blue-50"}`}>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                    <Mail className={gmailConnected ? "text-emerald-600" : "text-blue-800"} size={20} />
+                  </div>
+                  <div className="flex-1">
+                    {gmailConnected ? (
+                      <>
+                        <p className="font-semibold text-emerald-800 mb-1">Gmail connected ✓</p>
+                        <p className="text-sm text-emerald-700">Your drafts will appear directly in your Gmail Drafts folder with your CV pre-attached.</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-gray-900 mb-3">Connect your Gmail account</p>
+                        <div className="bg-white border border-gray-200 rounded-xl p-3 mb-4 space-y-1.5">
+                          {[
+                            "Drafts appear directly in your Gmail — ready to review and send",
+                            "Your CV is pre-attached to every email",
+                            "We only request permission to create drafts — we cannot read your emails",
+                          ].map(p => (
+                            <div key={p} className="flex items-center gap-2 text-xs text-gray-600">
+                              <Check className="text-blue-700 shrink-0" size={13} />
+                              {p}
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => {
+                            window.location.href = `/api/auth/gmail?preauth_id=${preauthId}`;
+                          }}
+                          className="btn-primary w-full flex items-center justify-center gap-2 text-sm"
+                        >
+                          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                          </svg>
+                          Connect Gmail
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {error && <p className="text-red-700 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</p>}
+            </div>
+          )}
+
           {/* Navigation */}
           <div className={`flex mt-8 gap-3 ${step === 0 ? "justify-end" : "justify-between"}`}>
             {step > 0 && (
-              <button className="btn-outline flex items-center gap-2" onClick={() => setStep(step - 1)} disabled={loading}>
+              <button className="btn-outline flex items-center gap-2" onClick={() => { setTriedToAdvance(false); setStep(step - 1); }} disabled={loading}>
                 <ChevronLeft size={16} /> Back
               </button>
             )}
             {step < STEPS.length - 1 ? (
-              <button className="btn-primary flex items-center gap-2" onClick={() => setStep(step + 1)} disabled={!canAdvance()}>
+              <button className="btn-primary flex items-center gap-2" onClick={() => {
+                if (!canAdvance()) { setTriedToAdvance(true); return; }
+                setTriedToAdvance(false);
+                setStep(step + 1);
+              }}>
                 Continue <ChevronRight size={16} />
               </button>
             ) : (
-              <button className="btn-primary flex items-center gap-2 min-w-[160px] justify-center" onClick={handleSubmit} disabled={!canAdvance() || loading}>
+              <button className="btn-primary flex items-center gap-2 min-w-[160px] justify-center" onClick={() => {
+                if (!canAdvance() || loading) { setTriedToAdvance(true); return; }
+                handleSubmit();
+              }}>
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : <>Pay & Get Drafts <ChevronRight size={16} /></>}
               </button>
+            )}
+            {triedToAdvance && step === 4 && !form.termsAccepted && (
+              <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Please agree to the Terms of Service to continue.</p>
+            )}
+            {triedToAdvance && step === 5 && !gmailConnected && (
+              <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Connect your Gmail above to proceed to payment.</p>
             )}
           </div>
         </div>

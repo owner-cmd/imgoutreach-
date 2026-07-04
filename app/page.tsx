@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Forward, Mail, Paperclip, Reply, Search, Star, Zap } from "lucide-react";
+import HeroSection from "./components/HeroSection";
 
 const stats = [
   { value: "3×", label: "more replies vs generic emails" },
@@ -33,72 +34,8 @@ const emailExample = {
 export default function Home() {
   return (
     <div className="pt-16">
-      {/* Hero */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 text-sm text-blue-900 font-medium mb-8">
-            Built for US medical students and IMGs
-          </div>
-          <h1 className="text-4xl sm:text-6xl font-bold leading-tight tracking-tight text-gray-900 mb-6">
-            Your path to US clinical<br />
-            <span className="text-blue-900">experience starts here.</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Whether you&apos;re an IMG seeking observerships and research, or a US student exploring a specialty — our AI researches each physician and writes a personalized cold email in your voice.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/request" className="btn-primary flex items-center gap-2 text-base px-8 py-4">
-              Get your email drafts <ArrowRight size={18} />
-            </Link>
-            <Link href="/examples" className="btn-outline text-base px-8 py-4">
-              See example emails
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
-      {/* Stats */}
-      <section className="border-b border-gray-200 bg-slate-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <p className="text-3xl sm:text-4xl font-bold text-blue-900 mb-1">{s.value}</p>
-              <p className="text-sm text-gray-600">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* IMG callout */}
-      <section className="hidden md:block bg-blue-900 border-b border-blue-800">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <p className="text-blue-300 text-sm font-semibold uppercase tracking-widest mb-3">For IMGs</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                Getting US clinical experience starts with one reply
-              </h2>
-              <p className="text-blue-200 leading-relaxed text-sm">
-                As an IMG, cold emailing physicians is often the only path to observerships, research positions, and the US clinical exposure you need for a competitive residency application. The problem isn&apos;t your qualifications — it&apos;s that generic emails get ignored. We fix that.
-              </p>
-            </div>
-            <div className="space-y-3">
-              {[
-                "Emails tailored to your IMG background and goals",
-                "Filter by specialty, state, and ethnicity of physician",
-                "Works for observerships, research, and elective rotations",
-                "Over 1.1 million US physicians with verified emails",
-                "Used by IMGs from over 30 countries",
-              ].map(p => (
-                <div key={p} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                  <p className="text-blue-100 text-sm">{p}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Email preview */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-24">
@@ -236,7 +173,7 @@ export default function Home() {
                 <span className="text-yellow-700 font-semibold">5–8%</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-900 font-semibold">MedReach personalized drafts</span>
+                <span className="text-gray-900 font-semibold">IMG Outreach personalized drafts</span>
                 <span className="text-blue-800 font-bold">15–25%</span>
               </div>
             </div>

@@ -86,7 +86,7 @@ function SuccessContent() {
         <div className="space-y-3">
           {[
             { text: "We research each physician on PubMed and the web", done: true },
-            { text: "Claude writes a personalized email for each one", done: false },
+            { text: "We write a personalized email for each one", done: false },
             { text: gmailConnected ? "Drafts are loaded into your Gmail with CV attached" : "Drafts are saved to your Google Sheet", done: false },
             { text: "You review and click Send — takes ~10 minutes total", done: false },
           ].map(({ text, done }, i) => (

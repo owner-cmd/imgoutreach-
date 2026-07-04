@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const sessionId = req.nextUrl.searchParams.get("session_id") || "";
+  const preauthId = req.nextUrl.searchParams.get("preauth_id") || "";
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID!,
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     scope: "https://www.googleapis.com/auth/gmail.compose",
     access_type: "offline",
     prompt: "consent",
-    state: sessionId,
+    state: preauthId,
   });
 
   return NextResponse.redirect(
