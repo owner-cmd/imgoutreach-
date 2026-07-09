@@ -41,7 +41,7 @@ const ETHNICITIES = [
   { value: "hispanic", label: "Hispanic / Latino" },
 ];
 
-const STEPS = ["Find Physicians", "Your Info", "Letter", "Documents", "Package", "Connect Gmail"];
+const STEPS = ["Connect Gmail", "Find Physicians", "Your Info", "Letter", "Documents", "Package"];
 
 interface FormData {
   // Step 0
@@ -150,14 +150,11 @@ function RequestForm() {
     const gmailParam = searchParams.get("gmail");
     if (gmailParam === "connected") {
       setGmailConnected(true);
-      // CV file is lost after OAuth redirect (files can't be saved to localStorage)
-      // Send back to step 3 so they re-upload before paying
-      setStep(3);
-      setError("Gmail connected ✓ — please re-upload your CV to continue.");
+      setStep(1);
       router.replace("/request");
     } else if (gmailParam === "error") {
       setError("Gmail connection failed — please try again.");
-      setStep(5);
+      setStep(0);
       router.replace("/request");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,12 +239,12 @@ function RequestForm() {
     set("extraFiles", form.extraFiles.filter((_, i) => i !== idx));
 
   const canAdvance = (): boolean => {
-    if (step === 0) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
-    if (step === 1) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
-    if (step === 2) return form.letterOfInterest.trim().length >= 50;
-    if (step === 3) return !!form.cvFile;
-    if (step === 4) return !!form.plan && form.termsAccepted;
-    if (step === 5) return gmailConnected;
+    if (step === 0) return gmailConnected;
+    if (step === 1) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
+    if (step === 2) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
+    if (step === 3) return form.letterOfInterest.trim().length >= 50;
+    if (step === 4) return !!form.cvFile;
+    if (step === 5) return !!form.plan && form.termsAccepted;
     return true;
   };
 
@@ -355,8 +352,8 @@ function RequestForm() {
 
         <div className="card p-8">
 
-          {/* ── STEP 0: Find Physicians ── */}
-          {step === 0 && (
+          {/* ── STEP 1: Find Physicians ── */}
+          {step === 1 && (
             <div className="space-y-7">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Find your physicians</h2>
@@ -493,8 +490,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 1: Your Info ── */}
-          {step === 1 && (
+          {/* ── STEP 2: Your Info ── */}
+          {step === 2 && (
             <div className="space-y-5">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Your information</h2>
@@ -559,8 +556,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 2: Letter ── */}
-          {step === 2 && (
+          {/* ── STEP 3: Letter ── */}
+          {step === 3 && (
             <div className="space-y-5">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Letter of interest</h2>
@@ -596,8 +593,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 3: Documents ── */}
-          {step === 3 && (
+          {/* ── STEP 4: Documents ── */}
+          {step === 4 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Upload your documents</h2>
@@ -649,8 +646,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 4: Package ── */}
-          {step === 4 && (
+          {/* ── STEP 5: Package ── */}
+          {step === 5 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Choose your package</h2>
@@ -716,8 +713,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 5: Connect Gmail ── */}
-          {step === 5 && (
+          {/* ── STEP 0: Connect Gmail ── */}
+          {step === 0 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Connect your Gmail</h2>
@@ -799,11 +796,11 @@ function RequestForm() {
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : <>Pay & Get Drafts <ChevronRight size={16} /></>}
               </button>
             )}
-            {triedToAdvance && step === 4 && !form.termsAccepted && (
+            {triedToAdvance && step === 5 && !form.termsAccepted && (
               <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Please agree to the Terms of Service to continue.</p>
             )}
-            {triedToAdvance && step === 5 && !gmailConnected && (
-              <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Connect your Gmail above to proceed to payment.</p>
+            {triedToAdvance && step === 0 && !gmailConnected && (
+              <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Connect your Gmail above to continue.</p>
             )}
           </div>
         </div>
