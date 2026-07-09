@@ -41,7 +41,7 @@ const ETHNICITIES = [
   { value: "hispanic", label: "Hispanic / Latino" },
 ];
 
-const STEPS = ["Connect Gmail", "Find Physicians", "Your Info", "Letter", "Documents", "Package"];
+const STEPS = ["Find Physicians", "Connect Gmail", "Your Info", "Letter", "Documents", "Package"];
 
 interface FormData {
   // Step 0
@@ -150,11 +150,11 @@ function RequestForm() {
     const gmailParam = searchParams.get("gmail");
     if (gmailParam === "connected") {
       setGmailConnected(true);
-      setStep(1);
+      setStep(2);
       router.replace("/request");
     } else if (gmailParam === "error") {
       setError("Gmail connection failed — please try again.");
-      setStep(0);
+      setStep(1);
       router.replace("/request");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -239,8 +239,8 @@ function RequestForm() {
     set("extraFiles", form.extraFiles.filter((_, i) => i !== idx));
 
   const canAdvance = (): boolean => {
-    if (step === 0) return gmailConnected;
-    if (step === 1) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
+    if (step === 0) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
+    if (step === 1) return gmailConnected;
     if (step === 2) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
     if (step === 3) return form.letterOfInterest.trim().length >= 50;
     if (step === 4) return !!form.cvFile;
@@ -352,8 +352,8 @@ function RequestForm() {
 
         <div className="card p-8">
 
-          {/* ── STEP 1: Find Physicians ── */}
-          {step === 1 && (
+          {/* ── STEP 0: Find Physicians ── */}
+          {step === 0 && (
             <div className="space-y-7">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Find your physicians</h2>
@@ -713,8 +713,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 0: Connect Gmail ── */}
-          {step === 0 && (
+          {/* ── STEP 1: Connect Gmail ── */}
+          {step === 1 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Connect your Gmail</h2>
@@ -799,7 +799,7 @@ function RequestForm() {
             {triedToAdvance && step === 5 && !form.termsAccepted && (
               <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Please agree to the Terms of Service to continue.</p>
             )}
-            {triedToAdvance && step === 0 && !gmailConnected && (
+            {triedToAdvance && step === 1 && !gmailConnected && (
               <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Connect your Gmail above to continue.</p>
             )}
           </div>
