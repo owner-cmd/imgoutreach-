@@ -10,6 +10,7 @@ export default function Footer() {
           <Link href="/pricing" className="hover:text-gray-800 transition-colors">Pricing</Link>
           <Link href="/contact" className="hover:text-gray-800 transition-colors">Contact</Link>
           <Link href="/terms" className="hover:text-gray-800 transition-colors">Terms</Link>
+          <Link href="/privacy" className="hover:text-gray-800 transition-colors">Privacy</Link>
           <Link href="/request" className="hover:text-gray-800 transition-colors">Get Started</Link>
         </div>
         <p>© {new Date().getFullYear()} IMG Outreach. All rights reserved.</p>
