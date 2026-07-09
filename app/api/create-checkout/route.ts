@@ -4,11 +4,18 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
   try {
-    const { planId, metadata } = await req.json();
+    const { planId, metadata, promoCode } = await req.json();
     const plan = PLANS.find((p) => p.id === planId);
     if (!plan) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+    // Resolve promo code to a Stripe promotion_code ID so it's pre-applied at checkout
+    let resolvedPromoId: string | null = null;
+    if (promoCode) {
+      const promos = await stripe.promotionCodes.list({ code: promoCode, active: true, limit: 1 });
+      if (promos.data.length > 0) resolvedPromoId = promos.data[0].id;
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -26,7 +33,9 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      allow_promotion_codes: true,
+      ...(resolvedPromoId
+        ? { discounts: [{ promotion_code: resolvedPromoId }] }
+        : { allow_promotion_codes: true }),
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/request`,
       customer_email: metadata.student_email,

@@ -90,6 +90,7 @@ function RequestForm() {
   const [gmailConnected, setGmailConnected] = useState(false);
   const [preauthId, setPreauthId] = useState("");
   const [triedToAdvance, setTriedToAdvance] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
 
@@ -293,6 +294,7 @@ function RequestForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: form.plan,
+          promoCode: promoCode.trim() || null,
           metadata: {
             student_name: form.fullName,
             student_email: form.email,
@@ -675,6 +677,17 @@ function RequestForm() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Promo code */}
+              <div>
+                <label className="label">Have a promo code?</label>
+                <input
+                  className="input"
+                  placeholder="Enter code (optional)"
+                  value={promoCode}
+                  onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                />
               </div>
 
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-sm space-y-2">
