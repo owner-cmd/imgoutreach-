@@ -150,7 +150,10 @@ function RequestForm() {
     const gmailParam = searchParams.get("gmail");
     if (gmailParam === "connected") {
       setGmailConnected(true);
-      setStep(5);
+      // CV file is lost after OAuth redirect (files can't be saved to localStorage)
+      // Send back to step 3 so they re-upload before paying
+      setStep(3);
+      setError("Gmail connected ✓ — please re-upload your CV to continue.");
       router.replace("/request");
     } else if (gmailParam === "error") {
       setError("Gmail connection failed — please try again.");
