@@ -30,12 +30,11 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      body: {
-        data: {
-          object: {
-            id: order.stripe_session_id,
-            amount_total: order.amount_paid,
-            metadata: {
+      data: {
+        object: {
+          id: order.stripe_session_id,
+          amount_total: order.amount_paid,
+          metadata: {
               student_email: order.student_email,
               student_name: order.student_name,
               specialty: order.specialty,
@@ -56,9 +55,9 @@ export async function POST(req: NextRequest) {
             },
           },
         },
-      },
-    }),
+      }),
   });
+
 
   if (!n8nRes.ok) {
     const text = await n8nRes.text();
