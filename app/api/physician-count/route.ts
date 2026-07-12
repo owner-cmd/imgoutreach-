@@ -16,8 +16,11 @@ export async function GET(req: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
+    // Use an estimated count — an exact count over 100k+ rows exceeds the DB
+    // statement timeout (3s) and 500s, which would show the user 0 physicians.
+    // The UI presents this as "~N", so a planner estimate is the right trade-off.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let q: any = supabase.from("physicians").select("*", { count: "exact", head: true });
+    let q: any = supabase.from("physicians").select("*", { count: "estimated", head: true });
 
     const allSpecialties = [...specialties, ...subspecialties];
     if (allSpecialties.length > 0) {
