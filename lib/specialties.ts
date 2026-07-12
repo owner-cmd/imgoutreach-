@@ -284,13 +284,18 @@ export function computeCount(
     base = TOTAL_PHYSICIANS;
   } else {
     base = 0;
+    const seen = new Set<string>(); // dedupe cross-listed subspecialties
     for (const label of selectedSpecialtyLabels) {
       const specialty = SPECIALTIES.find(s => s.label === label);
       if (!specialty) continue;
       const subEntries = SUBSPECIALTIES[label] || [];
       const selectedSubs = subEntries.filter(s => selectedSubspecialtyDbValues.includes(s.dbValue));
       if (selectedSubs.length > 0) {
-        base += selectedSubs.reduce((sum, s) => sum + s.count, 0);
+        for (const s of selectedSubs) {
+          if (seen.has(s.dbValue)) continue;
+          seen.add(s.dbValue);
+          base += s.count;
+        }
       } else {
         base += specialty.count;
       }
@@ -320,6 +325,7 @@ export function weightedMaleShare(
   if (selectedSpecialtyLabels.length === 0) return GLOBAL_MALE_SHARE;
   let weightedMales = 0;
   let total = 0;
+  const seen = new Set<string>(); // dedupe cross-listed subspecialties
   for (const label of selectedSpecialtyLabels) {
     const s = SPECIALTIES.find(x => x.label === label);
     if (!s) continue;
@@ -329,6 +335,8 @@ export function weightedMaleShare(
     );
     if (subEntries.length > 0) {
       for (const sub of subEntries) {
+        if (seen.has(sub.dbValue)) continue;
+        seen.add(sub.dbValue);
         weightedMales += sub.count * (sub.maleShare ?? parentShare);
         total += sub.count;
       }
