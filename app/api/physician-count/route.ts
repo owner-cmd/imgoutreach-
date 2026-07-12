@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
     const states = searchParams.get("states")?.split(",").filter(Boolean) || [];
     const excludeStates = searchParams.get("excludeStates") === "true";
     const ethnicity = searchParams.get("ethnicity") || "any";
+    const gender = searchParams.get("gender") || "any";
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,6 +35,11 @@ export async function GET(req: NextRequest) {
     // Use real ethnicity column if enrichment has been run; fall back to name patterns
     if (ethnicity !== "any") {
       q = q.eq("ethnicity", ethnicity);
+    }
+
+    // Gender filter — "M" / "F" from NPPES sex code
+    if (gender === "M" || gender === "F") {
+      q = q.eq("gender", gender);
     }
 
     const { count, error } = await q;

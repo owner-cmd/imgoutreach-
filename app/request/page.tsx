@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle, Mail } from "lucide-react";
 import { PLANS } from "@/lib/stripe";
 import { SPECIALTIES, SUBSPECIALTIES, computeCount } from "@/lib/specialties";
+import { MED_SCHOOLS, OTHER_SCHOOL } from "@/lib/medSchools";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" }, { code: "AZ", name: "Arizona" },
@@ -33,6 +34,17 @@ const PURPOSES = [
   { value: "other", label: "Other / General interest", desc: "Career advice, mentorship, or exploring the specialty broadly" },
 ];
 
+const INSTRUCTION_IDEAS = [
+  "Mention I can handle literature reviews and data entry",
+  "Mention I can do statistical analysis (SPSS/R)",
+  "Mention I can help with manuscript writing and abstracts",
+  "Mention I'm fully flexible — nights and weekends included",
+  "Mention I can work remotely on research projects",
+  "Mention I speak their language for patient communication",
+  "Keep the tone very formal",
+  "Only mention my strongest credential",
+];
+
 const ETHNICITIES = [
   { value: "any", label: "Any — no filter" },
   { value: "south_asian", label: "South Asian (Indian, Pakistani, Bangladeshi…)" },
@@ -50,6 +62,7 @@ interface FormData {
   stateMode: "all" | "include" | "exclude";
   selectedStates: string[];
   ethnicity: string;
+  gender: string;
   // Step 1
   fullName: string;
   email: string;
@@ -90,6 +103,7 @@ function RequestForm() {
   const [gmailConnected, setGmailConnected] = useState(false);
   const [preauthId, setPreauthId] = useState("");
   const [triedToAdvance, setTriedToAdvance] = useState(false);
+  const [schoolChoice, setSchoolChoice] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
@@ -102,6 +116,7 @@ function RequestForm() {
     stateMode: "all",
     selectedStates: [],
     ethnicity: "any",
+    gender: "any",
     fullName: "",
     email: "",
     medicalSchool: "",
@@ -129,6 +144,7 @@ function RequestForm() {
           stateMode: saved.stateMode ?? prev.stateMode,
           selectedStates: saved.selectedStates ?? prev.selectedStates,
           ethnicity: saved.ethnicity ?? prev.ethnicity,
+          gender: saved.gender ?? prev.gender,
           fullName: saved.fullName ?? prev.fullName,
           email: saved.email ?? prev.email,
           medicalSchool: saved.medicalSchool ?? prev.medicalSchool,
@@ -139,6 +155,10 @@ function RequestForm() {
           customPrompt: saved.customPrompt ?? prev.customPrompt,
           plan: searchParams.get("plan") || saved.plan || prev.plan,
         }));
+        if (saved.medicalSchool) {
+          const known = MED_SCHOOLS.some(g => g.schools.includes(saved.medicalSchool));
+          setSchoolChoice(known ? saved.medicalSchool : OTHER_SCHOOL);
+        }
       } else {
         const planParam = searchParams.get("plan");
         if (planParam) setForm(prev => ({ ...prev, plan: planParam }));
@@ -181,8 +201,10 @@ function RequestForm() {
   const [liveCount, setLiveCount] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
 
+  const usesLiveCount = form.ethnicity !== "any" || form.gender !== "any";
+
   useEffect(() => {
-    if (form.ethnicity === "any") {
+    if (!usesLiveCount) {
       setLiveCount(null);
       return;
     }
@@ -201,7 +223,8 @@ function RequestForm() {
           params.set("states", form.selectedStates.join(","));
           if (form.stateMode === "exclude") params.set("excludeStates", "true");
         }
-        params.set("ethnicity", form.ethnicity);
+        if (form.ethnicity !== "any") params.set("ethnicity", form.ethnicity);
+        if (form.gender !== "any") params.set("gender", form.gender);
         const res = await fetch(`/api/physician-count?${params}`);
         const data = await res.json();
         setLiveCount(data.count ?? 0);
@@ -212,9 +235,9 @@ function RequestForm() {
       }
     }, 600);
     return () => clearTimeout(timer);
-  }, [form.ethnicity, form.selectedSpecialties, form.selectedSubspecialties, form.stateMode, form.selectedStates]);
+  }, [usesLiveCount, form.ethnicity, form.gender, form.selectedSpecialties, form.selectedSubspecialties, form.stateMode, form.selectedStates]);
 
-  const physicianCount = form.ethnicity !== "any" && liveCount !== null ? liveCount : hardcodedCount;
+  const physicianCount = usesLiveCount && liveCount !== null ? liveCount : hardcodedCount;
 
   const toggleSpecialty = (label: string) => {
     const next = form.selectedSpecialties.includes(label)
@@ -306,6 +329,7 @@ function RequestForm() {
             state_mode: form.stateMode,
             city: form.city || "",
             ethnicity: form.ethnicity || "any",
+            gender: form.gender || "any",
             letter_of_interest: form.letterOfInterest.slice(0, 490),
             custom_prompt: form.customPrompt.slice(0, 490),
             email_purpose: form.purpose,
@@ -477,6 +501,45 @@ function RequestForm() {
                 )}
               </div>
 
+              {/* Gender */}
+              <div>
+                <label className="label">Physician gender preference <span className="text-gray-400">(optional)</span></label>
+                <div className="flex rounded-xl border border-gray-300 overflow-hidden text-sm">
+                  {([
+                    { value: "any", label: "Any" },
+                    { value: "M", label: "Male" },
+                    { value: "F", label: "Female" },
+                  ] as const).map(g => (
+                    <button key={g.value} type="button" onClick={() => set("gender", g.value)}
+                      className={`flex-1 py-2 font-medium transition-all ${form.gender === g.value ? "bg-blue-900 text-white" : "text-gray-600 hover:bg-gray-50"}`}>
+                      {g.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Program Directors — coming soon (non-functional) */}
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="label mb-0">Program Directors only</label>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2 py-0.5">
+                    Coming soon
+                  </span>
+                </div>
+                <div
+                  className="flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 cursor-not-allowed opacity-70 select-none"
+                  aria-disabled="true"
+                  title="This filter is coming soon"
+                >
+                  <span className="text-sm text-gray-500">
+                    Target only residency &amp; fellowship program directors — the people who control training-program admissions.
+                  </span>
+                  <div className="w-9 h-5 rounded-full bg-gray-300 relative shrink-0 ml-3">
+                    <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white" />
+                  </div>
+                </div>
+              </div>
+
               {/* Ethnicity */}
               <div>
                 <label className="label">Physician ethnicity preference <span className="text-gray-400">(approximate — filtered by last name)</span></label>
@@ -511,7 +574,33 @@ function RequestForm() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">Medical school / program <span className="text-red-500">*</span></label>
-                  <input className="input" placeholder="e.g. Rush Medical College" value={form.medicalSchool} onChange={e => set("medicalSchool", e.target.value)} />
+                  <select
+                    className="input text-sm"
+                    value={schoolChoice}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setSchoolChoice(v);
+                      set("medicalSchool", v === OTHER_SCHOOL ? "" : v);
+                    }}
+                  >
+                    <option value="" disabled>Select your school…</option>
+                    {MED_SCHOOLS.map(group => (
+                      <optgroup key={group.country} label={group.country}>
+                        {group.schools.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+                    <option value={OTHER_SCHOOL}>{OTHER_SCHOOL}</option>
+                  </select>
+                  {schoolChoice === OTHER_SCHOOL && (
+                    <input
+                      className="input mt-2"
+                      placeholder="Type your medical school's full name"
+                      value={form.medicalSchool}
+                      onChange={e => set("medicalSchool", e.target.value)}
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="label">Year</label>
@@ -576,6 +665,11 @@ function RequestForm() {
                   </ul>
                   <p className="text-blue-600 text-xs">The more you write, the more our AI has to connect you genuinely to each physician&apos;s specific work.</p>
                 </div>
+                <div className="mt-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                  <p className="text-xs text-amber-800 leading-relaxed">
+                    <span className="font-semibold">Don&apos;t worry about making it look good.</span> Write it rough — bullet points, incomplete sentences, whatever. Our AI polishes the wording in every email. What matters is the raw facts and stories only you know.
+                  </p>
+                </div>
               </div>
               <div>
                 <label className="label">Your letter of interest <span className="text-red-500">*</span></label>
@@ -587,9 +681,28 @@ function RequestForm() {
                 </p>
               </div>
               <div>
-                <label className="label">Custom instructions <span className="text-gray-400">(optional)</span></label>
+                <label className="label">Custom instructions for the AI <span className="text-gray-400">(optional)</span></label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Tip: emails that offer the physician something concrete get far more replies. Click an idea to add it, or write your own.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {INSTRUCTION_IDEAS.map(idea => {
+                    const added = form.customPrompt.includes(idea);
+                    return (
+                      <button
+                        key={idea}
+                        type="button"
+                        disabled={added}
+                        onClick={() => set("customPrompt", (form.customPrompt.trim() ? form.customPrompt.trim() + ". " : "") + idea)}
+                        className={`text-xs px-2.5 py-1.5 rounded-full border transition-all ${added ? "border-blue-300 bg-blue-100 text-blue-400 cursor-default" : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-800"}`}
+                      >
+                        {added ? "✓ " : "+ "}{idea}
+                      </button>
+                    );
+                  })}
+                </div>
                 <textarea className="input min-h-[100px] resize-none"
-                  placeholder="e.g. Avoid mentioning my research background. Only include physicians at academic medical centers."
+                  placeholder="e.g. The email must mention I can offer help with data collection and chart review. Avoid mentioning my research background."
                   value={form.customPrompt} onChange={e => set("customPrompt", e.target.value)} />
               </div>
             </div>

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const preauthId = req.nextUrl.searchParams.get("preauth_id") || "";
+  const sessionId = req.nextUrl.searchParams.get("session_id") || "";
+
+  // Encode both flows in state so the callback knows where to save and where to return
+  const state = Buffer.from(JSON.stringify({ p: preauthId, s: sessionId })).toString("base64url");
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID!,
@@ -10,7 +14,7 @@ export async function GET(req: NextRequest) {
     scope: "https://www.googleapis.com/auth/gmail.compose",
     access_type: "offline",
     prompt: "consent",
-    state: preauthId,
+    state,
   });
 
   return NextResponse.redirect(

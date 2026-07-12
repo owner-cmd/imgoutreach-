@@ -28,7 +28,15 @@ type Draft = {
   status: string;
   replied: boolean;
   replied_at: string | null;
+  sent_at: string | null;
+  opened_at: string | null;
+  open_count: number | null;
+  reply_subject: string | null;
+  reply_snippet: string | null;
+  reply_body: string | null;
 };
+
+const hasReplied = (d: Draft) => !!d.replied_at || d.status === "replied" || d.replied;
 
 const STATUS_COLORS: Record<string, string> = {
   pending_payment: "bg-gray-100 text-gray-600",
@@ -189,9 +197,9 @@ export default function AdminPage() {
                     <div className="text-right hidden sm:block">
                       <p className="text-sm font-medium text-gray-900">{order.drafts_completed} / {order.physician_count} drafts</p>
                       <p className="text-xs text-gray-400">
-                        {drafts[order.stripe_session_id]?.filter(d => d.replied).length > 0 && (
+                        {drafts[order.stripe_session_id]?.filter(hasReplied).length > 0 && (
                           <span className="text-emerald-600 font-medium mr-2">
-                            {drafts[order.stripe_session_id].filter(d => d.replied).length} repl{drafts[order.stripe_session_id].filter(d => d.replied).length === 1 ? "y" : "ies"}
+                            {drafts[order.stripe_session_id].filter(hasReplied).length} repl{drafts[order.stripe_session_id].filter(hasReplied).length === 1 ? "y" : "ies"}
                           </span>
                         )}
                         ${(order.amount_paid / 100).toFixed(0)} · {order.tier}
@@ -254,10 +262,16 @@ export default function AdminPage() {
                               <div>
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <p className="text-sm font-semibold text-gray-900">{draft.doctor_name}</p>
-                                  {draft.replied && (
+                                  {hasReplied(draft) && (
                                     <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                                       <CheckCircle size={10} /> Replied
                                     </span>
+                                  )}
+                                  {!hasReplied(draft) && draft.sent_at && (
+                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Sent</span>
+                                  )}
+                                  {!hasReplied(draft) && !draft.sent_at && draft.opened_at && (
+                                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Opened{draft.open_count && draft.open_count > 1 ? ` ×${draft.open_count}` : ""}</span>
                                   )}
                                 </div>
                                 <p className="text-xs text-gray-400">{draft.doctor_email} · {draft.specialty} · {draft.state}</p>
@@ -269,6 +283,24 @@ export default function AdminPage() {
                             </div>
                             <p className="text-xs font-semibold text-gray-700 mb-1">Subject: {draft.subject}</p>
                             <p className="text-xs text-gray-600 leading-relaxed">{draft.body}</p>
+                            {hasReplied(draft) && (
+                              <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                <div className="flex items-center justify-between mb-1">
+                                  <p className="text-xs font-semibold text-emerald-800">
+                                    Reply from {draft.doctor_name}
+                                  </p>
+                                  {draft.replied_at && (
+                                    <p className="text-xs text-emerald-600">{new Date(draft.replied_at).toLocaleDateString()}</p>
+                                  )}
+                                </div>
+                                {draft.reply_subject && (
+                                  <p className="text-xs font-medium text-emerald-700 mb-1">Re: {draft.reply_subject}</p>
+                                )}
+                                <p className="text-xs text-emerald-900 leading-relaxed whitespace-pre-wrap">
+                                  {draft.reply_body || draft.reply_snippet || "Reply detected — content not captured yet (will appear on next poll)."}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

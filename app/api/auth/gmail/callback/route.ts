@@ -1,13 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+function parseState(raw: string): { p: string; s: string } {
+  try {
+    const decoded = JSON.parse(Buffer.from(raw, "base64url").toString("utf8"));
+    return { p: decoded.p || "", s: decoded.s || "" };
+  } catch {
+    // Backwards compat: old links carried the preauth_id as plain state
+    return { p: raw, s: "" };
+  }
+}
+
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const preauthId = req.nextUrl.searchParams.get("state") || "";
+  const { p: preauthId, s: sessionId } = parseState(req.nextUrl.searchParams.get("state") || "");
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+  // Where to send the user if something fails
+  const errorUrl = sessionId
+    ? `${siteUrl}/success?session_id=${encodeURIComponent(sessionId)}&gmail=error`
+    : `${siteUrl}/request?gmail=error`;
+
   if (!code) {
-    return NextResponse.redirect(`${siteUrl}/request?gmail=error`);
+    return NextResponse.redirect(errorUrl);
   }
 
   try {
@@ -31,6 +46,22 @@ export async function GET(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    if (sessionId) {
+      // Post-payment flow: attach token directly to the paid order
+      await supabase
+        .from("student_submissions")
+        .update({
+          gmail_refresh_token: tokens.refresh_token,
+          gmail_connected_at: new Date().toISOString(),
+        })
+        .eq("stripe_session_id", sessionId);
+
+      return NextResponse.redirect(
+        `${siteUrl}/success?session_id=${encodeURIComponent(sessionId)}&gmail=connected`
+      );
+    }
+
+    // Pre-payment flow: park token under preauth_id; webhook copies it after payment
     await supabase.from("gmail_preauth").upsert({
       preauth_id: preauthId,
       refresh_token: tokens.refresh_token,
@@ -40,6 +71,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${siteUrl}/request?gmail=connected`);
   } catch (e) {
     console.error("Gmail OAuth callback error:", e);
-    return NextResponse.redirect(`${siteUrl}/request?gmail=error`);
+    return NextResponse.redirect(errorUrl);
   }
 }
