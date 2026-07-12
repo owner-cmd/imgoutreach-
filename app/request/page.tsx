@@ -191,12 +191,14 @@ function RequestForm() {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveable)); } catch { /* ignore */ }
   }, [form]);
 
-  // Instant count from hardcoded data; switches to live API when ethnicity filter is active
-  const hardcodedCount = computeCount(
+  // Exact hardcoded count (specialty × state × gender). No DB call, no approximation.
+  // Switches to live API only when the ethnicity filter is active.
+  const exactCount = computeCount(
     form.selectedSpecialties,
     form.selectedSubspecialties,
     form.stateMode,
     form.selectedStates,
+    form.gender,
   );
   const [liveCount, setLiveCount] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
@@ -238,10 +240,12 @@ function RequestForm() {
     return () => clearTimeout(timer);
   }, [usesLiveCount, form.ethnicity, form.selectedSpecialties, form.selectedSubspecialties, form.stateMode, form.selectedStates]);
 
-  // Base = live ethnicity count (if active) else hardcoded specialty/state count.
-  // Gender is always applied as a hardcoded ratio on top of that base.
-  const baseCount = usesLiveCount && liveCount !== null ? liveCount : hardcodedCount;
-  const physicianCount = Math.round(baseCount * genderMultiplier(form.gender, form.selectedSpecialties, form.selectedSubspecialties));
+  // No ethnicity filter → fully exact hardcoded count (specialty × state × gender).
+  // Ethnicity filter → live specialty+ethnicity+state count, with the gender ratio
+  // applied on top (ethnicity×gender isn't in the exact table, so this stays an estimate).
+  const physicianCount = usesLiveCount && liveCount !== null
+    ? Math.round(liveCount * genderMultiplier(form.gender, form.selectedSpecialties, form.selectedSubspecialties))
+    : exactCount;
 
   const toggleSpecialty = (label: string) => {
     const next = form.selectedSpecialties.includes(label)

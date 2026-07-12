@@ -2,6 +2,8 @@
 // Counts reflect total physicians per specialty_text value.
 // Update periodically if the DB grows significantly.
 
+import { SSG, type GenderCell } from "./specialtyStateGender";
+
 export interface SpecialtyEntry {
   label: string;
   dbValue: string;
@@ -270,48 +272,58 @@ export const STATE_COUNTS: Record<string, number> = {
   VT: 2565,  WA: 29049, WI: 22204, WV: 5647,  WY: 1474,
 };
 
-// Compute count from all filters (client-side, no DB call).
-// State filter applies a proportion multiplier (approximate — assumes even specialty distribution).
+// Pick the gender slice of a [M, F] cell.
+function pickGender(cell: GenderCell | undefined, gender: string): number {
+  if (!cell) return 0;
+  if (gender === "M") return cell[0];
+  if (gender === "F") return cell[1];
+  return cell[0] + cell[1];
+}
+
+// EXACT count from all filters, computed client-side from the hardcoded
+// specialty x state x gender table (no DB call, no approximation).
+// - specialty/subspecialty: sums the exact matching specialty_text rows
+// - state: exact per-state counts (include = selected states; exclude = all others)
+// - gender: exact male/female slice
 export function computeCount(
   selectedSpecialtyLabels: string[],
   selectedSubspecialtyDbValues: string[],
   stateMode: "all" | "include" | "exclude" = "all",
   selectedStates: string[] = [],
+  gender: string = "any",
 ): number {
-  // Base count from specialty/subspecialty
-  let base: number;
+  // Which specialty_text keys to sum (deduped — handles cross-listed subspecialties).
+  const targets = new Set<string>();
   if (selectedSpecialtyLabels.length === 0) {
-    base = TOTAL_PHYSICIANS;
+    for (const key of Object.keys(SSG)) targets.add(key);
   } else {
-    base = 0;
-    const seen = new Set<string>(); // dedupe cross-listed subspecialties
     for (const label of selectedSpecialtyLabels) {
       const specialty = SPECIALTIES.find(s => s.label === label);
       if (!specialty) continue;
-      const subEntries = SUBSPECIALTIES[label] || [];
-      const selectedSubs = subEntries.filter(s => selectedSubspecialtyDbValues.includes(s.dbValue));
+      const selectedSubs = (SUBSPECIALTIES[label] || []).filter(s =>
+        selectedSubspecialtyDbValues.includes(s.dbValue));
       if (selectedSubs.length > 0) {
-        for (const s of selectedSubs) {
-          if (seen.has(s.dbValue)) continue;
-          seen.add(s.dbValue);
-          base += s.count;
-        }
+        for (const s of selectedSubs) targets.add(s.dbValue);
       } else {
-        base += specialty.count;
+        targets.add(specialty.dbValue);
       }
     }
   }
 
-  // Apply state multiplier
-  if (stateMode !== "all" && selectedStates.length > 0) {
-    const stateTotal = selectedStates.reduce((sum, code) => sum + (STATE_COUNTS[code] ?? 0), 0);
-    const multiplier = stateMode === "include"
-      ? stateTotal / TOTAL_PHYSICIANS
-      : (TOTAL_PHYSICIANS - stateTotal) / TOTAL_PHYSICIANS;
-    return Math.round(base * Math.max(0, multiplier));
-  }
+  const includeSet = stateMode === "include" ? new Set(selectedStates) : null;
+  const excludeSet = stateMode === "exclude" ? new Set(selectedStates) : null;
 
-  return base;
+  let sum = 0;
+  for (const key of targets) {
+    const byState = SSG[key];
+    if (!byState) continue;
+    for (const st in byState) {
+      if (includeSet && !includeSet.has(st)) continue;   // only chosen states
+      if (excludeSet && excludeSet.has(st)) continue;     // all except chosen
+      sum += pickGender(byState[st], gender);
+    }
+  }
+  return sum;
 }
 
 // Weighted male share across the current selection. Mirrors computeCount:
