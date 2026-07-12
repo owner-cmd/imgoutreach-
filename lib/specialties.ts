@@ -6,35 +6,40 @@ export interface SpecialtyEntry {
   label: string;
   dbValue: string;
   count: number;
+  maleShare?: number; // fraction male (0–1), from DB. Falls back to global if absent.
 }
 
+// Overall DB gender split (713,832 M / 450,026 F) used when a specialty has no
+// specific maleShare (e.g. subspecialties).
+export const GLOBAL_MALE_SHARE = 0.613;
+
 export const SPECIALTIES: SpecialtyEntry[] = [
-  { label: "Allergy & Immunology",               dbValue: "Allergy & Immunology Physician",                              count: 3393 },
-  { label: "Anesthesiology",                     dbValue: "Anesthesiology Physician",                                   count: 56864 },
-  { label: "Colon & Rectal Surgery",             dbValue: "Colon & Rectal Surgery Physician",                           count: 1623 },
-  { label: "Dermatology",                        dbValue: "Dermatology Physician",                                      count: 14758 },
-  { label: "Emergency Medicine",                 dbValue: "Emergency Medicine Physician",                               count: 65297 },
-  { label: "Family Medicine",                    dbValue: "Family Medicine Physician",                                  count: 148872 },
-  { label: "General Practice",                   dbValue: "General Practice Physician",                                 count: 16940 },
-  { label: "Internal Medicine",                  dbValue: "Internal Medicine Physician",                                count: 173424 },
-  { label: "Medical Genetics & Genomics",        dbValue: "Clinical Genetics (M.D.) Physician",                        count: 828 },
-  { label: "Neurological Surgery",               dbValue: "Neurological Surgery Physician",                            count: 8202 },
-  { label: "Neurology",                          dbValue: "Neurology Physician",                                       count: 20127 },
-  { label: "Nuclear Medicine",                   dbValue: "Nuclear Medicine Physician",                                 count: 901 },
-  { label: "Obstetrics & Gynecology",            dbValue: "Obstetrics & Gynecology Physician",                         count: 44625 },
-  { label: "Ophthalmology",                      dbValue: "Ophthalmology Physician",                                   count: 22226 },
-  { label: "Orthopaedic Surgery",                dbValue: "Orthopaedic Surgery Physician",                             count: 25875 },
-  { label: "Otolaryngology – Head & Neck",       dbValue: "Otolaryngology Physician",                                  count: 10974 },
-  { label: "Pathology",                          dbValue: "Anatomic Pathology & Clinical Pathology Physician",         count: 13832 },
-  { label: "Pediatrics",                         dbValue: "Pediatrics Physician",                                      count: 81088 },
-  { label: "Physical Medicine & Rehabilitation", dbValue: "Physical Medicine & Rehabilitation Physician",              count: 15437 },
-  { label: "Plastic Surgery",                    dbValue: "Plastic Surgery Physician",                                 count: 5371 },
-  { label: "Preventive Medicine",                dbValue: "Public Health & General Preventive Medicine Physician",     count: 1801 },
-  { label: "Psychiatry",                         dbValue: "Psychiatry Physician",                                      count: 53741 },
-  { label: "Radiology",                          dbValue: "Diagnostic Radiology Physician",                            count: 40037 },
-  { label: "Surgery",                            dbValue: "Surgery Physician",                                         count: 36499 },
-  { label: "Thoracic Surgery",                   dbValue: "Thoracic Surgery (Cardiothoracic Vascular Surgery) Physician", count: 5108 },
-  { label: "Urology",                            dbValue: "Urology Physician",                                         count: 13442 },
+  { label: "Allergy & Immunology",               dbValue: "Allergy & Immunology Physician",                              count: 3393, maleShare: 0.579  },
+  { label: "Anesthesiology",                     dbValue: "Anesthesiology Physician",                                   count: 56864, maleShare: 0.714  },
+  { label: "Colon & Rectal Surgery",             dbValue: "Colon & Rectal Surgery Physician",                           count: 1623, maleShare: 0.736  },
+  { label: "Dermatology",                        dbValue: "Dermatology Physician",                                      count: 14758, maleShare: 0.462  },
+  { label: "Emergency Medicine",                 dbValue: "Emergency Medicine Physician",                               count: 65297, maleShare: 0.688  },
+  { label: "Family Medicine",                    dbValue: "Family Medicine Physician",                                  count: 148872, maleShare: 0.539  },
+  { label: "General Practice",                   dbValue: "General Practice Physician",                                 count: 16940, maleShare: 0.618  },
+  { label: "Internal Medicine",                  dbValue: "Internal Medicine Physician",                                count: 173424, maleShare: 0.597  },
+  { label: "Medical Genetics & Genomics",        dbValue: "Clinical Genetics (M.D.) Physician",                        count: 828, maleShare: 0.469  },
+  { label: "Neurological Surgery",               dbValue: "Neurological Surgery Physician",                            count: 8202, maleShare: 0.873  },
+  { label: "Neurology",                          dbValue: "Neurology Physician",                                       count: 20127, maleShare: 0.63  },
+  { label: "Nuclear Medicine",                   dbValue: "Nuclear Medicine Physician",                                 count: 901, maleShare: 0.729  },
+  { label: "Obstetrics & Gynecology",            dbValue: "Obstetrics & Gynecology Physician",                         count: 44625, maleShare: 0.366  },
+  { label: "Ophthalmology",                      dbValue: "Ophthalmology Physician",                                   count: 22226, maleShare: 0.727  },
+  { label: "Orthopaedic Surgery",                dbValue: "Orthopaedic Surgery Physician",                             count: 25875, maleShare: 0.908  },
+  { label: "Otolaryngology – Head & Neck",       dbValue: "Otolaryngology Physician",                                  count: 10974, maleShare: 0.775  },
+  { label: "Pathology",                          dbValue: "Anatomic Pathology & Clinical Pathology Physician",         count: 13832, maleShare: 0.573  },
+  { label: "Pediatrics",                         dbValue: "Pediatrics Physician",                                      count: 81088, maleShare: 0.338  },
+  { label: "Physical Medicine & Rehabilitation", dbValue: "Physical Medicine & Rehabilitation Physician",              count: 15437, maleShare: 0.527  },
+  { label: "Plastic Surgery",                    dbValue: "Plastic Surgery Physician",                                 count: 5371, maleShare: 0.765  },
+  { label: "Preventive Medicine",                dbValue: "Public Health & General Preventive Medicine Physician",     count: 1801, maleShare: 0.523  },
+  { label: "Psychiatry",                         dbValue: "Psychiatry Physician",                                      count: 53741, maleShare: 0.55  },
+  { label: "Radiology",                          dbValue: "Diagnostic Radiology Physician",                            count: 40037, maleShare: 0.749  },
+  { label: "Surgery",                            dbValue: "Surgery Physician",                                         count: 36499, maleShare: 0.728  },
+  { label: "Thoracic Surgery",                   dbValue: "Thoracic Surgery (Cardiothoracic Vascular Surgery) Physician", count: 5108, maleShare: 0.898  },
+  { label: "Urology",                            dbValue: "Urology Physician",                                         count: 13442, maleShare: 0.868  },
 ];
 
 export const SUBSPECIALTIES: Record<string, SpecialtyEntry[]> = {
@@ -302,4 +307,27 @@ export function computeCount(
   }
 
   return base;
+}
+
+// Weighted male share across the selected specialties (by their counts).
+// Subspecialties inherit their parent specialty's share; unknowns use the global.
+export function weightedMaleShare(selectedSpecialtyLabels: string[]): number {
+  if (selectedSpecialtyLabels.length === 0) return GLOBAL_MALE_SHARE;
+  let weightedMales = 0;
+  let total = 0;
+  for (const label of selectedSpecialtyLabels) {
+    const s = SPECIALTIES.find(x => x.label === label);
+    if (!s) continue;
+    const share = s.maleShare ?? GLOBAL_MALE_SHARE;
+    weightedMales += s.count * share;
+    total += s.count;
+  }
+  return total > 0 ? weightedMales / total : GLOBAL_MALE_SHARE;
+}
+
+// Multiplier to apply to a base count for a gender selection ("M" | "F" | "any").
+export function genderMultiplier(gender: string, selectedSpecialtyLabels: string[]): number {
+  if (gender !== "M" && gender !== "F") return 1;
+  const male = weightedMaleShare(selectedSpecialtyLabels);
+  return gender === "M" ? male : 1 - male;
 }

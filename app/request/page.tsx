@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle, Mail } from "lucide-react";
 import { PLANS } from "@/lib/stripe";
-import { SPECIALTIES, SUBSPECIALTIES, computeCount } from "@/lib/specialties";
+import { SPECIALTIES, SUBSPECIALTIES, computeCount, genderMultiplier } from "@/lib/specialties";
 import { MED_SCHOOLS, OTHER_SCHOOL } from "@/lib/medSchools";
 
 const US_STATES = [
@@ -201,7 +201,9 @@ function RequestForm() {
   const [liveCount, setLiveCount] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
 
-  const usesLiveCount = form.ethnicity !== "any" || form.gender !== "any";
+  // Only ethnicity hits the live DB (it improves as enrichment runs).
+  // Specialty and gender are computed from hardcoded data.
+  const usesLiveCount = form.ethnicity !== "any";
 
   useEffect(() => {
     if (!usesLiveCount) {
@@ -224,7 +226,6 @@ function RequestForm() {
           if (form.stateMode === "exclude") params.set("excludeStates", "true");
         }
         if (form.ethnicity !== "any") params.set("ethnicity", form.ethnicity);
-        if (form.gender !== "any") params.set("gender", form.gender);
         const res = await fetch(`/api/physician-count?${params}`);
         const data = await res.json();
         setLiveCount(data.count ?? 0);
@@ -235,9 +236,12 @@ function RequestForm() {
       }
     }, 600);
     return () => clearTimeout(timer);
-  }, [usesLiveCount, form.ethnicity, form.gender, form.selectedSpecialties, form.selectedSubspecialties, form.stateMode, form.selectedStates]);
+  }, [usesLiveCount, form.ethnicity, form.selectedSpecialties, form.selectedSubspecialties, form.stateMode, form.selectedStates]);
 
-  const physicianCount = usesLiveCount && liveCount !== null ? liveCount : hardcodedCount;
+  // Base = live ethnicity count (if active) else hardcoded specialty/state count.
+  // Gender is always applied as a hardcoded ratio on top of that base.
+  const baseCount = usesLiveCount && liveCount !== null ? liveCount : hardcodedCount;
+  const physicianCount = Math.round(baseCount * genderMultiplier(form.gender, form.selectedSpecialties));
 
   const toggleSpecialty = (label: string) => {
     const next = form.selectedSpecialties.includes(label)
