@@ -241,7 +241,7 @@ function RequestForm() {
   // Base = live ethnicity count (if active) else hardcoded specialty/state count.
   // Gender is always applied as a hardcoded ratio on top of that base.
   const baseCount = usesLiveCount && liveCount !== null ? liveCount : hardcodedCount;
-  const physicianCount = Math.round(baseCount * genderMultiplier(form.gender, form.selectedSpecialties));
+  const physicianCount = Math.round(baseCount * genderMultiplier(form.gender, form.selectedSpecialties, form.selectedSubspecialties));
 
   const toggleSpecialty = (label: string) => {
     const next = form.selectedSpecialties.includes(label)
