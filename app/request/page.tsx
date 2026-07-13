@@ -38,8 +38,18 @@ const ETHNICITIES = [
   { value: "any", label: "Any — no filter" },
   { value: "south_asian", label: "South Asian (Indian, Pakistani, Bangladeshi…)" },
   { value: "east_asian", label: "East / Southeast Asian (Chinese, Korean, Vietnamese…)" },
-  { value: "middle_eastern", label: "Middle Eastern / Arab" },
+  { value: "middle_eastern", label: "Middle Eastern and North African" },
   { value: "hispanic", label: "Hispanic / Latino" },
+];
+
+const COMING_SOON_FILTERS = [
+  "Program directors only",
+  "Similar medical school",
+  "Doctor position (Professor, Chair…)",
+  "Same country of origin",
+  "Speaks your language",
+  "Accepts observers",
+  "Actively publishing",
 ];
 
 const STEPS = ["Find Physicians", "Connect Gmail", "Your Info", "Letter", "Documents", "Package"];
@@ -517,24 +527,25 @@ function RequestForm() {
               </div>
 
               {/* Program Directors — coming soon (non-functional) */}
+              {/* More filters — coming soon (non-functional) */}
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <label className="label mb-0">Program Directors only</label>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="label mb-0">More filters</label>
                   <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2 py-0.5">
                     Coming soon
                   </span>
                 </div>
-                <div
-                  className="flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 cursor-not-allowed opacity-70 select-none"
-                  aria-disabled="true"
-                  title="This filter is coming soon"
-                >
-                  <span className="text-sm text-gray-500">
-                    Target only residency &amp; fellowship program directors — the people who control training-program admissions.
-                  </span>
-                  <div className="w-9 h-5 rounded-full bg-gray-300 relative shrink-0 ml-3">
-                    <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white" />
-                  </div>
+                <div className="flex flex-wrap gap-2">
+                  {COMING_SOON_FILTERS.map(f => (
+                    <span
+                      key={f}
+                      className="text-sm px-3 py-2 rounded-lg border border-dashed border-gray-300 bg-gray-50 text-gray-400 cursor-not-allowed select-none"
+                      aria-disabled="true"
+                      title="Coming soon"
+                    >
+                      {f}
+                    </span>
+                  ))}
                 </div>
               </div>
 
