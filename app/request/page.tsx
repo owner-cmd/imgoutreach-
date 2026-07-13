@@ -651,40 +651,22 @@ function RequestForm() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Letter of interest</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  This is not the email itself — it&apos;s the raw material our AI uses to write something that sounds like you. The more specific you are, the better each email will be.
+                  The raw material our AI writes each email from. Rough notes are fine — we polish the wording. Include a case or moment that drew you to this field, a question you want to explore, and any research or projects you&apos;ve done.
                 </p>
-                <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-sm text-blue-900 space-y-1.5">
-                  <p className="font-semibold">What makes emails get replies:</p>
-                  <ul className="space-y-1 text-blue-800 text-xs leading-relaxed">
-                    <li>• <span className="font-medium">A case you saw</span> — a patient or situation during a rotation that stuck with you and made you curious about this field</li>
-                    <li>• <span className="font-medium">A specific question you have</span> — something you read or learned that you don&apos;t fully understand yet</li>
-                    <li>• <span className="font-medium">What you&apos;ve done</span> — research projects, thesis work, presentations, anything relevant</li>
-                    <li>• <span className="font-medium">Why this specialty</span> — not "I&apos;m passionate about it" but the actual moment or reason it clicked</li>
-                  </ul>
-                  <p className="text-blue-600 text-xs">The more you write, the more our AI has to connect you genuinely to each physician&apos;s specific work.</p>
-                </div>
-                <div className="mt-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                  <p className="text-xs text-amber-800 leading-relaxed">
-                    <span className="font-semibold">Don&apos;t worry about making it look good.</span> Write it rough — bullet points, incomplete sentences, whatever. Our AI polishes the wording in every email. What matters is the raw facts and stories only you know.
-                  </p>
-                </div>
               </div>
               <div>
                 <label className="label">Your letter of interest <span className="text-red-500">*</span></label>
                 <textarea className="input min-h-[220px] resize-none"
-                  placeholder="During my internal medicine rotation I saw a patient in her 80s who was discharged stable and back within two weeks — and nobody could explain why she deteriorated so fast. That made me want to understand how to predict who's actually high-risk at discharge. I'm also interested in frailty assessment and polypharmacy in older adults…"
+                  placeholder="Rough notes are fine. e.g. Saw an 80yo readmitted 2 weeks after a stable discharge — nobody could explain it. Want to understand who's actually high-risk at discharge. Also into frailty + polypharmacy in older adults."
                   value={form.letterOfInterest} onChange={e => set("letterOfInterest", e.target.value)} />
                 <p className={`text-xs mt-1 ${form.letterOfInterest.length < 50 ? "text-gray-400" : "text-blue-800 font-medium"}`}>
                   {form.letterOfInterest.length} characters {form.letterOfInterest.length < 50 ? "(minimum 50)" : "✓"}
                 </p>
               </div>
               <div>
-                <label className="label">Custom instructions for the AI <span className="text-gray-400">(optional)</span></label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Anything specific you want in your emails that we wouldn&apos;t know — what you can offer a physician, tone preferences, or things to avoid.
-                </p>
-                <textarea className="input min-h-[100px] resize-none"
-                  placeholder="e.g. Mention I can help with data collection and stats. Keep it formal. Don't bring up my research background."
+                <label className="label">Anything you&apos;d like mentioned <span className="text-gray-400">(optional)</span></label>
+                <textarea className="input min-h-[90px] resize-none"
+                  placeholder="e.g. I can help with research, data collection, or statistics. Available to start this summer."
                   value={form.customPrompt} onChange={e => set("customPrompt", e.target.value)} />
               </div>
             </div>
