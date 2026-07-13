@@ -34,17 +34,6 @@ const PURPOSES = [
   { value: "other", label: "Other / General interest", desc: "Career advice, mentorship, or exploring the specialty broadly" },
 ];
 
-const INSTRUCTION_IDEAS = [
-  "Mention I can handle literature reviews and data entry",
-  "Mention I can do statistical analysis (SPSS/R)",
-  "Mention I can help with manuscript writing and abstracts",
-  "Mention I'm fully flexible — nights and weekends included",
-  "Mention I can work remotely on research projects",
-  "Mention I speak their language for patient communication",
-  "Keep the tone very formal",
-  "Only mention my strongest credential",
-];
-
 const ETHNICITIES = [
   { value: "any", label: "Any — no filter" },
   { value: "south_asian", label: "South Asian (Indian, Pakistani, Bangladeshi…)" },
@@ -394,8 +383,8 @@ function RequestForm() {
                 <p className="text-gray-500 text-sm">Filter our database to see how many physicians match your target. Select at least one specialty to continue.</p>
               </div>
 
-              {/* Physician count */}
-              <div className={`flex items-center gap-3 rounded-xl px-5 py-4 border ${
+              {/* Physician count — pinned to top while scrolling filters */}
+              <div className={`sticky top-16 z-30 flex items-center gap-3 rounded-xl px-5 py-4 border shadow-sm ${
                 physicianCount === 0 ? "border-red-300 bg-red-50" :
                 physicianCount < 30 ? "border-yellow-300 bg-yellow-50" :
                 "border-blue-200 bg-blue-50"
@@ -405,7 +394,7 @@ function RequestForm() {
                   : physicianCount === 0
                   ? <AlertTriangle className="text-red-500 shrink-0" size={22} />
                   : <Users className={physicianCount < 30 ? "text-yellow-600 shrink-0" : "text-blue-800 shrink-0"} size={22} />}
-                <div>
+                <div className="min-w-0">
                   {countLoading
                     ? <p className="text-blue-700 text-sm font-medium">Calculating…</p>
                     : physicianCount === 0
@@ -415,17 +404,18 @@ function RequestForm() {
                       <p className={`font-bold text-lg ${physicianCount < 30 ? "text-yellow-700" : "text-blue-900"}`}>
                         ~{physicianCount.toLocaleString()} physicians
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 truncate">
                         {form.selectedSpecialties.length === 0
                           ? "in our database — select a specialty to narrow"
                           : [
                               form.selectedSubspecialties.length > 0
-                                ? "in your selected subspecialties"
-                                : "in your selected specialties",
+                                ? form.selectedSubspecialties.length + " subspecialt" + (form.selectedSubspecialties.length > 1 ? "ies" : "y")
+                                : form.selectedSpecialties.join(", "),
                               form.stateMode !== "all" && form.selectedStates.length > 0
-                                ? `(${form.stateMode === "include" ? "filtered to" : "excluding"} ${form.selectedStates.length} state${form.selectedStates.length > 1 ? "s" : ""})`
+                                ? `${form.stateMode === "include" ? "" : "excl. "}${form.selectedStates.join(", ")}`
                                 : null,
-                            ].filter(Boolean).join(" ")
+                              form.gender === "M" ? "male" : form.gender === "F" ? "female" : null,
+                            ].filter(Boolean).join(" · ")
                         }
                       </p>
                     </>
@@ -691,26 +681,10 @@ function RequestForm() {
               <div>
                 <label className="label">Custom instructions for the AI <span className="text-gray-400">(optional)</span></label>
                 <p className="text-xs text-gray-500 mb-2">
-                  Tip: emails that offer the physician something concrete get far more replies. Click an idea to add it, or write your own.
+                  Anything specific you want in your emails that we wouldn&apos;t know — what you can offer a physician, tone preferences, or things to avoid.
                 </p>
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {INSTRUCTION_IDEAS.map(idea => {
-                    const added = form.customPrompt.includes(idea);
-                    return (
-                      <button
-                        key={idea}
-                        type="button"
-                        disabled={added}
-                        onClick={() => set("customPrompt", (form.customPrompt.trim() ? form.customPrompt.trim() + ". " : "") + idea)}
-                        className={`text-xs px-2.5 py-1.5 rounded-full border transition-all ${added ? "border-blue-300 bg-blue-100 text-blue-400 cursor-default" : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-800"}`}
-                      >
-                        {added ? "✓ " : "+ "}{idea}
-                      </button>
-                    );
-                  })}
-                </div>
                 <textarea className="input min-h-[100px] resize-none"
-                  placeholder="e.g. The email must mention I can offer help with data collection and chart review. Avoid mentioning my research background."
+                  placeholder="e.g. Mention I can help with data collection and stats. Keep it formal. Don't bring up my research background."
                   value={form.customPrompt} onChange={e => set("customPrompt", e.target.value)} />
               </div>
             </div>
