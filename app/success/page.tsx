@@ -72,7 +72,7 @@ function SuccessContent() {
                   Connect Gmail
                 </button>
                 <p className="text-xs text-gray-400 mt-2 text-center">
-                  Skip this — drafts will still be available in your Google Sheet.
+                  You can also connect later from the link we email you.
                 </p>
               </>
             )}
@@ -87,7 +87,7 @@ function SuccessContent() {
           {[
             { text: "We research each physician on PubMed and the web", done: true },
             { text: "We write a personalized email for each one", done: false },
-            { text: gmailConnected ? "Drafts are loaded into your Gmail with CV attached" : "Drafts are saved to your Google Sheet", done: false },
+            { text: "Drafts are saved to your Gmail Drafts folder with your CV attached", done: false },
             { text: "You review and click Send — takes ~10 minutes total", done: false },
           ].map(({ text, done }, i) => (
             <div key={i} className="flex items-start gap-3">

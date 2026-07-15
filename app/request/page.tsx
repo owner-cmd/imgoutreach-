@@ -67,7 +67,7 @@ interface FormData {
   email: string;
   medicalSchool: string;
   year: string;
-  purpose: string;
+  purposes: string[];
   city: string;
   // Step 2
   letterOfInterest: string;
@@ -120,7 +120,7 @@ function RequestForm() {
     email: "",
     medicalSchool: "",
     year: "MS3",
-    purpose: "",
+    purposes: [],
     city: "",
     letterOfInterest: "",
     customPrompt: "",
@@ -148,7 +148,7 @@ function RequestForm() {
           email: saved.email ?? prev.email,
           medicalSchool: saved.medicalSchool ?? prev.medicalSchool,
           year: saved.year ?? prev.year,
-          purpose: saved.purpose ?? prev.purpose,
+          purposes: saved.purposes ?? prev.purposes,
           city: saved.city ?? prev.city,
           letterOfInterest: saved.letterOfInterest ?? prev.letterOfInterest,
           customPrompt: saved.customPrompt ?? prev.customPrompt,
@@ -339,7 +339,7 @@ function RequestForm() {
             gender: form.gender || "any",
             letter_of_interest: form.letterOfInterest.slice(0, 490),
             custom_prompt: form.customPrompt.slice(0, 490),
-            email_purpose: form.purpose,
+            email_purpose: form.purposes.join(", "),
             cv_url: cvUrl,
             extra_doc_urls: extraUrls.join(",").slice(0, 490),
             physician_count: String(selectedPlan.count),
@@ -573,7 +573,7 @@ function RequestForm() {
               </div>
               <div>
                 <label className="label">Full name (as it should appear in emails) <span className="text-red-500">*</span></label>
-                <input className="input" placeholder="e.g. Omar Saad" value={form.fullName} onChange={e => set("fullName", e.target.value)} />
+                <input className="input" placeholder="Your full name" value={form.fullName} onChange={e => set("fullName", e.target.value)} />
               </div>
               <div>
                 <label className="label">Email address <span className="text-red-500">*</span></label>
@@ -639,18 +639,27 @@ function RequestForm() {
                 <input className="input" placeholder="e.g. Chicago" value={form.city} onChange={e => set("city", e.target.value)} />
               </div>
               <div>
-                <label className="label">Purpose of outreach <span className="text-red-500">*</span></label>
+                <label className="label">Purpose of outreach <span className="text-gray-400">(select all that apply)</span></label>
                 <p className="text-xs text-gray-500 mb-3">This shapes how each email is framed — a research request reads very differently from an observership ask.</p>
                 <div className="space-y-2">
-                  {PURPOSES.map(p => (
-                    <label key={p.value} className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${form.purpose === p.value ? "border-blue-700 bg-blue-50" : "border-gray-300 hover:border-gray-400"}`}>
-                      <input type="radio" name="purpose" value={p.value} checked={form.purpose === p.value} onChange={() => set("purpose", p.value)} className="accent-blue-800 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{p.label}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{p.desc}</p>
-                      </div>
-                    </label>
-                  ))}
+                  {PURPOSES.map(p => {
+                    const checked = form.purposes.includes(p.value);
+                    return (
+                      <label key={p.value} className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked ? "border-blue-700 bg-blue-50" : "border-gray-300 hover:border-gray-400"}`}>
+                        <input
+                          type="checkbox"
+                          value={p.value}
+                          checked={checked}
+                          onChange={() => set("purposes", checked ? form.purposes.filter(v => v !== p.value) : [...form.purposes, p.value])}
+                          className="accent-blue-800 mt-0.5"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{p.label}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{p.desc}</p>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -783,7 +792,7 @@ function RequestForm() {
                 {[
                   ["Name", form.fullName],
                   ["Specialty", form.selectedSpecialties.join(", ") || "—"],
-                  ["Purpose", PURPOSES.find(p => p.value === form.purpose)?.label || "—"],
+                  ["Purpose", form.purposes.map(v => PURPOSES.find(p => p.value === v)?.label).filter(Boolean).join(", ") || "—"],
                   ["Location", [form.city, form.stateMode === "all" ? "All states" : form.selectedStates.join(", ")].filter(Boolean).join(", ") || "All states"],
                   ["Package", `${selectedPlan?.count} drafts`],
                 ].map(([k, v]) => (
