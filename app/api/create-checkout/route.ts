@@ -94,7 +94,13 @@ export async function POST(req: NextRequest) {
     }, { onConflict: "stripe_session_id" });
 
     if (supabaseError) {
+      // Fail loudly BEFORE the user pays — otherwise the order is saved nowhere
+      // and is lost after payment (invisible in admin, webhook has nothing to move).
       console.error("Supabase pending_submissions error:", supabaseError);
+      return NextResponse.json(
+        { error: "Could not save your order. Please try again or contact support." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ url: session.url });
