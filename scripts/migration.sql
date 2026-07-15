@@ -7,6 +7,7 @@
 -- ── Website: gender + offers must exist or checkout/webhook inserts will fail ──
 ALTER TABLE pending_submissions ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT 'any';
 ALTER TABLE pending_submissions ADD COLUMN IF NOT EXISTS student_offers TEXT;
+ALTER TABLE pending_submissions ADD COLUMN IF NOT EXISTS preauth_id TEXT;
 
 ALTER TABLE student_submissions ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT 'any';
 ALTER TABLE student_submissions ADD COLUMN IF NOT EXISTS student_offers TEXT;
