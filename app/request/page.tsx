@@ -200,6 +200,7 @@ function RequestForm() {
     form.gender,
   );
   const [liveCount, setLiveCount] = useState<number | null>(null);
+  const [preferredMatch, setPreferredMatch] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
 
   // Only ethnicity hits the live DB (it improves as enrichment runs).
@@ -209,6 +210,7 @@ function RequestForm() {
   useEffect(() => {
     if (!usesLiveCount) {
       setLiveCount(null);
+      setPreferredMatch(null);
       return;
     }
     setCountLoading(true);
@@ -230,8 +232,10 @@ function RequestForm() {
         const res = await fetch(`/api/physician-count?${params}`);
         const data = await res.json();
         setLiveCount(data.count ?? 0);
+        setPreferredMatch(typeof data.preferredCount === "number" ? data.preferredCount : null);
       } catch {
         setLiveCount(null);
+        setPreferredMatch(null);
       } finally {
         setCountLoading(false);
       }
@@ -281,7 +285,8 @@ function RequestForm() {
 
   const availableSubspecialties = form.selectedSpecialties.flatMap(label =>
     (SUBSPECIALTIES[label] || [])
-  ).filter((s, idx, arr) => arr.findIndex(x => x.dbValue === s.dbValue) === idx);
+  ).filter((s, idx, arr) => arr.findIndex(x => x.dbValue === s.dbValue) === idx)
+   .sort((a, b) => a.label.localeCompare(b.label));
 
   const filteredStates = US_STATES.filter(s =>
     s.name.toLowerCase().includes(stateSearch.toLowerCase()) || s.code.toLowerCase().includes(stateSearch.toLowerCase())
@@ -436,8 +441,8 @@ function RequestForm() {
               {/* Specialty */}
               <div>
                 <label className="label">Specialty <span className="text-red-500">*</span></label>
-                <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
-                  {SPECIALTIES.map(s => (
+                <div className="grid grid-cols-2 gap-2">
+                  {[...SPECIALTIES].sort((a, b) => a.label.localeCompare(b.label)).map(s => (
                     <button key={s.label} type="button" onClick={() => toggleSpecialty(s.label)}
                       className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
                         form.selectedSpecialties.includes(s.label)
@@ -458,7 +463,7 @@ function RequestForm() {
               {availableSubspecialties.length > 0 && (
                 <div>
                   <label className="label">Subspecialty <span className="text-gray-400">(optional — narrows to a specific focus)</span></label>
-                  <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-2">
                     {availableSubspecialties.map(sub => (
                       <button key={sub.dbValue} type="button" onClick={() => toggleSubspecialty(sub.dbValue)}
                         className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
@@ -549,9 +554,12 @@ function RequestForm() {
                 </div>
               </div>
 
-              {/* Ethnicity */}
+              {/* Ethnicity — a PREFERENCE, not a hard filter */}
               <div>
-                <label className="label">Physician ethnicity preference <span className="text-gray-400">(approximate — filtered by last name)</span></label>
+                <label className="label">Preferred physician ethnicity <span className="text-gray-400">(a preference, not a filter)</span></label>
+                <p className="text-xs text-gray-500 mb-2 leading-relaxed">
+                  We <span className="font-medium">prioritize</span> physicians who match this preference, but it won&apos;t reduce your order. If there aren&apos;t enough high-quality matches, we top up your list with other strong physicians so you still get your full number of drafts. Low-quality physicians are skipped whether they match or not.
+                </p>
                 <div className="space-y-2">
                   {ETHNICITIES.map(e => (
                     <label key={e.value} className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${form.ethnicity === e.value ? "border-blue-700 bg-blue-50" : "border-gray-300 hover:border-gray-400"}`}>
@@ -560,6 +568,11 @@ function RequestForm() {
                     </label>
                   ))}
                 </div>
+                {form.ethnicity !== "any" && preferredMatch !== null && !countLoading && (
+                  <p className="text-xs mt-2 text-blue-800">
+                    ~{preferredMatch.toLocaleString()} of the physicians in your target match this preference — these are prioritized first, and the rest of your order is filled with other strong matches.
+                  </p>
+                )}
               </div>
             </div>
           )}

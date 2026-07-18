@@ -87,8 +87,8 @@ function SuccessContent() {
           {[
             { text: "We research each physician on PubMed and the web", done: true },
             { text: "We write a personalized email for each one", done: false },
-            { text: "Drafts are saved to your Gmail Drafts folder with your CV attached", done: false },
-            { text: "You review and click Send — takes ~10 minutes total", done: false },
+            { text: "Your drafts are saved to your Gmail Drafts folder with your CV attached", done: false },
+            { text: "We'll email you when your drafts are ready to review and send", done: false },
           ].map(({ text, done }, i) => (
             <div key={i} className="flex items-start gap-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${done ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>

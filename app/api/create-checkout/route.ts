@@ -8,6 +8,13 @@ export async function POST(req: NextRequest) {
     const plan = PLANS.find((p) => p.id === planId);
     if (!plan) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
 
+    // ── Paid-tier gate (server-side, never trust the client) ──
+    // Ethnicity targeting is a paid feature. A free-trial order (tier "trial")
+    // can never target by ethnicity, regardless of what the form submitted.
+    const tier = metadata.tier || plan.id;
+    const isPaid = tier !== "trial";
+    if (!isPaid) metadata.ethnicity = "any";
+
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
     // Resolve promo code to a Stripe promotion_code ID so it's pre-applied at checkout

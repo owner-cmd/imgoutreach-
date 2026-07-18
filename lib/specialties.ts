@@ -69,7 +69,7 @@ export const SUBSPECIALTIES: Record<string, SpecialtyEntry[]> = {
   ],
   "Family Medicine": [
     { label: "Adolescent Medicine",           dbValue: "Adolescent Medicine (Family Medicine) Physician",             count: 259, maleShare: 0.432  },
-    { label: "Geriatric Medicine",            dbValue: "Geriatric Medicine (Family Medicine) Physician",              count: 1788, maleShare: 0.522  },
+    { label: "Geriatric Medicine (via Family Medicine)", dbValue: "Geriatric Medicine (Family Medicine) Physician",              count: 1788, maleShare: 0.522  },
     { label: "Hospice & Palliative Medicine", dbValue: "Hospice and Palliative Medicine (Family Medicine) Physician", count: 810, maleShare: 0.416  },
     { label: "Obesity Medicine",              dbValue: "Obesity Medicine (Family Medicine) Physician",                count: 154, maleShare: 0.383  },
     { label: "Sleep Medicine",                dbValue: "Sleep Medicine (Family Medicine) Physician",                  count: 197, maleShare: 0.563  },
@@ -84,7 +84,7 @@ export const SUBSPECIALTIES: Record<string, SpecialtyEntry[]> = {
     { label: "Critical Care Medicine",                       dbValue: "Critical Care Medicine (Internal Medicine) Physician",        count: 6762, maleShare: 0.732  },
     { label: "Endocrinology, Diabetes & Metabolism",         dbValue: "Endocrinology, Diabetes & Metabolism Physician",             count: 7952, maleShare: 0.477  },
     { label: "Gastroenterology",                             dbValue: "Gastroenterology Physician",                                  count: 16780, maleShare: 0.797  },
-    { label: "Geriatric Medicine",                           dbValue: "Geriatric Medicine (Internal Medicine) Physician",            count: 4182, maleShare: 0.494  },
+    { label: "Geriatric Medicine (via Internal Medicine)",   dbValue: "Geriatric Medicine (Internal Medicine) Physician",            count: 4182, maleShare: 0.494  },
     { label: "Hematology",                                   dbValue: "Hematology (Internal Medicine) Physician",                   count: 1483, maleShare: 0.632  },
     { label: "Hematology & Oncology",                        dbValue: "Hematology & Oncology Physician",                            count: 11319, maleShare: 0.653  },
     { label: "Hepatology",                                   dbValue: "Hepatology Physician",                                       count: 286, maleShare: 0.664  },

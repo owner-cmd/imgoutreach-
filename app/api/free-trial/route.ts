@@ -1,0 +1,107 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import crypto from "node:crypto";
+
+const TRIAL_COUNT = 25;
+
+const admin = () =>
+  createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+// Verify the caller's Supabase (Google) session from the Bearer token.
+async function getUser(req: NextRequest) {
+  const auth = req.headers.get("authorization") || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!token) return null;
+  const anon = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+  const { data, error } = await anon.auth.getUser(token);
+  if (error || !data.user) return null;
+  return data.user;
+}
+
+// Fingerprint the identifying parts of the request so the same info can't farm
+// multiple free trials across different accounts.
+function fingerprint(m: Record<string, string>) {
+  const norm = (s: string) => (s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  const basis = [norm(m.student_name), norm(m.cv_url), norm(m.medical_school), norm(m.specialty), norm(m.state)].join("|");
+  return crypto.createHash("sha256").update(basis).digest("hex");
+}
+
+export async function POST(req: NextRequest) {
+  const user = await getUser(req);
+  if (!user) return NextResponse.json({ error: "Please sign in to use the free trial." }, { status: 401 });
+
+  const { metadata } = await req.json().catch(() => ({ metadata: {} }));
+  const m: Record<string, string> = metadata || {};
+  const sb = admin();
+
+  // ── Protection 1: one free trial per account ──
+  const { data: acct } = await sb.from("accounts").select("free_trial_used").eq("user_id", user.id).single();
+  if (acct?.free_trial_used) {
+    return NextResponse.json({ error: "You've already used your free trial. Upgrade to send more." }, { status: 403 });
+  }
+
+  // ── Protection 2: the same info can't claim a second trial (any account) ──
+  const fp = fingerprint(m);
+  const { data: usedFp } = await sb.from("trial_fingerprints").select("fingerprint").eq("fingerprint", fp).single();
+  if (usedFp) {
+    return NextResponse.json({ error: "This information has already been used for a free trial." }, { status: 403 });
+  }
+
+  const sessionId = "trial_" + crypto.randomUUID();
+  const reviewToken = "rv_" + crypto.randomBytes(20).toString("hex");
+
+  // Free trial is trial-tier: ethnicity targeting is off (paid-only) and count is fixed.
+  const order = {
+    stripe_session_id: sessionId,
+    student_email: m.student_email || user.email,
+    student_name: m.student_name || "",
+    specialty: (m.specialty || "").slice(0, 490),
+    subspecialty: (m.subspecialty || "").slice(0, 490),
+    state: (m.state || "").slice(0, 490),
+    state_mode: m.state_mode || "all",
+    city: m.city || "",
+    ethnicity: "any",
+    gender: m.gender || "any",
+    medical_school: (m.medical_school || "").slice(0, 490),
+    year: m.year || "",
+    purpose: m.purpose || m.email_purpose || "",
+    letter_of_interest: m.letter_of_interest || "",
+    custom_prompt: m.custom_prompt || "",
+    student_offers: m.student_offers || "",
+    cv_url: m.cv_url || "",
+    extra_doc_urls: m.extra_doc_urls || "",
+    preauth_id: m.preauth_id || "",
+    physician_count: TRIAL_COUNT,
+    tier: "trial",
+    amount_paid: 0,
+    account_id: user.id,
+    review_token: reviewToken,
+    status: "processing",
+    submitted_at: new Date().toISOString(),
+  };
+
+  const { error: insErr } = await sb.from("student_submissions").upsert(order, { onConflict: "stripe_session_id" });
+  if (insErr) {
+    console.error("free-trial save error:", insErr);
+    return NextResponse.json({ error: "Could not start your trial. Please try again." }, { status: 500 });
+  }
+
+  // Mark the trial used + record the fingerprint (best-effort; order is already saved).
+  await sb.from("accounts").upsert({ user_id: user.id, email: user.email, free_trial_used: true }, { onConflict: "user_id" });
+  await sb.from("trial_fingerprints").insert({ fingerprint: fp, user_id: user.id });
+
+  // Trigger the n8n workflow in the same Stripe-event shape it already expects.
+  try {
+    await fetch("https://n8n.imgoutreach.com/webhook/physician-outreach-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: { object: { id: sessionId, amount_total: 0, metadata: { ...order, physician_count: String(TRIAL_COUNT), email_purpose: order.purpose } } },
+      }),
+    });
+  } catch (e) {
+    console.error("free-trial n8n trigger failed (order saved, can be re-run from admin):", e);
+  }
+
+  return NextResponse.json({ ok: true, sessionId, reviewToken });
+}

@@ -28,3 +28,6 @@ scripts/service-key.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# local key files used by scripts (never commit)
+*.local
