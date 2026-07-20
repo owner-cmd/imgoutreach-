@@ -39,7 +39,7 @@ const PURPOSES = [
 ];
 
 const ETHNICITIES = [
-  { value: "any", label: "Any — no filter" },
+  { value: "any", label: "Any — no preference" },
   { value: "south_asian", label: "South Asian (Indian, Pakistani, Bangladeshi…)" },
   { value: "east_asian", label: "East / Southeast Asian (Chinese, Korean, Vietnamese…)" },
   { value: "middle_eastern", label: "Middle Eastern and North African" },
@@ -587,11 +587,17 @@ function RequestForm() {
                 </div>
               </div>
 
-              {/* Ethnicity — a PREFERENCE, not a hard filter */}
+              {/* Ethnicity — a PREFERENCE, not a hard filter; paid plans only */}
               <div>
-                <label className="label">Preferred physician ethnicity <span className="text-gray-400">(a preference, not a filter)</span></label>
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <label className="label mb-0">Preferred physician ethnicity <span className="text-gray-400">(a preference, not a filter)</span></label>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2 py-0.5">
+                    Paid plans
+                  </span>
+                </div>
                 <p className="text-xs text-gray-500 mb-2 leading-relaxed">
                   We <span className="font-medium">prioritize</span> physicians who match this preference, but it won&apos;t reduce your order. If there aren&apos;t enough high-quality matches, we top up your list with other strong physicians so you still get your full number of drafts. Low-quality physicians are skipped whether they match or not.
+                  {" "}Included with Standard, Pro, and Custom — free-trial orders always use &quot;Any&quot;.
                 </p>
                 <div className="space-y-2">
                   {ETHNICITIES.map(e => (
@@ -719,6 +725,9 @@ function RequestForm() {
                 <p className="text-gray-500 text-sm leading-relaxed">
                   The raw material our AI writes each email from. Rough notes are fine — we polish the wording. Include a case or moment that drew you to this field, a question you want to explore, and any research or projects you&apos;ve done.
                 </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-2">
+                  <span className="font-semibold">Be specific about your research interests</span> — &quot;predicting heart-failure readmissions&quot; beats &quot;cardiology&quot;. The more specific you are, the better we match physicians who work on exactly that, and the likelier they reply.
+                </p>
               </div>
               <div>
                 <label className="label">Your letter of interest <span className="text-red-500">*</span></label>
@@ -813,7 +822,7 @@ function RequestForm() {
                         <div>
                           <p className="font-semibold text-gray-900">{TRIAL_PLAN.name} — {TRIAL_PLAN.count} email drafts</p>
                           <p className="text-xs text-gray-500 mt-0.5">{TRIAL_PLAN.description}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">Ethnicity targeting and AI draft editing are on paid plans.</p>
+                          <p className="text-xs text-gray-400 mt-0.5">Ethnicity preference matching and AI draft editing are on paid plans.</p>
                         </div>
                       </div>
                       <div className="text-right shrink-0 ml-4">
@@ -821,6 +830,11 @@ function RequestForm() {
                         <p className="text-xs text-emerald-700 font-semibold">One per account</p>
                       </div>
                     </div>
+                    {form.plan === "trial" && form.ethnicity !== "any" && (
+                      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-3">
+                        You picked an ethnicity preference — that&apos;s a paid feature, so this trial will use &quot;Any&quot;.
+                      </p>
+                    )}
                   </div>
                 )}
                 {PLANS.map(plan => (

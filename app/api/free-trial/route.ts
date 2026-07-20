@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const sessionId = "trial_" + crypto.randomUUID();
   const reviewToken = "rv_" + crypto.randomBytes(20).toString("hex");
 
-  // Free trial is trial-tier: ethnicity targeting is off (paid-only) and count is fixed.
+  // Free trial is trial-tier: ethnicity preference is off (paid-only) and count is fixed.
   const order = {
     stripe_session_id: sessionId,
     student_email: m.student_email || user.email,

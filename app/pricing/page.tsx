@@ -12,9 +12,41 @@ export default function PricingPage() {
           <p className="text-gray-600 text-lg max-w-xl mx-auto">
             Pay once, get your email drafts delivered within 24 hours. No subscription, no hidden fees.
           </p>
+          <p className="text-gray-500 text-sm mt-3">Start free with 25 drafts — pay only when you want more.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5 mb-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+          {/* Free Trial card */}
+          <div className="card p-7 flex flex-col">
+            <div className="mb-5">
+              <p className="text-sm font-semibold text-emerald-700 uppercase tracking-widest mb-2">Free Trial</p>
+              <div className="flex items-end gap-1.5 mb-2">
+                <span className="text-3xl font-bold text-gray-900">$0</span>
+                <span className="text-gray-500 mb-1 text-sm">no card required</span>
+              </div>
+              <p className="text-lg font-semibold text-gray-800 mb-1">25 personalized drafts</p>
+              <p className="text-xs text-gray-500 leading-relaxed">Try the full pipeline — one trial per account</p>
+            </div>
+            <ul className="space-y-2.5 mb-7 flex-1">
+              {SHARED_FEATURES.filter((f) => !f.startsWith("Ethnicity")).map((f) => (
+                <li key={f} className="flex items-start gap-2.5 text-sm text-gray-700">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  {f}
+                </li>
+              ))}
+              <li className="flex items-start gap-2.5 text-sm text-gray-500">
+                <Check className="w-4 h-4 text-gray-300 shrink-0 mt-0.5" />
+                Upgrade anytime — paid plans add ethnicity preference
+              </li>
+            </ul>
+            <Link
+              href="/request"
+              className="w-full text-center py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 border border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+            >
+              Start free
+            </Link>
+          </div>
+
           {PLANS.map((plan) => (
             <div
               key={plan.id}

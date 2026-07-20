@@ -2,13 +2,6 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, Forward, Mail, Paperclip, Reply, Search, Star, Zap } from "lucide-react";
 import HeroSection from "./components/HeroSection";
 
-const stats = [
-  { value: "3×", label: "more replies vs generic emails" },
-  { value: "< 24h", label: "delivery after payment" },
-  { value: "1.1M+", label: "physicians in our database" },
-  { value: "95%", label: "valid email rate" },
-];
-
 const steps = [
   { icon: <Mail className="w-6 h-6 text-blue-800" />, title: "Tell us about yourself", desc: "Select your target specialty, location, and purpose. Upload your CV and write a brief letter of interest." },
   { icon: <Search className="w-6 h-6 text-blue-800" />, title: "We research every physician", desc: "Our AI scans PubMed, physician directories, and institutional pages to find real research interests and contact emails." },
@@ -186,7 +179,7 @@ export default function Home() {
       <section className="bg-blue-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to reach more physicians?</h2>
-          <p className="text-blue-100 mb-8 text-lg">Starting at $279 for 50 personalized drafts. Delivered within 24 hours.</p>
+          <p className="text-blue-100 mb-8 text-lg">Your first 25 drafts are free — no card required. Paid plans from $279 for 50 drafts, delivered within 24 hours.</p>
           <Link href="/request" className="inline-flex items-center gap-2 bg-white text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-blue-50 transition-all text-base">
             Start your request <ArrowRight size={18} />
           </Link>

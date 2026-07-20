@@ -91,6 +91,9 @@ export default function HeroSection() {
               See example emails
             </Link>
           </div>
+          <p className="text-sm text-gray-500 mt-4">
+            Free trial: your first <span className="font-semibold text-gray-700">25 drafts are free</span> — no card required.
+          </p>
         </div>
 
         {/* Right: stacked cards */}
@@ -118,7 +121,7 @@ export default function HeroSection() {
                       <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">{draft.preview}</p>
                     </div>
                     <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-[11px] text-gray-400 font-medium">
-                      + 49 more drafts ready to send
+                      + 45 more drafts ready to send
                     </div>
                   </>
                 )}

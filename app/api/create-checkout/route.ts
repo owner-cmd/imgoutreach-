@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     if (!plan) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
 
     // ── Paid-tier gate (server-side, never trust the client) ──
-    // Ethnicity targeting is a paid feature. A free-trial order (tier "trial")
+    // Ethnicity preference is a paid feature. A free-trial order (tier "trial")
     // can never target by ethnicity, regardless of what the form submitted.
     const tier = metadata.tier || plan.id;
     const isPaid = tier !== "trial";

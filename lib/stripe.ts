@@ -8,7 +8,7 @@ export const SHARED_FEATURES = [
   "AI physician research (PubMed + web)",
   "Quality score filter",
   "Specialty, state & gender targeting",
-  "Ethnicity preference matching",
+  "Ethnicity preference — matching physicians prioritized first",
   "Review, edit & send from your dashboard — via your Gmail",
   "Delivered within 24 hours",
   "Email support",
