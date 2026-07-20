@@ -5,6 +5,10 @@ import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, 
 import { PLANS } from "@/lib/stripe";
 import { SPECIALTIES, SUBSPECIALTIES, computeCount, genderMultiplier } from "@/lib/specialties";
 import { MED_SCHOOLS, OTHER_SCHOOL } from "@/lib/medSchools";
+import { supabaseBrowser } from "@/lib/supabaseBrowser";
+
+// Free trial is a pseudo-plan: no Stripe, 25 drafts, no ethnicity targeting.
+const TRIAL_PLAN = { id: "trial", name: "Free Trial", count: 25, price: 0, description: "25 personalized drafts — free, no card required" };
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" }, { code: "AZ", name: "Arizona" },
@@ -104,6 +108,11 @@ function RequestForm() {
   const [triedToAdvance, setTriedToAdvance] = useState(false);
   const [schoolChoice, setSchoolChoice] = useState("");
   const [promoCode, setPromoCode] = useState("");
+  // Signed-in user (Google via Supabase). Needed to claim the free trial and to
+  // save their info for next time.
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
 
@@ -182,6 +191,16 @@ function RequestForm() {
 
   const set = (field: keyof FormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  // Load the Google session (if any) so we know whether the free trial is offered.
+  useEffect(() => {
+    const sb = supabaseBrowser();
+    sb.auth.getSession().then(({ data }) => {
+      setAuthEmail(data.session?.user?.email ?? null);
+      setAuthToken(data.session?.access_token ?? null);
+      setAuthReady(true);
+    });
+  }, []);
 
   // Autosave to localStorage on every form change (skip files — not serializable)
   useEffect(() => {
@@ -319,18 +338,13 @@ function RequestForm() {
         if (r.ok) { const { url } = await r.json(); extraUrls.push(url); }
       }
 
-      const selectedPlan = PLANS.find(p => p.id === form.plan)!;
+      const isTrial = form.plan === "trial";
+      const selectedPlan = isTrial ? TRIAL_PLAN : PLANS.find(p => p.id === form.plan)!;
       const specialtyDbValues = form.selectedSpecialties
         .map(l => SPECIALTIES.find(s => s.label === l)?.dbValue || l)
         .join(", ");
 
-      const checkoutRes = await fetch("/api/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          planId: form.plan,
-          promoCode: promoCode.trim() || null,
-          metadata: {
+      const metadata = {
             student_name: form.fullName,
             student_email: form.email,
             medical_school: form.medicalSchool,
@@ -351,8 +365,27 @@ function RequestForm() {
             tier: form.plan,
             amount_paid: String(selectedPlan.price * 100),
             preauth_id: preauthId,
-          },
-        }),
+      };
+
+      if (isTrial) {
+        // Free trial: no Stripe. The API verifies the Google session, enforces
+        // one-trial-per-account + per-info, saves the order and starts the workflow.
+        const res = await fetch("/api/free-trial", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken || ""}` },
+          body: JSON.stringify({ metadata }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Could not start your free trial.");
+        try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ }
+        window.location.href = `/success?session_id=${encodeURIComponent(data.sessionId)}`;
+        return;
+      }
+
+      const checkoutRes = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId: form.plan, promoCode: promoCode.trim() || null, metadata }),
       });
       if (!checkoutRes.ok) throw new Error("Could not create checkout session");
       const { url } = await checkoutRes.json();
@@ -364,7 +397,7 @@ function RequestForm() {
     }
   };
 
-  const selectedPlan = PLANS.find(p => p.id === form.plan);
+  const selectedPlan = form.plan === "trial" ? TRIAL_PLAN : PLANS.find(p => p.id === form.plan);
 
   return (
     <div className="pt-28 pb-20">
@@ -766,6 +799,30 @@ function RequestForm() {
                 <p className="text-gray-500 text-sm">More emails = higher chance of a reply.</p>
               </div>
               <div className="space-y-3">
+                {/* Free trial — signed-in users only; one per account */}
+                {authEmail && (
+                  <div
+                    className={`border rounded-xl p-5 cursor-pointer transition-all ${form.plan === "trial" ? "border-emerald-600 bg-emerald-50" : "border-emerald-300 bg-emerald-50/40 hover:border-emerald-500"}`}
+                    onClick={() => set("plan", "trial")}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${form.plan === "trial" ? "border-emerald-600" : "border-gray-400"}`}>
+                          {form.plan === "trial" && <div className="w-2 h-2 rounded-full bg-emerald-600" />}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{TRIAL_PLAN.name} — {TRIAL_PLAN.count} email drafts</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{TRIAL_PLAN.description}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">Ethnicity targeting and AI draft editing are on paid plans.</p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0 ml-4">
+                        <p className="text-xl font-bold text-emerald-700">$0</p>
+                        <p className="text-xs text-emerald-700 font-semibold">One per account</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {PLANS.map(plan => (
                   <div key={plan.id}
                     className={`border rounded-xl p-5 cursor-pointer transition-all ${form.plan === plan.id ? "border-blue-700 bg-blue-50" : "border-gray-300 hover:border-gray-400"}`}
@@ -842,7 +899,7 @@ function RequestForm() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Connect your Gmail</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  We need access to place your 50 email drafts directly into your Gmail Drafts folder with your CV already attached. Without this we can&apos;t deliver your order.
+                  We need access so your personalized emails can be sent from your own Gmail — that&apos;s what makes them look genuinely personal to physicians. Without this we can&apos;t deliver your order.
                 </p>
               </div>
 
@@ -855,16 +912,16 @@ function RequestForm() {
                     {gmailConnected ? (
                       <>
                         <p className="font-semibold text-emerald-800 mb-1">Gmail connected ✓</p>
-                        <p className="text-sm text-emerald-700">Your drafts will appear directly in your Gmail Drafts folder with your CV pre-attached.</p>
+                        <p className="text-sm text-emerald-700">When your drafts are ready, you&apos;ll review them on your review page and send them from your Gmail with one click — CV attached.</p>
                       </>
                     ) : (
                       <>
                         <p className="font-semibold text-gray-900 mb-3">Connect your Gmail account</p>
                         <div className="bg-white border border-gray-200 rounded-xl p-3 mb-4 space-y-1.5">
                           {[
-                            "Drafts appear directly in your Gmail — ready to review and send",
-                            "Your CV is pre-attached to every email",
-                            "We only request permission to create drafts — we cannot read your emails",
+                            "You review every email before anything is sent",
+                            "Your CV is attached to every email automatically",
+                            "We can only create and send emails — we can never read your inbox",
                           ].map(p => (
                             <div key={p} className="flex items-center gap-2 text-xs text-gray-600">
                               <Check className="text-blue-700 shrink-0" size={13} />
@@ -906,6 +963,16 @@ function RequestForm() {
             {step < STEPS.length - 1 ? (
               <button className="btn-primary flex items-center gap-2" onClick={() => {
                 if (!canAdvance()) { setTriedToAdvance(true); return; }
+                // After the filters step, require an account. The form autosaves to
+                // localStorage, so they land back here with everything intact.
+                if (step === 0) {
+                  // Don't let anyone slip past while the session check is still in flight.
+                  if (!authReady) return;
+                  if (!authEmail) {
+                    window.location.href = `/signin?next=${encodeURIComponent("/request")}`;
+                    return;
+                  }
+                }
                 setTriedToAdvance(false);
                 setStep(step + 1);
               }}>

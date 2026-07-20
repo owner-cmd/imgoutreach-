@@ -11,9 +11,9 @@ const stats = [
 
 const steps = [
   { icon: <Mail className="w-6 h-6 text-blue-800" />, title: "Tell us about yourself", desc: "Select your target specialty, location, and purpose. Upload your CV and write a brief letter of interest." },
-  { icon: <Search className="w-6 h-6 text-blue-800" />, title: "We research every physician", desc: "Our AI scans PubMed, physician directories, and institutional pages to find real research interests and verified emails." },
+  { icon: <Search className="w-6 h-6 text-blue-800" />, title: "We research every physician", desc: "Our AI scans PubMed, physician directories, and institutional pages to find real research interests and contact emails." },
   { icon: <Zap className="w-6 h-6 text-blue-800" />, title: "Emails are written for each doctor", desc: "Each draft references the physician's published work and connects it to your genuine interests — not a template." },
-  { icon: <Star className="w-6 h-6 text-blue-800" />, title: "Drafts appear in your Gmail", desc: "Your personalized emails land directly in your Gmail Drafts — one per physician, ready to send with one click." },
+  { icon: <Star className="w-6 h-6 text-blue-800" />, title: "Review & send with one click", desc: "Every draft appears on your review page — edit anything you like, then send them all from your own Gmail with one click." },
 ];
 
 const emailExample = {
@@ -53,10 +53,10 @@ export default function Home() {
           <div className="px-5 pt-5 pb-3 border-b border-gray-100">
             <div className="flex items-start justify-between gap-4 mb-3">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-semibold shrink-0">NM</div>
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-semibold shrink-0">RM</div>
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">
-                    Nour Mansour <span className="text-gray-400 font-normal">&lt;{emailExample.from.match(/<(.+)>/)?.[1]}&gt;</span>
+                    Rohan Mehta <span className="text-gray-400 font-normal">&lt;{emailExample.from.match(/<(.+)>/)?.[1]}&gt;</span>
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">to {emailExample.to}</p>
                 </div>
@@ -151,7 +151,7 @@ export default function Home() {
                 "Each email references the physician's specific published research by name",
                 "Emails are 3–4 sentences — short enough to read in 30 seconds",
                 "Written in a realistic medical student or IMG voice, not consultant prose",
-                "Only physicians with verified emails are included",
+                "Physicians with no discoverable email are filtered out automatically",
                 "Quality-scored: low-match physicians are filtered out automatically",
               ].map((point) => (
                 <div key={point} className="flex items-start gap-3">
@@ -186,7 +186,7 @@ export default function Home() {
       <section className="bg-blue-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to reach more physicians?</h2>
-          <p className="text-blue-100 mb-8 text-lg">Starting at $279 for 50 personalized drafts. Delivered in under 24 hours.</p>
+          <p className="text-blue-100 mb-8 text-lg">Starting at $279 for 50 personalized drafts. Delivered within 24 hours.</p>
           <Link href="/request" className="inline-flex items-center gap-2 bg-white text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-blue-50 transition-all text-base">
             Start your request <ArrowRight size={18} />
           </Link>

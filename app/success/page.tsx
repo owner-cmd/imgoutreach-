@@ -38,20 +38,20 @@ function SuccessContent() {
               <>
                 <p className="font-semibold text-green-800 mb-1">Gmail connected ✓</p>
                 <p className="text-sm text-green-700 leading-relaxed">
-                  Your email drafts will appear directly in your Gmail Drafts folder with your CV pre-attached — ready to review and send.
+                  When your drafts are ready, you&apos;ll get an email with a link to review them — then send them all from your Gmail with one click, CV attached.
                 </p>
               </>
             ) : (
               <>
-                <p className="font-semibold text-gray-900 mb-1">Connect Gmail to get pre-loaded drafts</p>
+                <p className="font-semibold text-gray-900 mb-1">Connect Gmail so your emails send from your own address</p>
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                  Connect your Gmail and we&apos;ll place each personalized email directly into your Drafts folder with your CV already attached. You just open each draft, review it, and click Send.
+                  Connect your Gmail and, once you approve your drafts on the review page, we send each email from your own address with your CV attached — that&apos;s what makes them look genuinely personal.
                 </p>
                 <div className="bg-white border border-gray-200 rounded-xl p-3 mb-4 space-y-1.5">
                   {[
-                    "Drafts appear directly in your Gmail inbox",
-                    "CV is pre-attached to every email",
-                    "We only request permission to create drafts — nothing else",
+                    "You review every email before anything is sent",
+                    "CV is attached to every email automatically",
+                    "We can only create and send emails — we can never read your inbox",
                   ].map(p => (
                     <div key={p} className="flex items-center gap-2 text-xs text-gray-600">
                       <CheckCircle className="text-blue-700 shrink-0" size={13} />
@@ -87,8 +87,8 @@ function SuccessContent() {
           {[
             { text: "We research each physician on PubMed and the web", done: true },
             { text: "We write a personalized email for each one", done: false },
-            { text: "Your drafts are saved to your Gmail Drafts folder with your CV attached", done: false },
-            { text: "We'll email you when your drafts are ready to review and send", done: false },
+            { text: "We email you a link to your review page when they're ready", done: false },
+            { text: "You review, edit anything you like, and send them all from your Gmail with one click", done: false },
           ].map(({ text, done }, i) => (
             <div key={i} className="flex items-start gap-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${done ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>

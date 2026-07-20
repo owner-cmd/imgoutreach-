@@ -12,7 +12,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-base font-bold text-gray-900 mb-3">1. What IMG Outreach Does</h2>
-            <p>IMG Outreach (&quot;we,&quot; &quot;us,&quot; &quot;the service&quot;) generates personalized physician outreach email drafts using artificial intelligence. We research physicians&apos; published work and combine it with information you provide to produce draft emails. These drafts are delivered directly to your Gmail Drafts folder.</p>
+            <p>IMG Outreach (&quot;we,&quot; &quot;us,&quot; &quot;the service&quot;) generates personalized physician outreach email drafts using artificial intelligence. We research physicians&apos; published work and combine it with information you provide to produce draft emails. These drafts are made available on your review page, and — when you approve them — are sent from your own Gmail account, spaced out over time.</p>
           </section>
 
           <section>

@@ -24,26 +24,28 @@ export default function PrivacyPage() {
               <li><span className="font-medium text-gray-800">Documents</span> — your CV and any additional documents you upload</li>
               <li><span className="font-medium text-gray-800">Letter of interest</span> — the personal statement you write to inform your email drafts</li>
               <li><span className="font-medium text-gray-800">Payment information</span> — processed securely by Stripe; we never see or store your card details</li>
-              <li><span className="font-medium text-gray-800">Gmail OAuth token</span> — a limited-access token used solely to create email drafts in your Gmail Drafts folder</li>
+              <li><span className="font-medium text-gray-800">Gmail OAuth token</span> — a limited-access token used solely to create your email drafts and to send the emails you approve, from your own Gmail</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-base font-bold text-gray-900 mb-3">3. Gmail Access — What We Do and Do Not Do</h2>
-            <p className="mb-3">To deliver your email drafts directly to your Gmail, you authorize IMG Outreach via Google OAuth. We request only the <strong>gmail.compose</strong> scope, which allows us to create draft emails on your behalf.</p>
+            <p className="mb-3">To deliver your emails from your own Gmail, you authorize IMG Outreach via Google OAuth. We request only the <strong>gmail.compose</strong> scope, which allows us to create draft emails and send emails on your behalf — it does not allow us to read your inbox.</p>
             <p className="mb-3">With this access, we:</p>
             <ul className="space-y-1.5 list-disc list-inside text-gray-600 mb-3">
-              <li>Create personalized email drafts in your Gmail Drafts folder</li>
-              <li>Attach your CV to each draft</li>
+              <li>Create your personalized email drafts</li>
+              <li>Attach your CV to each email</li>
+              <li>Send the emails you approve on your review page, from your Gmail, spaced out over time</li>
             </ul>
             <p className="mb-3">We do <strong>not</strong>:</p>
             <ul className="space-y-1.5 list-disc list-inside text-gray-600">
               <li>Read, access, or store any of your existing emails</li>
-              <li>Send emails on your behalf</li>
+              <li>Send any email you have not approved</li>
               <li>Delete or modify any of your existing emails or drafts</li>
               <li>Share your Gmail data with any third party</li>
-              <li>Use your Gmail data for any purpose other than creating your requested drafts</li>
+              <li>Use your Gmail data for any purpose other than fulfilling your order</li>
             </ul>
+            <p className="mb-3">Emails we send for you include a small tracking image so you can see whether a physician opened your email. This measures opens only — it does not read any email content.</p>
             <p className="mt-3">Your Gmail refresh token is stored securely and used only to fulfill your order. You can revoke access at any time at <a href="https://myaccount.google.com/permissions" className="text-blue-800 hover:underline" target="_blank" rel="noopener noreferrer">myaccount.google.com/permissions</a>.</p>
             <p className="mt-3">Our use of Google user data complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy" className="text-blue-800 hover:underline" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
           </section>
@@ -53,7 +55,7 @@ export default function PrivacyPage() {
             <p className="mb-3">We use the information you provide to:</p>
             <ul className="space-y-1.5 list-disc list-inside text-gray-600">
               <li>Generate personalized email drafts tailored to your background and target physicians</li>
-              <li>Deliver those drafts to your Gmail Drafts folder</li>
+              <li>Deliver those drafts to your review page and send the ones you approve from your Gmail</li>
               <li>Send you order confirmation and delivery notifications</li>
               <li>Respond to your support requests</li>
             </ul>

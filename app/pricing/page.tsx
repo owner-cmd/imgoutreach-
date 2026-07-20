@@ -10,7 +10,7 @@ export default function PricingPage() {
           <p className="text-blue-800 font-semibold text-sm uppercase tracking-widest mb-3">Pricing</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-5">Simple, one-time pricing</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto">
-            Pay once, get your email drafts delivered in under 24 hours. No subscription, no hidden fees.
+            Pay once, get your email drafts delivered within 24 hours. No subscription, no hidden fees.
           </p>
         </div>
 
@@ -97,11 +97,11 @@ export default function PricingPage() {
               },
               {
                 q: "How long does it take?",
-                a: "Most orders are delivered within 12–24 hours after payment. You'll receive an email with a link to your draft sheet.",
+                a: "Most orders are delivered within 24 hours after payment. You'll receive an email with a link to review your drafts.",
               },
               {
                 q: "What do I do with the drafts?",
-                a: "Nothing — the drafts are delivered directly into your Gmail Drafts folder, one per physician, ready to send. Just open Gmail and hit send.",
+                a: "Open your review page, read through each email (edit anything you like), and click Send All. We send them from your own Gmail, spaced out so they look natural — your CV attached to every one.",
               },
               {
                 q: "I'm an IMG — does this work for me?",

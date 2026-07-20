@@ -7,9 +7,10 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export const SHARED_FEATURES = [
   "AI physician research (PubMed + web)",
   "Quality score filter",
-  "Specialty, state & ethnicity targeting",
-  "Drafts delivered to your Gmail",
-  "Delivered in under 24 hrs",
+  "Specialty, state & gender targeting",
+  "Ethnicity preference matching",
+  "Review, edit & send from your dashboard — via your Gmail",
+  "Delivered within 24 hours",
   "Email support",
 ];
 

@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       subject: "We received your order — drafts coming within 24 hours",
       html: `<p>Hi ${(pending.student_name || "").split(" ")[0] || "there"},</p>
 <p>We received your order for ${pending.physician_count || 25} personalized email drafts in <strong>${pending.specialty}</strong>.</p>
-<p>We'll have your drafts ready and delivered directly to your Gmail Drafts folder within 24 hours. You'll get another email when they're ready.</p>
+<p>We'll have your drafts ready within 24 hours. You'll get another email with a link to review them — then send them all from your own Gmail with one click.</p>
 <p>Questions? Contact us at <a href="mailto:contact@imgoutreach.com">contact@imgoutreach.com</a>.</p>
 <p>— IMG Outreach</p>`,
     }),

@@ -73,7 +73,7 @@ export default function HeroSection() {
           </p>
           <div className="space-y-3 mb-10">
             {[
-              "50 emails to US physicians, ready in under 24 hours",
+              "50 emails to US physicians, ready within 24 hours",
               "Each email references the doctor's published research",
               "Sent directly from your Gmail — looks completely personal",
             ].map(p => (
