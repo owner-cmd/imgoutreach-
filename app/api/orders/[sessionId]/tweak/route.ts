@@ -3,7 +3,7 @@ import { adminClient, authorizeOrder, isPaidTier } from "@/lib/orderAuth";
 
 // POST body: { token, doctor_npi, instruction }
 // Paid-only. Rewrites one draft's subject/body per the student's instruction via
-// Claude Haiku, saves it, and returns the new text so the review page updates live.
+// DeepSeek, saves it, and returns the new text so the review page updates live.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
   const { sessionId } = await params;
   const body = await req.json().catch(() => null);
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ses
     return NextResponse.json({ error: "AI editing is a paid feature. Upgrade to edit drafts with AI." }, { status: 403 });
   }
   if (!npi || !instruction) return NextResponse.json({ error: "Missing draft or instruction" }, { status: 400 });
-  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: "AI editing is temporarily unavailable" }, { status: 503 });
+  if (!process.env.DEEPSEEK_API_KEY) return NextResponse.json({ error: "AI editing is temporarily unavailable" }, { status: 503 });
 
   const sb = adminClient();
   const { data: draft } = await sb
@@ -40,22 +40,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ses
 
   let revised: { subject?: string; body?: string } = {};
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    // DeepSeek is OpenAI-compatible. json_object mode requires "json" in the prompt (it is).
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5",
+        model: "deepseek-chat",
         max_tokens: 1500,
+        response_format: { type: "json_object" },
         messages: [{ role: "user", content: prompt }],
       }),
     });
-    if (!res.ok) throw new Error(`Anthropic ${res.status}`);
+    if (!res.ok) throw new Error(`DeepSeek ${res.status}`);
     const data = await res.json();
-    const text = (data.content || []).filter((b: { type: string }) => b.type === "text").map((b: { text: string }) => b.text).join("");
+    const text: string = data.choices?.[0]?.message?.content || "";
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
     if (start !== -1 && end > start) revised = JSON.parse(text.substring(start, end + 1));
