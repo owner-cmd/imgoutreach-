@@ -70,7 +70,6 @@ export async function POST(req: NextRequest) {
     student_offers: m.student_offers || "",
     cv_url: m.cv_url || "",
     extra_doc_urls: m.extra_doc_urls || "",
-    preauth_id: m.preauth_id || "",
     physician_count: TRIAL_COUNT,
     tier: "trial",
     amount_paid: 0,
