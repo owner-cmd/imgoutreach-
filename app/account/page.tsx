@@ -103,7 +103,7 @@ export default function AccountPage() {
             {apps.map((a) => {
               const s = STATUS[a.status];
               const Icon = s.icon;
-              const canReview = a.draftsTotal > 0;
+              const isResearching = a.status === "researching";
               return (
                 <div key={a.sessionId} className="card p-6">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -115,7 +115,7 @@ export default function AccountPage() {
                         </span>
                       </div>
                       <p className="text-xs text-gray-500">
-                        {a.physicianCount} drafts · started {new Date(a.submittedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                        {a.physicianCount} physicians · started {new Date(a.submittedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                       </p>
                     </div>
                     <span className={`inline-flex items-center gap-1.5 text-xs font-medium border rounded-full px-3 py-1 ${s.cls}`}>
@@ -124,22 +124,21 @@ export default function AccountPage() {
                   </div>
 
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-xs text-gray-500">
-                      {a.draftsTotal > 0
-                        ? `${a.sentCount} of ${a.draftsTotal} sent`
-                        : "We'll email you when your drafts are ready"}
-                    </p>
-                    {canReview ? (
-                      <Link
-                        href={`/review/${a.sessionId}?t=${a.reviewToken}`}
-                        className="btn-primary inline-flex items-center gap-1.5 text-sm py-2"
-                      >
-                        Review &amp; send <ArrowRight size={15} />
-                      </Link>
+                    {isResearching ? (
+                      <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                        <Loader2 className="animate-spin text-blue-700" size={13} />
+                        We&apos;ll email you the moment your drafts are ready to review.
+                      </p>
                     ) : (
-                      <span className="text-xs text-gray-400 flex items-center gap-1.5">
-                        <Loader2 className="animate-spin" size={13} /> Preparing…
-                      </span>
+                      <>
+                        <p className="text-xs text-gray-500">{a.sentCount} of {a.draftsTotal} sent</p>
+                        <Link
+                          href={`/review/${a.sessionId}?t=${a.reviewToken}`}
+                          className="btn-primary inline-flex items-center gap-1.5 text-sm py-2"
+                        >
+                          Review &amp; send <ArrowRight size={15} />
+                        </Link>
+                      </>
                     )}
                   </div>
                 </div>

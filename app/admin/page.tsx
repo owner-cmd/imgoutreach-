@@ -42,6 +42,7 @@ const STATUS_COLORS: Record<string, string> = {
   pending_payment: "bg-gray-100 text-gray-600",
   processing: "bg-yellow-100 text-yellow-800",
   drafts_ready: "bg-blue-100 text-blue-800",
+  needs_attention: "bg-red-100 text-red-800",
   approved: "bg-purple-100 text-purple-800",
   sent: "bg-emerald-100 text-emerald-800",
 };
@@ -175,6 +176,7 @@ export default function AdminPage() {
           {orders.map(order => {
             const isExpanded = expanded === order.stripe_session_id;
             const orderDrafts = drafts[order.stripe_session_id] || [];
+            const draftsLoaded = drafts[order.stripe_session_id] !== undefined;
             const isApproved = approved.includes(order.stripe_session_id);
 
             return (
@@ -232,8 +234,8 @@ export default function AdminPage() {
                         <p className="text-sm text-yellow-800 font-medium">Workflow triggered — check back in ~30 minutes</p>
                       </div>
                     )}
-                    {/* Approve button */}
-                    {order.status === "drafts_ready" && !isApproved && (
+                    {/* Approve button — only when drafts actually exist */}
+                    {order.status === "drafts_ready" && orderDrafts.length > 0 && !isApproved && (
                       <div className="px-5 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
                         <p className="text-sm text-blue-800 font-medium">{orderDrafts.length} drafts ready for review</p>
                         <button
@@ -245,6 +247,27 @@ export default function AdminPage() {
                         </button>
                       </div>
                     )}
+                    {/* Incomplete run — partial or empty. Customer stays on
+                        "Researching physicians"; this is your signal to fix it. */}
+                    {(order.status === "needs_attention" ||
+                      (order.status === "drafts_ready" && draftsLoaded && orderDrafts.length === 0)) &&
+                      !isApproved && (
+                      <div className="px-5 py-3 bg-red-50 border-b border-red-100 flex items-center justify-between">
+                        <p className="text-sm text-red-800 font-medium">
+                          Needs attention — {order.drafts_completed} of {order.physician_count} drafts written.
+                          {order.drafts_completed === 0
+                            ? " Nothing found — check the filters and re-run."
+                            : " Partial — widen the filter and re-run to complete it."}
+                        </p>
+                        <button
+                          className="bg-red-700 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap"
+                          onClick={() => runWorkflow(order.stripe_session_id)}
+                          disabled={running === order.stripe_session_id}
+                        >
+                          {running === order.stripe_session_id ? "Starting…" : "Re-run Workflow"}
+                        </button>
+                      </div>
+                    )}
                     {isApproved && (
                       <div className="px-5 py-3 bg-emerald-50 border-b border-emerald-100 flex items-center gap-2">
                         <CheckCircle size={14} className="text-emerald-600" />
@@ -253,7 +276,7 @@ export default function AdminPage() {
                     )}
 
                     {orderDrafts.length === 0 ? (
-                      <p className="px-5 py-4 text-sm text-gray-400">Loading drafts…</p>
+                      <p className="px-5 py-4 text-sm text-gray-400">{draftsLoaded ? "No drafts yet." : "Loading drafts…"}</p>
                     ) : (
                       <div className="divide-y divide-gray-100">
                         {orderDrafts.map((draft, i) => (

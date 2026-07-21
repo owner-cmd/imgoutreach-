@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Send, CheckCircle, ArrowRight } from "lucide-react";
+import { Send, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const drafts = [
@@ -73,7 +73,7 @@ export default function HeroSection() {
           </p>
           <div className="space-y-3 mb-10">
             {[
-              "50 emails to US physicians, ready within 24 hours",
+              "200 emails to US physicians, ready within 24 hours",
               "Each email references the doctor's published research",
               "Sent directly from your Gmail — looks completely personal",
             ].map(p => (
@@ -91,9 +91,9 @@ export default function HeroSection() {
               See example emails
             </Link>
           </div>
-          <p className="text-sm text-gray-500 mt-4">
-            Free trial: your first <span className="font-semibold text-gray-700">25 drafts are free</span> — no card required.
-          </p>
+          <div className="mt-4 inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full px-4 py-1.5 text-sm font-semibold">
+            <Sparkles size={15} /> 25 free drafts to start — no card required
+          </div>
         </div>
 
         {/* Right: stacked cards */}
@@ -121,7 +121,7 @@ export default function HeroSection() {
                       <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">{draft.preview}</p>
                     </div>
                     <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-[11px] text-gray-400 font-medium">
-                      + 45 more drafts ready to send
+                      + 195 more drafts ready to send
                     </div>
                   </>
                 )}
@@ -153,13 +153,13 @@ export default function HeroSection() {
 
           {phase === "idle" && (
             <button onClick={handleSend} className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-bold px-8 py-3.5 rounded-xl text-sm transition-all shadow-md">
-              <Send size={15} /> Send all 50 drafts
+              <Send size={15} /> Send all 200 drafts
             </button>
           )}
           {phase === "sending" && (
             <div className="flex items-center gap-2.5 text-gray-400 text-sm py-3.5">
               <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
-              Sending 50 drafts to Gmail…
+              Sending 200 drafts to Gmail…
             </div>
           )}
           {phase === "replies" && (

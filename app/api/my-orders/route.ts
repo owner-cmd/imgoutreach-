@@ -42,10 +42,15 @@ export async function GET(req: NextRequest) {
 
   const applications = (orders || []).map((o) => {
     const c = counts[o.stripe_session_id] || { total: 0, sent: 0 };
+    // Customer only leaves "researching" once the FULL order is drafted. Partial
+    // or empty runs stay "researching" — the customer is never shown a partial or
+    // a failure; the admin handles those.
+    const requested = o.physician_count || 0;
+    const complete = requested > 0 && c.total >= requested;
     let status = "researching";
-    if (c.total > 0 && c.sent === 0) status = "ready";
-    else if (c.sent > 0 && c.sent < c.total) status = "sending";
-    else if (c.total > 0 && c.sent === c.total) status = "sent";
+    if (complete && c.sent === 0) status = "ready";
+    else if (complete && c.sent > 0 && c.sent < c.total) status = "sending";
+    else if (complete && c.sent >= c.total) status = "sent";
     return {
       sessionId: o.stripe_session_id,
       specialty: o.specialty,
