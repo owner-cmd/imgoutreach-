@@ -73,6 +73,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   free_trial_used boolean DEFAULT false,
   created_at timestamptz DEFAULT now()
 );
+-- Gmail send token captured during Google sign-in (merged one-consent flow).
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS gmail_refresh_token text;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS gmail_connected_at timestamptz;
 CREATE TABLE IF NOT EXISTS trial_fingerprints (
   fingerprint text PRIMARY KEY,
   user_id uuid,

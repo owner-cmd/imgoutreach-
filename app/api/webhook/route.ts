@@ -71,25 +71,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Copy Gmail refresh token from preauth table if available
+  // Attach the Gmail send token. Prefer the standalone preauth flow; fall back to
+  // the account-level token captured during Google sign-in (merged one-consent flow).
+  let gmailToken: string | null = null;
   if (pending.preauth_id) {
     const { data: preauth } = await supabase
       .from("gmail_preauth")
       .select("refresh_token")
       .eq("preauth_id", pending.preauth_id)
       .single();
-
     if (preauth?.refresh_token) {
-      await supabase
-        .from("student_submissions")
-        .update({
-          gmail_refresh_token: preauth.refresh_token,
-          gmail_connected_at: new Date().toISOString(),
-        })
-        .eq("stripe_session_id", sessionId);
-
+      gmailToken = preauth.refresh_token;
       await supabase.from("gmail_preauth").delete().eq("preauth_id", pending.preauth_id);
     }
+  }
+  if (!gmailToken && pending.student_email) {
+    const { data: acct } = await supabase
+      .from("accounts")
+      .select("gmail_refresh_token")
+      .eq("email", pending.student_email)
+      .single();
+    if (acct?.gmail_refresh_token) gmailToken = acct.gmail_refresh_token;
+  }
+  if (gmailToken) {
+    await supabase
+      .from("student_submissions")
+      .update({ gmail_refresh_token: gmailToken, gmail_connected_at: new Date().toISOString() })
+      .eq("stripe_session_id", sessionId);
   }
 
   // Clean up pending

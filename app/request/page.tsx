@@ -46,14 +46,11 @@ const ETHNICITIES = [
   { value: "hispanic", label: "Hispanic / Latino" },
 ];
 
+// Trimmed to the filters students actually value — the full chip wall was clutter.
 const COMING_SOON_FILTERS = [
   "Program directors only",
-  "Similar medical school",
-  "Doctor position (Professor, Chair…)",
-  "Same country of origin",
-  "Speaks your language",
-  "Accepts observers",
   "Actively publishing",
+  "Accepts observers",
 ];
 
 const STEPS = ["Find Physicians", "Connect Gmail", "Your Info", "Letter", "Documents", "Package"];
@@ -103,6 +100,8 @@ function RequestForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [stateSearch, setStateSearch] = useState("");
+  const [specialtySearch, setSpecialtySearch] = useState("");
+  const [subspecialtySearch, setSubspecialtySearch] = useState("");
   const [gmailConnected, setGmailConnected] = useState(false);
   const [preauthId, setPreauthId] = useState("");
   const [triedToAdvance, setTriedToAdvance] = useState(false);
@@ -193,12 +192,22 @@ function RequestForm() {
     setForm((prev) => ({ ...prev, [field]: value }));
 
   // Load the Google session (if any) so we know whether the free trial is offered.
+  // If the account already has a Gmail token (captured at sign-in), mark Gmail
+  // connected so the student isn't asked to connect it again on every visit.
   useEffect(() => {
     const sb = supabaseBrowser();
-    sb.auth.getSession().then(({ data }) => {
+    sb.auth.getSession().then(async ({ data }) => {
+      const accessToken = data.session?.access_token ?? null;
       setAuthEmail(data.session?.user?.email ?? null);
-      setAuthToken(data.session?.access_token ?? null);
+      setAuthToken(accessToken);
       setAuthReady(true);
+      if (accessToken) {
+        try {
+          const res = await fetch("/api/gmail/status", { headers: { Authorization: `Bearer ${accessToken}` } });
+          const json = await res.json();
+          if (json.connected) setGmailConnected(true);
+        } catch { /* fall back to the standalone Gmail step */ }
+      }
     });
   }, []);
 
@@ -471,11 +480,30 @@ function RequestForm() {
                 </div>
               </div>
 
-              {/* Specialty */}
+              {/* Specialty — searchable, with selected shown as removable chips */}
               <div>
                 <label className="label">Specialty <span className="text-red-500">*</span></label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[...SPECIALTIES].sort((a, b) => a.label.localeCompare(b.label)).map(s => (
+                {form.selectedSpecialties.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {form.selectedSpecialties.map(label => (
+                      <span key={label} className="flex items-center gap-1 bg-blue-100 text-blue-900 text-xs font-medium px-2 py-1 rounded-md">
+                        {label}
+                        <button type="button" onClick={() => toggleSpecialty(label)} className="hover:text-blue-700"><X size={12} /></button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <input
+                  className="input mb-2"
+                  placeholder="Search specialties…"
+                  value={specialtySearch}
+                  onChange={e => setSpecialtySearch(e.target.value)}
+                />
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                  {[...SPECIALTIES]
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .filter(s => s.label.toLowerCase().includes(specialtySearch.toLowerCase()))
+                    .map(s => (
                     <button key={s.label} type="button" onClick={() => toggleSpecialty(s.label)}
                       className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
                         form.selectedSpecialties.includes(s.label)
@@ -487,17 +515,36 @@ function RequestForm() {
                     </button>
                   ))}
                 </div>
-                {form.selectedSpecialties.length > 0 && (
-                  <p className="text-xs text-blue-800 mt-2 font-medium">{form.selectedSpecialties.join(", ")}</p>
-                )}
               </div>
 
-              {/* Subspecialty */}
+              {/* Subspecialty — searchable, with selected shown as removable chips */}
               {availableSubspecialties.length > 0 && (
                 <div>
                   <label className="label">Subspecialty <span className="text-gray-400">(optional — narrows to a specific focus)</span></label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableSubspecialties.map(sub => (
+                  {form.selectedSubspecialties.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {form.selectedSubspecialties.map(dbValue => {
+                        const sub = availableSubspecialties.find(s => s.dbValue === dbValue);
+                        if (!sub) return null;
+                        return (
+                          <span key={dbValue} className="flex items-center gap-1 bg-blue-100 text-blue-900 text-xs font-medium px-2 py-1 rounded-md">
+                            {sub.label}
+                            <button type="button" onClick={() => toggleSubspecialty(dbValue)} className="hover:text-blue-700"><X size={12} /></button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <input
+                    className="input mb-2"
+                    placeholder="Search subspecialties…"
+                    value={subspecialtySearch}
+                    onChange={e => setSubspecialtySearch(e.target.value)}
+                  />
+                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                    {availableSubspecialties
+                      .filter(sub => sub.label.toLowerCase().includes(subspecialtySearch.toLowerCase()))
+                      .map(sub => (
                       <button key={sub.dbValue} type="button" onClick={() => toggleSubspecialty(sub.dbValue)}
                         className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
                           form.selectedSubspecialties.includes(sub.dbValue)
@@ -564,29 +611,6 @@ function RequestForm() {
                 </div>
               </div>
 
-              {/* Program Directors — coming soon (non-functional) */}
-              {/* More filters — coming soon (non-functional) */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="label mb-0">More filters</label>
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2 py-0.5">
-                    Coming soon
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {COMING_SOON_FILTERS.map(f => (
-                    <span
-                      key={f}
-                      className="text-sm px-3 py-2 rounded-lg border border-dashed border-gray-300 bg-gray-50 text-gray-400 cursor-not-allowed select-none"
-                      aria-disabled="true"
-                      title="Coming soon"
-                    >
-                      {f}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
               {/* Ethnicity — a PREFERENCE, not a hard filter; paid plans only */}
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -595,24 +619,29 @@ function RequestForm() {
                     Paid plans
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mb-2 leading-relaxed">
-                  We <span className="font-medium">prioritize</span> physicians who match this preference, but it won&apos;t reduce your order. If there aren&apos;t enough high-quality matches, we top up your list with other strong physicians so you still get your full number of drafts. Low-quality physicians are skipped whether they match or not.
-                  {" "}Included with Standard, Pro, and Custom — free-trial orders always use &quot;Any&quot;.
-                </p>
-                <div className="space-y-2">
+                <select
+                  className="input text-sm"
+                  value={form.ethnicity}
+                  onChange={e => set("ethnicity", e.target.value)}
+                >
                   {ETHNICITIES.map(e => (
-                    <label key={e.value} className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${form.ethnicity === e.value ? "border-blue-700 bg-blue-50" : "border-gray-300 hover:border-gray-400"}`}>
-                      <input type="radio" name="ethnicity" value={e.value} checked={form.ethnicity === e.value} onChange={() => set("ethnicity", e.value)} className="accent-blue-800" />
-                      <span className="text-sm text-gray-800">{e.label}</span>
-                    </label>
+                    <option key={e.value} value={e.value}>{e.label}</option>
                   ))}
-                </div>
+                </select>
+                <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                  Matching physicians are <span className="font-medium">prioritized first</span> — it never reduces your order. Free-trial orders always use &quot;Any&quot;.
+                </p>
                 {form.ethnicity !== "any" && preferredMatch !== null && !countLoading && (
-                  <p className="text-xs mt-2 text-blue-800">
-                    ~{preferredMatch.toLocaleString()} of the physicians in your target match this preference — these are prioritized first, and the rest of your order is filled with other strong matches.
+                  <p className="text-xs mt-1.5 text-blue-800">
+                    ~{preferredMatch.toLocaleString()} of your target match this preference — prioritized first, the rest filled with other strong matches.
                   </p>
                 )}
               </div>
+
+              {/* Coming soon — one compact line, not a chip wall */}
+              <p className="text-xs text-gray-400">
+                <span className="text-amber-600 font-medium">Coming soon:</span> {COMING_SOON_FILTERS.join(" · ")}
+              </p>
             </div>
           )}
 

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   const sb = admin();
 
   // ── Protection 1: one free trial per account ──
-  const { data: acct } = await sb.from("accounts").select("free_trial_used").eq("user_id", user.id).single();
+  const { data: acct } = await sb.from("accounts").select("free_trial_used, gmail_refresh_token").eq("user_id", user.id).single();
   if (acct?.free_trial_used) {
     return NextResponse.json({ error: "You've already used your free trial. Upgrade to send more." }, { status: 403 });
   }
@@ -76,6 +76,11 @@ export async function POST(req: NextRequest) {
     amount_paid: 0,
     account_id: user.id,
     review_token: reviewToken,
+    // Gmail token captured at sign-in (merged one-consent flow) so the sender can
+    // deliver without a separate Gmail-connect step.
+    ...(acct?.gmail_refresh_token
+      ? { gmail_refresh_token: acct.gmail_refresh_token, gmail_connected_at: new Date().toISOString() }
+      : {}),
     status: "processing",
     submitted_at: new Date().toISOString(),
   };

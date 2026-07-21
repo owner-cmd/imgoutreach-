@@ -12,11 +12,23 @@ function SignInInner() {
 
   useEffect(() => {
     const sb = supabaseBrowser();
-    sb.auth.getSession().then(({ data }) => {
-      const user = data.session?.user;
+    sb.auth.getSession().then(async ({ data }) => {
+      const session = data.session;
+      const user = session?.user;
       if (user) {
         setEmail(user.email ?? null);
-        // Already signed in (or just came back from Google) → continue.
+        // Google returns the Gmail refresh token once, right after consent. Capture
+        // it now so we never have to ask the student to connect Gmail separately.
+        const refresh = session?.provider_refresh_token;
+        if (refresh && session?.access_token) {
+          try {
+            await fetch("/api/gmail/store", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+              body: JSON.stringify({ refresh_token: refresh }),
+            });
+          } catch { /* non-fatal — the standalone Gmail step is the fallback */ }
+        }
         window.location.replace(next);
       } else {
         setLoading(false);
@@ -28,7 +40,13 @@ function SignInInner() {
     const sb = supabaseBrowser();
     await sb.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/signin?next=${encodeURIComponent(next)}` },
+      options: {
+        redirectTo: `${window.location.origin}/signin?next=${encodeURIComponent(next)}`,
+        // Ask for Gmail send permission in the same consent, and force offline +
+        // consent so Google returns a refresh token we can use to send later.
+        scopes: "https://www.googleapis.com/auth/gmail.compose",
+        queryParams: { access_type: "offline", prompt: "consent" },
+      },
     });
   };
 
@@ -36,7 +54,7 @@ function SignInInner() {
     <div className="pt-32 pb-20 max-w-md mx-auto px-6 text-center">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Create your account</h1>
       <p className="text-gray-500 text-sm mb-8">
-        Sign in to claim your <span className="font-semibold text-blue-800">25 free drafts</span> — and so your details are saved for next time.
+        Sign in with Google to claim your <span className="font-semibold text-blue-800">25 free drafts</span>, save your details for next time, and let us send your approved emails from your Gmail — all in one step.
       </p>
 
       {loading ? (

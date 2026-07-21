@@ -42,6 +42,7 @@ Next.js + Supabase + Stripe + n8n. Live at imgoutreach.com.
 
 ## Gotchas
 - Google OAuth client is **948188183701-vhnmnht2m2l6qnht9kefak8u8mtsjke0** — refresh tokens only work with the client that minted them (`unauthorized_client` otherwise).
+- **Merged sign-in flow:** Google sign-in requests `gmail.compose` + offline/consent, captures `provider_refresh_token` → `accounts.gmail_refresh_token` (see `app/api/gmail/store`). For n8n to redeem it, **Supabase's Google provider must be configured with the same 948188 client + secret.** The standalone `/api/auth/gmail` step remains as fallback.
 - `gmail.compose` already allows **send**. `gmail.readonly` is RESTRICTED (needs CASA, ~$500–4k/yr) — that's why reply tracking is dormant.
 - n8n: `$('Node Name')` breaks silently on rename. HTTP nodes REPLACE item json — restore context from a named upstream node.
 - Anti-hallucination: if `source_urls` is empty the agent didn't really search → discard the email, mark `enrichment_status='unverified'`.

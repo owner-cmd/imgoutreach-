@@ -6,16 +6,15 @@ export default function PricingPage() {
   return (
     <div className="pt-28 pb-20 bg-slate-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <p className="text-blue-800 font-semibold text-sm uppercase tracking-widest mb-3">Pricing</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-5">Simple, one-time pricing</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Simple, one-time pricing</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto">
-            Pay once, get your email drafts delivered within 24 hours. No subscription, no hidden fees.
+            Start free with 25 drafts. Pay once for more — delivered within 24 hours, no subscription.
           </p>
-          <p className="text-gray-500 text-sm mt-3">Start free with 25 drafts — pay only when you want more.</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
           {/* Free Trial card */}
           <div className="card p-7 flex flex-col">
             <div className="mb-5">
@@ -121,31 +120,23 @@ export default function PricingPage() {
             {[
               {
                 q: "Are physicians guaranteed to reply?",
-                a: "No — and we'll never promise that. Whether a physician replies depends on their schedule, interest, and how attractive your profile is to them. What we guarantee is that every email is tailored, references their real research, and is written to give you the best possible shot. The rest is up to them.",
+                a: "No — we'll never promise that. What we guarantee is that every email is tailored, references their real research, and gives you the best possible shot. The rest is up to them.",
               },
               {
                 q: "How are the emails personalized?",
-                a: "Our AI searches PubMed for each physician's publications, scans their institutional page, and identifies their research focus. It then combines that with what you wrote about yourself — your cases, interests, and background — and writes an email using the best available AI models. The result references their specific work and connects it to your genuine story, not just your specialty.",
-              },
-              {
-                q: "How long does it take?",
-                a: "Most orders are delivered within 24 hours after payment. You'll receive an email with a link to review your drafts.",
+                a: "Our AI reads each physician's PubMed publications and institutional page, then combines their research focus with what you wrote about yourself — so each email references their specific work, not just your specialty.",
               },
               {
                 q: "What do I do with the drafts?",
-                a: "Open your review page, read through each email (edit anything you like), and click Send All. We send them from your own Gmail, spaced out so they look natural — your CV attached to every one.",
-              },
-              {
-                q: "I'm an IMG — does this work for me?",
-                a: "Yes — the majority of our customers are IMGs. The emails are written to reflect your background authentically, whether you're seeking observerships, research opportunities, or clinical exposure before residency.",
+                a: "Within 24 hours you get a link to your review page. Read each email, edit anything, and click Send All — we send them from your own Gmail, CV attached, spaced out so they look natural.",
               },
               {
                 q: "Will the emails make false claims about me?",
-                a: "No. Every claim in the email either comes directly from what you wrote about yourself, or is something you can make true before you meet the physician. If the email says you came across their paper — you can read that paper before your meeting, and by the time you meet them it will be true. We never fabricate clinical experiences or credentials. The AI only works with what you give it.",
+                a: "No. Every claim comes from what you wrote, or is something you can make true before you meet the physician (e.g. reading the paper an email mentions). We never fabricate experiences or credentials.",
               },
               {
-                q: "What documents should I upload?",
-                a: "CV is required. Optionally upload additional documents like vaccination records, HIPAA training certificates, or letters — these will be noted in your drafts as recommended attachments.",
+                q: "I'm an IMG — does this work for me?",
+                a: "Yes — most of our customers are IMGs. Emails reflect your background authentically, whether you're after observerships, research, or clinical exposure before residency. CV is required; add vaccination records, HIPAA certificates, or letters and we'll note them as recommended attachments.",
               },
             ].map(({ q, a }) => (
               <div key={q} className="border-b border-gray-200 pb-6">
