@@ -252,7 +252,7 @@ export default function AdminPage() {
                     {(order.status === "needs_attention" ||
                       (order.status === "drafts_ready" && draftsLoaded && orderDrafts.length === 0)) &&
                       !isApproved && (
-                      <div className="px-5 py-3 bg-red-50 border-b border-red-100 flex items-center justify-between">
+                      <div className="px-5 py-3 bg-red-50 border-b border-red-100 flex items-center justify-between gap-3 flex-wrap">
                         <p className="text-sm text-red-800 font-medium">
                           Needs attention — {order.drafts_completed} of {order.physician_count} drafts written.
                           {order.drafts_completed === 0

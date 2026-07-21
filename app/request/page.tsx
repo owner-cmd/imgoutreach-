@@ -5,6 +5,7 @@ import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, 
 import { PLANS } from "@/lib/stripe";
 import { SPECIALTIES, SUBSPECIALTIES, computeCount, genderMultiplier } from "@/lib/specialties";
 import { MED_SCHOOLS, OTHER_SCHOOL } from "@/lib/medSchools";
+import { US_CITIES } from "@/lib/usCities";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
 
 // Free trial is a pseudo-plan: no Stripe, 25 drafts, no ethnicity targeting.
@@ -46,13 +47,6 @@ const ETHNICITIES = [
   { value: "hispanic", label: "Hispanic / Latino" },
 ];
 
-// Trimmed to the filters students actually value — the full chip wall was clutter.
-const COMING_SOON_FILTERS = [
-  "Program directors only",
-  "Actively publishing",
-  "Accepts observers",
-];
-
 // Gmail access is granted during Google sign-in (the gate after step 0), so there
 // is no separate "Connect Gmail" step here.
 const STEPS = ["Find Physicians", "Your Info", "Letter", "Documents", "Package"];
@@ -66,12 +60,14 @@ interface FormData {
   ethnicity: string;
   gender: string;
   // Step 1
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   medicalSchool: string;
   year: string;
   purposes: string[];
-  city: string;
+  otherPurpose: string;
+  selectedCities: string[];
   // Step 2
   letterOfInterest: string;
   customPrompt: string;
@@ -104,6 +100,7 @@ function RequestForm() {
   const [stateSearch, setStateSearch] = useState("");
   const [specialtySearch, setSpecialtySearch] = useState("");
   const [subspecialtySearch, setSubspecialtySearch] = useState("");
+  const [citySearch, setCitySearch] = useState("");
   const [preauthId, setPreauthId] = useState("");
   const [triedToAdvance, setTriedToAdvance] = useState(false);
   const [schoolChoice, setSchoolChoice] = useState("");
@@ -113,6 +110,7 @@ function RequestForm() {
   const [authEmail, setAuthEmail] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [trialUsed, setTrialUsed] = useState(false);
   const cvRef = useRef<HTMLInputElement>(null);
   const extrasRef = useRef<HTMLInputElement>(null);
 
@@ -125,12 +123,14 @@ function RequestForm() {
     selectedStates: [],
     ethnicity: "any",
     gender: "any",
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     medicalSchool: "",
-    year: "MS3",
+    year: "",
     purposes: [],
-    city: "",
+    otherPurpose: "",
+    selectedCities: [],
     letterOfInterest: "",
     customPrompt: "",
     cvFile: null,
@@ -153,12 +153,14 @@ function RequestForm() {
           selectedStates: saved.selectedStates ?? prev.selectedStates,
           ethnicity: saved.ethnicity ?? prev.ethnicity,
           gender: saved.gender ?? prev.gender,
-          fullName: saved.fullName ?? prev.fullName,
+          firstName: saved.firstName ?? prev.firstName,
+          lastName: saved.lastName ?? prev.lastName,
           email: saved.email ?? prev.email,
           medicalSchool: saved.medicalSchool ?? prev.medicalSchool,
           year: saved.year ?? prev.year,
           purposes: saved.purposes ?? prev.purposes,
-          city: saved.city ?? prev.city,
+          otherPurpose: saved.otherPurpose ?? prev.otherPurpose,
+          selectedCities: saved.selectedCities ?? prev.selectedCities,
           letterOfInterest: saved.letterOfInterest ?? prev.letterOfInterest,
           customPrompt: saved.customPrompt ?? prev.customPrompt,
           plan: searchParams.get("plan") || saved.plan || prev.plan,
@@ -194,6 +196,18 @@ function RequestForm() {
       setAuthEmail(data.session?.user?.email ?? null);
       setAuthToken(accessToken);
       setAuthReady(true);
+      // If this account already used its free trial, hide the trial option and
+      // make paid the only choice.
+      if (accessToken) {
+        try {
+          const res = await fetch("/api/trial-status", { headers: { Authorization: `Bearer ${accessToken}` } });
+          const j = await res.json();
+          if (j.used) {
+            setTrialUsed(true);
+            setForm(prev => (prev.plan === "trial" ? { ...prev, plan: "standard" } : prev));
+          }
+        } catch { /* non-blocking */ }
+      }
     });
   }, []);
 
@@ -289,7 +303,10 @@ function RequestForm() {
 
   const canAdvance = (): boolean => {
     if (step === 0) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
-    if (step === 1) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
+    if (step === 1) return !!(
+      form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.medicalSchool.trim() &&
+      (!form.purposes.includes("other") || form.otherPurpose.trim())
+    );
     if (step === 2) return form.letterOfInterest.trim().length >= 50;
     if (step === 3) return !!form.cvFile;
     if (step === 4) return !!form.plan && form.termsAccepted;
@@ -339,7 +356,7 @@ function RequestForm() {
         .join(", ");
 
       const metadata = {
-            student_name: form.fullName,
+            student_name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
             student_email: form.email,
             medical_school: form.medicalSchool,
             year: form.year,
@@ -347,12 +364,14 @@ function RequestForm() {
             subspecialty: form.selectedSubspecialties.join(", ").slice(0, 490),
             state: form.stateMode === "all" ? "ALL" : form.selectedStates.join(","),
             state_mode: form.stateMode,
-            city: form.city || "",
+            city: form.selectedCities.join(", "),
             ethnicity: form.ethnicity || "any",
             gender: form.gender || "any",
             letter_of_interest: form.letterOfInterest.slice(0, 490),
             custom_prompt: form.customPrompt.slice(0, 490),
-            email_purpose: form.purposes.join(", "),
+            email_purpose: form.purposes
+              .map(v => (v === "other" && form.otherPurpose.trim() ? `other (${form.otherPurpose.trim()})` : v))
+              .join(", "),
             cv_url: cvUrl,
             extra_doc_urls: extraUrls.join(",").slice(0, 490),
             physician_count: String(selectedPlan.count),
@@ -473,7 +492,7 @@ function RequestForm() {
                     {form.selectedSpecialties.map(label => (
                       <span key={label} className="flex items-center gap-1 bg-blue-100 text-blue-900 text-xs font-medium px-2 py-1 rounded-md">
                         {label}
-                        <button type="button" onClick={() => toggleSpecialty(label)} className="hover:text-blue-700"><X size={12} /></button>
+                        <button type="button" aria-label={`Remove ${label}`} onClick={() => toggleSpecialty(label)} className="p-1.5 -m-1 hover:text-blue-700"><X size={14} /></button>
                       </span>
                     ))}
                   </div>
@@ -514,7 +533,7 @@ function RequestForm() {
                         return (
                           <span key={dbValue} className="flex items-center gap-1 bg-blue-100 text-blue-900 text-xs font-medium px-2 py-1 rounded-md">
                             {sub.label}
-                            <button type="button" onClick={() => toggleSubspecialty(dbValue)} className="hover:text-blue-700"><X size={12} /></button>
+                            <button type="button" aria-label={`Remove ${sub.label}`} onClick={() => toggleSubspecialty(dbValue)} className="p-1.5 -m-1 hover:text-blue-700"><X size={14} /></button>
                           </span>
                         );
                       })}
@@ -622,11 +641,6 @@ function RequestForm() {
                   </p>
                 )}
               </div>
-
-              {/* Coming soon — one compact line, not a chip wall */}
-              <p className="text-xs text-gray-400">
-                <span className="text-amber-600 font-medium">Coming soon:</span> {COMING_SOON_FILTERS.join(" · ")}
-              </p>
             </div>
           )}
 
@@ -637,14 +651,20 @@ function RequestForm() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Your information</h2>
                 <p className="text-gray-500 text-sm">Your name will appear in every email exactly as you enter it here.</p>
               </div>
-              <div>
-                <label className="label">Full name (as it should appear in emails) <span className="text-red-500">*</span></label>
-                <input className="input" placeholder="Your full name" value={form.fullName} onChange={e => set("fullName", e.target.value)} />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">First name <span className="text-red-500">*</span></label>
+                  <input className="input" placeholder="First name" value={form.firstName} onChange={e => set("firstName", e.target.value)} />
+                </div>
+                <div>
+                  <label className="label">Last name <span className="text-red-500">*</span></label>
+                  <input className="input" placeholder="Last name" value={form.lastName} onChange={e => set("lastName", e.target.value)} />
+                </div>
               </div>
               <div>
                 <label className="label">Email address <span className="text-red-500">*</span></label>
-                <input className="input" type="email" placeholder="you@medschool.edu" value={form.email} onChange={e => set("email", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">Your drafts will be sent here when ready.</p>
+                <input className="input" type="email" placeholder="you@example.com" value={form.email} onChange={e => set("email", e.target.value)} />
+                <p className="text-xs text-gray-400 mt-1">Personal or school email — either is fine. Your drafts are sent here when ready.</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -678,31 +698,57 @@ function RequestForm() {
                   )}
                 </div>
                 <div>
-                  <label className="label">Year</label>
+                  <label className="label">Stage of training</label>
                   <select className="input text-sm" value={form.year} onChange={e => set("year", e.target.value)}>
-                    <optgroup label="Medical School">
-                      <option value="MS1">MS1 (or equivalent)</option>
-                      <option value="MS2">MS2 (or equivalent)</option>
-                      <option value="MS3">MS3 (or equivalent)</option>
-                      <option value="MS4">MS4 (or equivalent)</option>
+                    <option value="" disabled>Select your stage…</option>
+                    <optgroup label="Medical school (any program length)">
+                      <option value="Pre-clinical">Pre-clinical (basic sciences / classroom)</option>
+                      <option value="Clinical">Clinical years (clerkships / rotations)</option>
+                      <option value="Final year">Final year (graduating soon)</option>
                     </optgroup>
-                    <optgroup label="Residency">
-                      <option value="PGY1">PGY-1 / Intern (or equivalent)</option>
-                      <option value="PGY2">PGY-2 (or equivalent)</option>
-                      <option value="PGY3">PGY-3 (or equivalent)</option>
-                      <option value="PGY4">PGY-4 (or equivalent)</option>
-                    </optgroup>
-                    <optgroup label="Other">
-                      <option value="Fellow">Fellow (or equivalent)</option>
-                      <option value="IMG">IMG — awaiting match</option>
-                      <option value="Graduate">Graduate — not yet matched</option>
+                    <optgroup label="After medical school">
+                      <option value="Graduated">Graduated — applying</option>
+                      <option value="Internship">Internship / House officer</option>
+                      <option value="Resident">Resident</option>
+                      <option value="Fellow">Fellow</option>
                     </optgroup>
                   </select>
+                  <p className="text-xs text-gray-400 mt-1">Pick where you are — this works whatever your program length.</p>
                 </div>
               </div>
               <div>
-                <label className="label">City you&apos;re targeting <span className="text-gray-400">(optional)</span></label>
-                <input className="input" placeholder="e.g. Chicago" value={form.city} onChange={e => set("city", e.target.value)} />
+                <label className="label">Cities you&apos;re targeting <span className="text-gray-400">(optional — a preference, add as many as you like)</span></label>
+                {form.selectedCities.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {form.selectedCities.map(c => (
+                      <span key={c} className="flex items-center gap-1 bg-blue-100 text-blue-900 text-xs font-medium px-2 py-1 rounded-md">
+                        {c}
+                        <button type="button" aria-label={`Remove ${c}`} onClick={() => set("selectedCities", form.selectedCities.filter(x => x !== c))} className="p-1.5 -m-1 hover:text-blue-700"><X size={14} /></button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <input
+                  className="input mb-2"
+                  placeholder="Search US cities…"
+                  value={citySearch}
+                  onChange={e => setCitySearch(e.target.value)}
+                />
+                {citySearch.trim() && (
+                  <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto">
+                    {US_CITIES
+                      .filter(c => c.toLowerCase().includes(citySearch.toLowerCase()) && !form.selectedCities.includes(c))
+                      .slice(0, 40)
+                      .map(c => (
+                        <button key={c} type="button"
+                          onClick={() => { set("selectedCities", [...form.selectedCities, c]); setCitySearch(""); }}
+                          className="text-left text-sm px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:border-gray-400 transition-all">
+                          {c}
+                        </button>
+                      ))}
+                  </div>
+                )}
+                <p className="text-xs text-gray-500 mt-1.5">Physicians in these cities are prioritized first — it never reduces your order.</p>
               </div>
               <div>
                 <label className="label">Purpose of outreach <span className="text-gray-400">(select all that apply)</span></label>
@@ -727,6 +773,17 @@ function RequestForm() {
                     );
                   })}
                 </div>
+                {form.purposes.includes("other") && (
+                  <div className="mt-3">
+                    <label className="label">What are you hoping for? <span className="text-red-500">*</span></label>
+                    <input
+                      className="input"
+                      placeholder="e.g. mentorship on applying to US residency, or advice on breaking into this specialty"
+                      value={form.otherPurpose}
+                      onChange={e => set("otherPurpose", e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -737,11 +794,26 @@ function RequestForm() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Letter of interest</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  The raw material our AI writes each email from. Rough notes are fine — we polish the wording. Include a case or moment that drew you to this field, a question you want to explore, and any research or projects you&apos;ve done.
+                  This is the raw material our AI writes each email from — write about <span className="font-medium text-gray-700">you</span>, and we handle personalizing it to each physician. Rough notes are fine.
                 </p>
-                <p className="text-gray-600 text-sm leading-relaxed mt-2">
-                  <span className="font-semibold">Be specific about your research interests</span> — &quot;predicting heart-failure readmissions&quot; beats &quot;cardiology&quot;. The more specific you are, the better we match physicians who work on exactly that, and the likelier they reply.
-                </p>
+                <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">What to include</p>
+                  <ul className="space-y-1.5 text-sm text-gray-600">
+                    <li>• <span className="font-medium text-gray-800">Your interests</span> — what genuinely draws you to this field</li>
+                    <li>• <span className="font-medium text-gray-800">A story or moment</span> — a case or experience that hooked you</li>
+                    <li>• <span className="font-medium text-gray-800">Your credentials</span> — achievements, research, projects, exam scores</li>
+                    <li>• <span className="font-medium text-gray-800">What you can offer</span> — skills, availability, how you can help</li>
+                  </ul>
+                  {form.purposes.includes("research") ? (
+                    <p className="text-sm text-blue-800 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 mt-3 leading-relaxed">
+                      <span className="font-semibold">Since you want research:</span> be specific and niche. &quot;Predicting heart-failure readmissions&quot; beats &quot;cardiology.&quot; The narrower your interest, the better we match physicians working on exactly that — and research-heavy specialties (neurology, oncology, cardiology…) reward that specificity most.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-3 py-2 mt-3 leading-relaxed">
+                      For observerships and electives, you don&apos;t need a niche research topic — genuine interest, a relevant experience, and your availability matter most.
+                    </p>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="label">Your letter of interest <span className="text-red-500">*</span></label>
@@ -755,7 +827,7 @@ function RequestForm() {
               <div>
                 <label className="label">Anything you&apos;d like mentioned <span className="text-gray-400">(optional)</span></label>
                 <textarea className="input min-h-[90px] resize-none"
-                  placeholder="e.g. I can help with research, data collection, or statistics. Available to start this summer."
+                  placeholder="e.g. I can help with research, data collection, or statistics. I have a green card / I don't need a visa. Available to start this summer."
                   value={form.customPrompt} onChange={e => set("customPrompt", e.target.value)} />
               </div>
             </div>
@@ -822,8 +894,8 @@ function RequestForm() {
                 <p className="text-gray-500 text-sm">More emails = higher chance of a reply.</p>
               </div>
               <div className="space-y-3">
-                {/* Free trial — signed-in users only; one per account */}
-                {authEmail && (
+                {/* Free trial — signed-in users who haven't used it yet; one per account */}
+                {authEmail && !trialUsed && (
                   <div
                     className={`border rounded-xl p-5 cursor-pointer transition-all ${form.plan === "trial" ? "border-emerald-600 bg-emerald-50" : "border-emerald-300 bg-emerald-50/40 hover:border-emerald-500"}`}
                     onClick={() => set("plan", "trial")}
@@ -888,10 +960,10 @@ function RequestForm() {
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-sm space-y-2">
                 <p className="font-semibold text-gray-800 mb-3">Order summary</p>
                 {[
-                  ["Name", form.fullName],
+                  ["Name", `${form.firstName} ${form.lastName}`.trim() || "—"],
                   ["Specialty", form.selectedSpecialties.join(", ") || "—"],
                   ["Purpose", form.purposes.map(v => PURPOSES.find(p => p.value === v)?.label).filter(Boolean).join(", ") || "—"],
-                  ["Location", [form.city, form.stateMode === "all" ? "All states" : form.selectedStates.join(", ")].filter(Boolean).join(", ") || "All states"],
+                  ["Location", [form.selectedCities.join(", "), form.stateMode === "all" ? "All states" : form.selectedStates.join(", ")].filter(Boolean).join(", ") || "All states"],
                   ["Package", `${selectedPlan?.count} drafts`],
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between text-gray-600">

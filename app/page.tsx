@@ -135,17 +135,18 @@ export default function Home() {
       </section>
 
       {/* Why it works */}
-      <section className="hidden md:block max-w-5xl mx-auto px-4 sm:px-6 py-24">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Why physicians actually reply</h2>
             <div className="space-y-4">
               {[
-                "Each email references the physician's specific published research by name",
-                "Emails are 3–4 sentences — short enough to read in 30 seconds",
-                "Written in a realistic medical student or IMG voice, not consultant prose",
-                "Physicians with no discoverable email are filtered out automatically",
-                "Quality-scored: low-match physicians are filtered out automatically",
+                "We match you first — our AI reads your CV and interests, then searches out and prioritizes physicians whose work actually fits you",
+                "Each email references that physician's specific published research by name",
+                "Short — 3–4 sentences, easy to read and reply to on a phone",
+                "Written in a genuine medical-student / IMG voice, focused on how you can help them",
+                "One clear, low-friction ask per email",
+                "Low-match or unreachable physicians are filtered out automatically",
               ].map((point) => (
                 <div key={point} className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-blue-800 flex-shrink-0 mt-0.5" />
