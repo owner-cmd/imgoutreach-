@@ -34,9 +34,18 @@ export default function Navbar() {
           )}
           <Link href="/request" className="btn-primary text-sm py-2">Get Started</Link>
         </div>
-        <button className="md:hidden text-gray-500" onClick={() => setOpen(!open)}>
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="md:hidden flex items-center gap-4">
+          {signedIn ? (
+            <Link href="/account" aria-label="My applications" className="text-gray-700 flex items-center gap-1.5 text-sm font-medium">
+              <LayoutGrid size={18} /> Applications
+            </Link>
+          ) : (
+            <Link href="/signin?next=%2Faccount" className="text-sm font-semibold text-blue-900">Sign in</Link>
+          )}
+          <button className="text-gray-500" onClick={() => setOpen(!open)} aria-label="Menu">
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
       {open && (
         <div className="md:hidden bg-white border-b border-gray-200 px-4 py-4 flex flex-col gap-4 text-sm">
