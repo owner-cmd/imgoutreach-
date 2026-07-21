@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle, Mail } from "lucide-react";
+import { Upload, X, FileText, ChevronRight, ChevronLeft, Loader2, Check, Users, AlertTriangle } from "lucide-react";
 import { PLANS } from "@/lib/stripe";
 import { SPECIALTIES, SUBSPECIALTIES, computeCount, genderMultiplier } from "@/lib/specialties";
 import { MED_SCHOOLS, OTHER_SCHOOL } from "@/lib/medSchools";
@@ -53,7 +53,9 @@ const COMING_SOON_FILTERS = [
   "Accepts observers",
 ];
 
-const STEPS = ["Find Physicians", "Connect Gmail", "Your Info", "Letter", "Documents", "Package"];
+// Gmail access is granted during Google sign-in (the gate after step 0), so there
+// is no separate "Connect Gmail" step here.
+const STEPS = ["Find Physicians", "Your Info", "Letter", "Documents", "Package"];
 
 interface FormData {
   // Step 0
@@ -102,7 +104,6 @@ function RequestForm() {
   const [stateSearch, setStateSearch] = useState("");
   const [specialtySearch, setSpecialtySearch] = useState("");
   const [subspecialtySearch, setSubspecialtySearch] = useState("");
-  const [gmailConnected, setGmailConnected] = useState(false);
   const [preauthId, setPreauthId] = useState("");
   const [triedToAdvance, setTriedToAdvance] = useState(false);
   const [schoolChoice, setSchoolChoice] = useState("");
@@ -172,20 +173,10 @@ function RequestForm() {
       }
     } catch { /* ignore */ }
 
-    // Initialize preauth ID and detect Gmail OAuth return
     const id = getPreauthId();
     setPreauthId(id);
-    const gmailParam = searchParams.get("gmail");
-    if (gmailParam === "connected") {
-      setGmailConnected(true);
-      setStep(2);
-      router.replace("/request");
-    } else if (gmailParam === "error") {
-      setError("Gmail connection failed — please try again.");
-      setStep(1);
-      router.replace("/request");
-    } else if (searchParams.get("resume") === "1") {
-      // Returned from sign-in — resume at the Gmail step instead of the filters.
+    if (searchParams.get("resume") === "1") {
+      // Returned from sign-in (which also granted Gmail) — resume at Your Info.
       setStep(1);
       router.replace("/request");
     }
@@ -196,8 +187,6 @@ function RequestForm() {
     setForm((prev) => ({ ...prev, [field]: value }));
 
   // Load the Google session (if any) so we know whether the free trial is offered.
-  // If the account already has a Gmail token (captured at sign-in), mark Gmail
-  // connected so the student isn't asked to connect it again on every visit.
   useEffect(() => {
     const sb = supabaseBrowser();
     sb.auth.getSession().then(async ({ data }) => {
@@ -205,13 +194,6 @@ function RequestForm() {
       setAuthEmail(data.session?.user?.email ?? null);
       setAuthToken(accessToken);
       setAuthReady(true);
-      if (accessToken) {
-        try {
-          const res = await fetch("/api/gmail/status", { headers: { Authorization: `Bearer ${accessToken}` } });
-          const json = await res.json();
-          if (json.connected) setGmailConnected(true);
-        } catch { /* fall back to the standalone Gmail step */ }
-      }
     });
   }, []);
 
@@ -307,11 +289,10 @@ function RequestForm() {
 
   const canAdvance = (): boolean => {
     if (step === 0) return form.selectedSpecialties.length > 0 && !countLoading && physicianCount > 0;
-    if (step === 1) return gmailConnected;
-    if (step === 2) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
-    if (step === 3) return form.letterOfInterest.trim().length >= 50;
-    if (step === 4) return !!form.cvFile;
-    if (step === 5) return !!form.plan && form.termsAccepted;
+    if (step === 1) return !!(form.fullName.trim() && form.email.trim() && form.medicalSchool.trim());
+    if (step === 2) return form.letterOfInterest.trim().length >= 50;
+    if (step === 3) return !!form.cvFile;
+    if (step === 4) return !!form.plan && form.termsAccepted;
     return true;
   };
 
@@ -649,8 +630,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 2: Your Info ── */}
-          {step === 2 && (
+          {/* ── STEP 1: Your Info ── */}
+          {step === 1 && (
             <div className="space-y-5">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Your information</h2>
@@ -750,8 +731,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 3: Letter ── */}
-          {step === 3 && (
+          {/* ── STEP 2: Letter ── */}
+          {step === 2 && (
             <div className="space-y-5">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Letter of interest</h2>
@@ -780,8 +761,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 4: Documents ── */}
-          {step === 4 && (
+          {/* ── STEP 3: Documents ── */}
+          {step === 3 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Upload your documents</h2>
@@ -833,8 +814,8 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 5: Package ── */}
-          {step === 5 && (
+          {/* ── STEP 4: Package ── */}
+          {step === 4 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Choose your package</h2>
@@ -940,66 +921,6 @@ function RequestForm() {
             </div>
           )}
 
-          {/* ── STEP 1: Connect Gmail ── */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">Connect your Gmail</h2>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  We need access so your personalized emails can be sent from your own Gmail — that&apos;s what makes them look genuinely personal to physicians. Without this we can&apos;t deliver your order.
-                </p>
-              </div>
-
-              <div className={`rounded-xl border-2 p-6 ${gmailConnected ? "border-emerald-400 bg-emerald-50" : "border-blue-300 bg-blue-50"}`}>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
-                    <Mail className={gmailConnected ? "text-emerald-600" : "text-blue-800"} size={20} />
-                  </div>
-                  <div className="flex-1">
-                    {gmailConnected ? (
-                      <>
-                        <p className="font-semibold text-emerald-800 mb-1">Gmail connected ✓</p>
-                        <p className="text-sm text-emerald-700">When your drafts are ready, you&apos;ll review them on your review page and send them from your Gmail with one click — CV attached.</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="font-semibold text-gray-900 mb-3">Connect your Gmail account</p>
-                        <div className="bg-white border border-gray-200 rounded-xl p-3 mb-4 space-y-1.5">
-                          {[
-                            "You review every email before anything is sent",
-                            "Your CV is attached to every email automatically",
-                            "We can only create and send emails — we can never read your inbox",
-                          ].map(p => (
-                            <div key={p} className="flex items-center gap-2 text-xs text-gray-600">
-                              <Check className="text-blue-700 shrink-0" size={13} />
-                              {p}
-                            </div>
-                          ))}
-                        </div>
-                        <button
-                          onClick={() => {
-                            window.location.href = `/api/auth/gmail?preauth_id=${preauthId}`;
-                          }}
-                          className="btn-primary w-full flex items-center justify-center gap-2 text-sm"
-                        >
-                          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                          </svg>
-                          Connect Gmail
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {error && <p className="text-red-700 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</p>}
-            </div>
-          )}
-
           {/* Navigation */}
           <div className={`flex mt-8 gap-3 ${step === 0 ? "justify-end" : "justify-between"}`}>
             {step > 0 && (
@@ -1016,7 +937,8 @@ function RequestForm() {
                   // Don't let anyone slip past while the session check is still in flight.
                   if (!authReady) return;
                   if (!authEmail) {
-                    // Come back to the Gmail step, not the filters, after signing in.
+                    // Sign-in (which also grants Gmail) is the gate after the filters.
+                    // The form autosaves, so they resume at Your Info with everything intact.
                     window.location.href = `/signin?next=${encodeURIComponent("/request?resume=1")}`;
                     return;
                   }
@@ -1034,11 +956,8 @@ function RequestForm() {
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : <>Pay & Get Drafts <ChevronRight size={16} /></>}
               </button>
             )}
-            {triedToAdvance && step === 5 && !form.termsAccepted && (
+            {triedToAdvance && step === 4 && !form.termsAccepted && (
               <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Please agree to the Terms of Service to continue.</p>
-            )}
-            {triedToAdvance && step === 1 && !gmailConnected && (
-              <p className="text-xs text-red-600 font-medium text-right w-full mt-1">Connect your Gmail above to continue.</p>
             )}
           </div>
         </div>
