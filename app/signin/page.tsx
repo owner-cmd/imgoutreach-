@@ -64,9 +64,9 @@ function SignInInner() {
 
   return (
     <div className="pt-32 pb-20 max-w-md mx-auto px-6 text-center">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Create your account</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign in</h1>
       <p className="text-gray-500 text-sm mb-8">
-        Sign in with Google to claim your <span className="font-semibold text-blue-800">25 free drafts</span>, save your details for next time, and let us send your approved emails from your Gmail — all in one step.
+        Sign in with Google to manage your applications, review your drafts, and send them from your Gmail — all in one place. New here? You&apos;ll start with <span className="font-semibold text-blue-800">25 free drafts</span>.
       </p>
 
       {loading ? (
@@ -89,7 +89,7 @@ function SignInInner() {
       )}
 
       <p className="text-xs text-gray-400 mt-6">
-        One free trial per account. Your info is saved so you can come back and order more anytime.
+        One free trial per account. Your details are saved so you can pick up where you left off anytime.
       </p>
     </div>
   );

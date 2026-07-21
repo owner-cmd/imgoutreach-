@@ -1,10 +1,20 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, LayoutGrid } from "lucide-react";
+import { supabaseBrowser } from "@/lib/supabaseBrowser";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    const sb = supabaseBrowser();
+    sb.auth.getSession().then(({ data }) => setSignedIn(!!data.session?.user));
+    const { data: sub } = sb.auth.onAuthStateChange((_e, session) => setSignedIn(!!session?.user));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   return (
     <nav className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
@@ -14,7 +24,14 @@ export default function Navbar() {
           <Link href="/pricing" className="hover:text-blue-900 transition-colors">Pricing</Link>
           <Link href="/contact" className="hover:text-blue-900 transition-colors">Contact</Link>
         </div>
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
+          {signedIn ? (
+            <Link href="/account" className="text-sm text-gray-600 hover:text-blue-900 transition-colors flex items-center gap-1.5">
+              <LayoutGrid size={15} /> My applications
+            </Link>
+          ) : (
+            <Link href="/signin?next=%2Faccount" className="text-sm text-gray-600 hover:text-blue-900 transition-colors">Sign in</Link>
+          )}
           <Link href="/request" className="btn-primary text-sm py-2">Get Started</Link>
         </div>
         <button className="md:hidden text-gray-500" onClick={() => setOpen(!open)}>
@@ -26,6 +43,13 @@ export default function Navbar() {
           <Link href="/examples" className="text-gray-600" onClick={() => setOpen(false)}>Examples</Link>
           <Link href="/pricing" className="text-gray-600" onClick={() => setOpen(false)}>Pricing</Link>
           <Link href="/contact" className="text-gray-600" onClick={() => setOpen(false)}>Contact</Link>
+          {signedIn ? (
+            <Link href="/account" className="text-gray-600 flex items-center gap-1.5" onClick={() => setOpen(false)}>
+              <LayoutGrid size={15} /> My applications
+            </Link>
+          ) : (
+            <Link href="/signin?next=%2Faccount" className="text-gray-600" onClick={() => setOpen(false)}>Sign in</Link>
+          )}
           <Link href="/request" className="btn-primary text-center" onClick={() => setOpen(false)}>Get Started</Link>
         </div>
       )}
