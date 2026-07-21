@@ -12,28 +12,40 @@ function SignInInner() {
 
   useEffect(() => {
     const sb = supabaseBrowser();
-    sb.auth.getSession().then(async ({ data }) => {
-      const session = data.session;
-      const user = session?.user;
-      if (user) {
-        setEmail(user.email ?? null);
-        // Google returns the Gmail refresh token once, right after consent. Capture
-        // it now so we never have to ask the student to connect Gmail separately.
-        const refresh = session?.provider_refresh_token;
-        if (refresh && session?.access_token) {
-          try {
-            await fetch("/api/gmail/store", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
-              body: JSON.stringify({ refresh_token: refresh }),
-            });
-          } catch { /* non-fatal — the standalone Gmail step is the fallback */ }
-        }
-        window.location.replace(next);
+    let done = false;
+
+    // Google returns the Gmail refresh token once, right after consent, in the
+    // session Supabase builds from the callback. onAuthStateChange delivers that
+    // full session (getSession can race the callback parse and miss the token).
+    const handle = async (session: import("@supabase/supabase-js").Session | null) => {
+      if (done || !session?.user) return;
+      done = true;
+      setEmail(session.user.email ?? null);
+      const refresh = session.provider_refresh_token;
+      if (refresh && session.access_token) {
+        try {
+          const res = await fetch("/api/gmail/store", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ refresh_token: refresh }),
+          });
+          if (!res.ok) console.error("gmail/store failed:", res.status, await res.text());
+          else console.log("gmail/store: token saved");
+        } catch (e) { console.error("gmail/store threw:", e); }
       } else {
-        setLoading(false);
+        // If this logs, Google didn't return a refresh token (check offline/consent + provider config).
+        console.warn("No provider_refresh_token on session — Gmail not captured.");
       }
+      window.location.replace(next);
+    };
+
+    const { data: sub } = sb.auth.onAuthStateChange((_event, session) => { handle(session); });
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) handle(data.session);
+      else setTimeout(() => { if (!done) setLoading(false); }, 1500);
     });
+
+    return () => sub.subscription.unsubscribe();
   }, [next]);
 
   const signIn = async () => {

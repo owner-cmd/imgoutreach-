@@ -184,6 +184,10 @@ function RequestForm() {
       setError("Gmail connection failed — please try again.");
       setStep(1);
       router.replace("/request");
+    } else if (searchParams.get("resume") === "1") {
+      // Returned from sign-in — resume at the Gmail step instead of the filters.
+      setStep(1);
+      router.replace("/request");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1012,7 +1016,8 @@ function RequestForm() {
                   // Don't let anyone slip past while the session check is still in flight.
                   if (!authReady) return;
                   if (!authEmail) {
-                    window.location.href = `/signin?next=${encodeURIComponent("/request")}`;
+                    // Come back to the Gmail step, not the filters, after signing in.
+                    window.location.href = `/signin?next=${encodeURIComponent("/request?resume=1")}`;
                     return;
                   }
                 }
