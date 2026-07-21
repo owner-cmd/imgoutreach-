@@ -88,7 +88,11 @@ export async function POST(req: NextRequest) {
   const { error: insErr } = await sb.from("student_submissions").upsert(order, { onConflict: "stripe_session_id" });
   if (insErr) {
     console.error("free-trial save error:", insErr);
-    return NextResponse.json({ error: "Could not start your trial. Please try again." }, { status: 500 });
+    // Surface the DB reason so schema issues are diagnosable from the browser.
+    return NextResponse.json(
+      { error: "Could not start your trial. Please try again.", detail: insErr.message || insErr.details || insErr.code },
+      { status: 500 },
+    );
   }
 
   // Mark the trial used + record the fingerprint (best-effort; order is already saved).

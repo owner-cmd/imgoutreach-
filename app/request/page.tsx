@@ -370,7 +370,7 @@ function RequestForm() {
           body: JSON.stringify({ metadata }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Could not start your free trial.");
+        if (!res.ok) throw new Error((data.error || "Could not start your free trial.") + (data.detail ? ` (${data.detail})` : ""));
         try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ }
         window.location.href = `/success?session_id=${encodeURIComponent(data.sessionId)}`;
         return;
