@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
+import { notifyAdminNewOrder } from "@/lib/notifyAdmin";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -102,6 +103,16 @@ export async function POST(req: NextRequest) {
 
   // Clean up pending
   await supabase.from("pending_submissions").delete().eq("stripe_session_id", sessionId);
+
+  // Notify the owner a new paid order came in (best-effort, non-blocking).
+  await notifyAdminNewOrder({
+    studentName: pending.student_name,
+    studentEmail: pending.student_email,
+    specialty: pending.specialty,
+    purpose: pending.purpose,
+    physicianCount: pending.physician_count,
+    tier: pending.tier,
+  });
 
   // Send confirmation email
   await fetch("https://api.resend.com/emails", {

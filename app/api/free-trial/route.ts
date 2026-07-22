@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "node:crypto";
+import { notifyAdminNewOrder } from "@/lib/notifyAdmin";
 
 const TRIAL_COUNT = 25;
 
@@ -105,6 +106,16 @@ export async function POST(req: NextRequest) {
   // Mark the trial used + record the fingerprint (best-effort; order is already saved).
   await sb.from("accounts").upsert({ user_id: user.id, email: user.email, free_trial_used: true }, { onConflict: "user_id" });
   await sb.from("trial_fingerprints").insert({ fingerprint: fp, user_id: user.id });
+
+  // Notify the owner a new free-trial application came in (best-effort, non-blocking).
+  await notifyAdminNewOrder({
+    studentName: order.student_name,
+    studentEmail: order.student_email,
+    specialty: order.specialty,
+    purpose: order.purpose,
+    physicianCount: TRIAL_COUNT,
+    tier: "trial",
+  });
 
   // Trigger the n8n workflow in the same Stripe-event shape it already expects.
   try {
