@@ -180,7 +180,7 @@ export default function Home() {
       <section className="bg-blue-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to reach more physicians?</h2>
-          <p className="text-blue-100 mb-8 text-lg">Your first 25 drafts are free — no card required. Paid plans from $279 for 200 drafts, delivered within 24 hours.</p>
+          <p className="text-blue-100 mb-8 text-lg">Your first 25 drafts are free — no card required. Paid plans from $279, up to 500 personalized emails, delivered within 24 hours.</p>
           <Link href="/request" className="inline-flex items-center gap-2 bg-white text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-blue-50 transition-all text-base">
             Start your request <ArrowRight size={18} />
           </Link>
