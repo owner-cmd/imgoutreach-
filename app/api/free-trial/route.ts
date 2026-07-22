@@ -34,9 +34,17 @@ export async function POST(req: NextRequest) {
   const m: Record<string, string> = metadata || {};
   const sb = admin();
 
-  // ── Protection 1: one free trial per account ──
   const { data: acct } = await sb.from("accounts").select("free_trial_used, gmail_refresh_token").eq("user_id", user.id).single();
-  if (acct?.free_trial_used) {
+
+  // ── Protection 1: one free trial per account ──
+  // Source of truth is whether a trial order already exists for this account —
+  // the flag on `accounts` is only a secondary signal (it can fail to persist).
+  const { count: trialCount } = await sb
+    .from("student_submissions")
+    .select("stripe_session_id", { count: "exact", head: true })
+    .eq("tier", "trial")
+    .or(`account_id.eq.${user.id}${user.email ? `,student_email.eq.${user.email}` : ""}`);
+  if ((trialCount ?? 0) > 0 || acct?.free_trial_used) {
     return NextResponse.json({ error: "You've already used your free trial. Upgrade to send more." }, { status: 403 });
   }
 

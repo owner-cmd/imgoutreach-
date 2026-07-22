@@ -14,6 +14,14 @@ export async function GET(req: NextRequest) {
   if (uErr || !u.user) return NextResponse.json({ used: false });
 
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+  // Source of truth: does a trial order already exist for this account? (The
+  // free_trial_used flag is only a secondary signal — it can fail to persist.)
+  const { count: trialCount } = await sb
+    .from("student_submissions")
+    .select("stripe_session_id", { count: "exact", head: true })
+    .eq("tier", "trial")
+    .or(`account_id.eq.${u.user.id}${u.user.email ? `,student_email.eq.${u.user.email}` : ""}`);
   const { data: acct } = await sb.from("accounts").select("free_trial_used").eq("user_id", u.user.id).single();
-  return NextResponse.json({ used: !!acct?.free_trial_used });
+  return NextResponse.json({ used: (trialCount ?? 0) > 0 || !!acct?.free_trial_used });
 }
