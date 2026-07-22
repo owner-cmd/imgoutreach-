@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Send, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Send, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const drafts = [
@@ -64,23 +64,20 @@ export default function HeroSection() {
 
         {/* Left: headline */}
         <div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-5">
-            You want US research,<br />
-            <span className="text-blue-900">US electives?</span>
+          <p className="text-sm font-semibold text-blue-800 mb-3">For IMGs &amp; medical students</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-5 text-balance">
+            Your US elective or research position — <span className="text-blue-900">500 personalized emails, one click.</span>
           </h1>
           <p className="text-gray-500 text-lg leading-relaxed mb-8">
-            There are over 1 million physicians in the US — and any one of them could say yes to you. We help you reach them with the press of a button, each with an email that reads like you wrote it yourself to a doctor you know.
+            Pick your physicians. Our AI researches each one and writes a tailored email. You review, then send all 500 from your own Gmail in a single click.
           </p>
-          <div className="space-y-3 mb-10">
+          <div className="flex flex-wrap gap-2 mb-10">
             {[
-              "200 emails to US physicians, ready within 24 hours",
-              "Each email references the doctor's published research",
-              "Sent directly from your Gmail — looks completely personal",
+              "Up to 500 physicians",
+              "Ready within 24 hours",
+              "Sent from your Gmail",
             ].map(p => (
-              <div key={p} className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-blue-800 shrink-0" />
-                <p className="text-sm text-gray-700">{p}</p>
-              </div>
+              <span key={p} className="text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full px-3.5 py-1.5">{p}</span>
             ))}
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -121,7 +118,7 @@ export default function HeroSection() {
                       <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">{draft.preview}</p>
                     </div>
                     <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-[11px] text-gray-400 font-medium">
-                      + 195 more drafts ready to send
+                      + 495 more drafts ready to send
                     </div>
                   </>
                 )}
@@ -153,13 +150,13 @@ export default function HeroSection() {
 
           {phase === "idle" && (
             <button onClick={handleSend} className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-bold px-8 py-3.5 rounded-xl text-sm transition-all shadow-md">
-              <Send size={15} /> Send all 200 drafts
+              <Send size={15} /> Send all 500 drafts
             </button>
           )}
           {phase === "sending" && (
             <div className="flex items-center gap-2.5 text-gray-400 text-sm py-3.5">
               <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
-              Sending 200 drafts to Gmail…
+              Sending 500 drafts to Gmail…
             </div>
           )}
           {phase === "replies" && (
