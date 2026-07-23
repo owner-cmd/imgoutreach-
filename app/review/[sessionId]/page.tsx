@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Loader2, Send, Sparkles, AlertTriangle, Check, ShieldCheck } from "lucide-react";
+import { Loader2, Send, Sparkles, Check, ShieldCheck } from "lucide-react";
 
 type Draft = {
   doctor_npi: string;
@@ -149,9 +149,9 @@ function ReviewInner() {
                     {d.send_status === "failed" && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Failed</span>}
                     {d.email_verified
                       ? <span className="text-[11px] inline-flex items-center gap-1 text-emerald-700"><ShieldCheck size={12} /> verified</span>
-                      : d.doctor_email
-                      ? <span className="text-[11px] inline-flex items-center gap-1 text-amber-700"><AlertTriangle size={12} /> unverified{d.email_inferred ? " (best-guess address)" : ""}</span>
-                      : <span className="text-[11px] text-red-600">no email found</span>}
+                      : !d.doctor_email
+                      ? <span className="text-[11px] text-red-600">no email found</span>
+                      : null}
                   </div>
                   <p className="text-xs text-gray-400">{d.doctor_email || "—"}</p>
                 </div>
