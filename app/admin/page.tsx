@@ -235,18 +235,43 @@ export default function AdminPage() {
                         <p className="text-sm text-yellow-800 font-medium">Workflow triggered — check back in ~30 minutes</p>
                       </div>
                     )}
-                    {/* Approve button — only when drafts actually exist */}
+                    {/* Drafts ready. If we haven't hit the requested count yet,
+                        prompt to run again for more; otherwise offer Approve. */}
                     {order.status === "drafts_ready" && orderDrafts.length > 0 && !isApproved && (
-                      <div className="px-5 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
-                        <p className="text-sm text-blue-800 font-medium">{orderDrafts.length} drafts ready for review</p>
-                        <button
-                          className="btn-primary text-sm px-4 py-2"
-                          onClick={() => approve(order.stripe_session_id)}
-                          disabled={approving === order.stripe_session_id}
-                        >
-                          {approving === order.stripe_session_id ? "Releasing…" : "Approve & Release for Review"}
-                        </button>
-                      </div>
+                      order.drafts_completed < order.physician_count ? (
+                        <div className="px-5 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between gap-3 flex-wrap">
+                          <p className="text-sm text-blue-800 font-medium">
+                            Only {order.drafts_completed} of {order.physician_count} found so far — run again to look for more.
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="bg-yellow-700 hover:bg-yellow-600 text-white text-sm px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap"
+                              onClick={() => runWorkflow(order.stripe_session_id)}
+                              disabled={running === order.stripe_session_id}
+                            >
+                              {running === order.stripe_session_id ? "Running…" : "Run workflow again"}
+                            </button>
+                            <button
+                              className="btn-primary text-sm px-4 py-2 whitespace-nowrap"
+                              onClick={() => approve(order.stripe_session_id)}
+                              disabled={approving === order.stripe_session_id}
+                            >
+                              {approving === order.stripe_session_id ? "Releasing…" : `Approve ${orderDrafts.length} anyway`}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-5 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                          <p className="text-sm text-blue-800 font-medium">{orderDrafts.length} drafts ready for review</p>
+                          <button
+                            className="btn-primary text-sm px-4 py-2"
+                            onClick={() => approve(order.stripe_session_id)}
+                            disabled={approving === order.stripe_session_id}
+                          >
+                            {approving === order.stripe_session_id ? "Releasing…" : "Approve & Release for Review"}
+                          </button>
+                        </div>
+                      )
                     )}
                     {/* Incomplete run — partial or empty. Customer stays on
                         "Researching physicians"; this is your signal to fix it. */}

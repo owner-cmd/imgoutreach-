@@ -25,6 +25,14 @@ export async function POST(req: NextRequest) {
 
   if (error || !order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
+  // Reset to "processing" so the workflow's resume guard doesn't treat a
+  // partial "drafts_ready" order as finished and stop immediately. The workflow
+  // resumes from drafts_completed (dedup + cache prevent re-drafting).
+  await supabase
+    .from("student_submissions")
+    .update({ status: "processing" })
+    .eq("stripe_session_id", stripe_session_id);
+
   // Send to n8n in the same format the Stripe webhook would send
   const n8nRes = await fetch("https://n8n.imgoutreach.com/webhook/physician-outreach-payment", {
     method: "POST",
