@@ -9,6 +9,7 @@ export type OrderRow = {
   tier: string;
   physician_count: number;
   review_token: string | null;
+  status: string | null;
 };
 
 /**
@@ -21,7 +22,7 @@ export async function authorizeOrder(sessionId: string, token: string | null): P
   const sb = adminClient();
   const { data } = await sb
     .from("student_submissions")
-    .select("stripe_session_id, student_name, tier, physician_count, review_token")
+    .select("stripe_session_id, student_name, tier, physician_count, review_token, status")
     .eq("stripe_session_id", sessionId)
     .single();
   if (!data || !data.review_token || data.review_token !== token) return null;

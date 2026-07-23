@@ -28,6 +28,7 @@ function ReviewInner() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [order, setOrder] = useState<OrderInfo | null>(null);
+  const [ready, setReady] = useState(true);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [included, setIncluded] = useState<Record<string, boolean>>({});
   const [tweaking, setTweaking] = useState<string | null>(null);
@@ -40,6 +41,7 @@ function ReviewInner() {
       if (!res.ok) throw new Error("This link is invalid or expired.");
       const data = await res.json();
       setOrder(data.order);
+      setReady(data.ready !== false);
       setDrafts(data.drafts);
       // Default: include every draft that has an email and hasn't been sent.
       const inc: Record<string, boolean> = {};
@@ -104,6 +106,16 @@ function ReviewInner() {
 
   if (loading) return <div className="pt-32 text-center"><Loader2 className="animate-spin mx-auto text-blue-700" /></div>;
   if (error) return <div className="pt-32 text-center text-red-600">{error}</div>;
+  if (!ready) return (
+    <div className="pt-32 pb-24 max-w-lg mx-auto px-6 text-center">
+      <Loader2 className="animate-spin mx-auto text-blue-700 mb-4" />
+      <h1 className="text-xl font-bold text-gray-900 mb-2">Your drafts are being prepared</h1>
+      <p className="text-gray-500 text-sm">
+        {order?.student_name ? `${order.student_name}, we` : "We"}&rsquo;re putting the finishing touches on your
+        personalized emails. You&rsquo;ll get an email the moment they&rsquo;re ready to review — usually within 24 hours.
+      </p>
+    </div>
+  );
 
   const selectedCount = drafts.filter(d => included[d.doctor_npi] && d.doctor_email && d.send_status !== "sent").length;
   const sentCount = drafts.filter(d => d.send_status === "sent").length;

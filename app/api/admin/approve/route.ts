@@ -17,23 +17,45 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Mark as approved in Supabase
+  // Fetch the order so we can notify the student with their review link.
+  const { data: order } = await supabase
+    .from("student_submissions")
+    .select("student_email, student_name, review_token")
+    .eq("stripe_session_id", stripe_session_id)
+    .single();
+
+  // Model B: the admin has reviewed the drafts and is releasing them to the
+  // student, who then reviews, edits, and sends from their own review page.
+  // (No Gmail push here — sending happens later via queue-send → Send Queue.)
   const { error } = await supabase
     .from("student_submissions")
-    .update({ status: "approved" })
+    .update({ status: "ready_for_review" })
     .eq("stripe_session_id", stripe_session_id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Trigger n8n send-approved-drafts workflow
-  const n8nRes = await fetch("https://n8n.imgoutreach.com/webhook/send-approved-drafts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ stripe_session_id }),
-  });
-
-  if (!n8nRes.ok) {
-    return NextResponse.json({ error: "Approved in DB but failed to trigger n8n" }, { status: 500 });
+  // Notify the student their drafts are ready to review (best-effort — a failed
+  // notification must not fail the approval).
+  if (order?.student_email && order?.review_token && process.env.RESEND_API_KEY) {
+    const reviewUrl = `https://imgoutreach.com/review/${stripe_session_id}?t=${order.review_token}`;
+    const firstName = (order.student_name || "").split(" ")[0] || "there";
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "IMG Outreach <noreply@sales.imgoutreach.com>",
+        to: order.student_email,
+        subject: "Your physician outreach drafts are ready to review",
+        html: `<p>Hi ${firstName},</p>
+<p>Your personalized physician outreach emails are ready. Review them, edit anything you like, then send them from your own Gmail — all from one page:</p>
+<p><a href="${reviewUrl}" style="display:inline-block;background:#1e3a8a;color:#fff;text-decoration:none;font-weight:600;padding:10px 18px;border-radius:8px;">Review &amp; send your drafts →</a></p>
+<p>Questions? Reply to this email or contact <a href="mailto:contact@imgoutreach.com">contact@imgoutreach.com</a>.</p>
+<p>— IMG Outreach</p>`,
+      }),
+    }).catch(() => null);
   }
 
   return NextResponse.json({ success: true });

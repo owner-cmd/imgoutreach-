@@ -8,6 +8,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ sess
   const order = await authorizeOrder(sessionId, token);
   if (!order) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  const orderInfo = {
+    student_name: order.student_name,
+    tier: order.tier,
+    isPaid: order.tier !== "trial",
+    physician_count: order.physician_count,
+  };
+
+  // Drafts are only shown to the student after the admin reviews and releases
+  // the order (status "ready_for_review"). Before that, the page shows a
+  // "being prepared" state so nothing is visible or sendable prematurely.
+  const released = order.status === "ready_for_review" || order.status === "sent";
+  if (!released) {
+    return NextResponse.json({ order: orderInfo, drafts: [], ready: false });
+  }
+
   const sb = adminClient();
   const { data: drafts, error } = await sb
     .from("email_drafts")
@@ -19,13 +34,5 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ sess
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({
-    order: {
-      student_name: order.student_name,
-      tier: order.tier,
-      isPaid: order.tier !== "trial",
-      physician_count: order.physician_count,
-    },
-    drafts: drafts || [],
-  });
+  return NextResponse.json({ order: orderInfo, drafts: drafts || [], ready: true });
 }

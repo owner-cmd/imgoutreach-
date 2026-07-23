@@ -14,6 +14,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ses
 
   const order = await authorizeOrder(sessionId, token);
   if (!order) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  // Guard: nothing can be sent until the admin has reviewed and released the order.
+  if (order.status !== "ready_for_review" && order.status !== "sent") {
+    return NextResponse.json({ error: "These drafts aren't available to send yet." }, { status: 403 });
+  }
   if (selected.length === 0) return NextResponse.json({ error: "No drafts selected" }, { status: 400 });
 
   const sb = adminClient();

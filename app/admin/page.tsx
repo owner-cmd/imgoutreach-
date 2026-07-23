@@ -44,6 +44,7 @@ const STATUS_COLORS: Record<string, string> = {
   drafts_ready: "bg-blue-100 text-blue-800",
   needs_attention: "bg-red-100 text-red-800",
   approved: "bg-purple-100 text-purple-800",
+  ready_for_review: "bg-purple-100 text-purple-800",
   sent: "bg-emerald-100 text-emerald-800",
 };
 
@@ -125,9 +126,9 @@ export default function AdminPage() {
     setApproving(null);
     if (res.ok) {
       setApproved(prev => [...prev, sessionId]);
-      setOrders(prev => prev.map(o => o.stripe_session_id === sessionId ? { ...o, status: "approved" } : o));
+      setOrders(prev => prev.map(o => o.stripe_session_id === sessionId ? { ...o, status: "ready_for_review" } : o));
     } else {
-      alert("Approval failed — check n8n");
+      alert("Approval failed — try again");
     }
   }
 
@@ -243,7 +244,7 @@ export default function AdminPage() {
                           onClick={() => approve(order.stripe_session_id)}
                           disabled={approving === order.stripe_session_id}
                         >
-                          {approving === order.stripe_session_id ? "Sending…" : "Approve & Send to Student"}
+                          {approving === order.stripe_session_id ? "Releasing…" : "Approve & Release for Review"}
                         </button>
                       </div>
                     )}
@@ -271,7 +272,7 @@ export default function AdminPage() {
                     {isApproved && (
                       <div className="px-5 py-3 bg-emerald-50 border-b border-emerald-100 flex items-center gap-2">
                         <CheckCircle size={14} className="text-emerald-600" />
-                        <p className="text-sm text-emerald-800 font-medium">Approved — drafts sent to student</p>
+                        <p className="text-sm text-emerald-800 font-medium">Released — student can now review &amp; send</p>
                       </div>
                     )}
 
