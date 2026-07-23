@@ -119,6 +119,12 @@ function ReviewInner() {
   const selectedCount = drafts.filter(d => included[d.doctor_npi] && d.doctor_email && d.send_status !== "sent").length;
   const sentCount = drafts.filter(d => d.send_status === "sent").length;
   const queuedCount = drafts.filter(d => d.send_status === "queued").length;
+  const eligible = drafts.filter(d => d.doctor_email && d.send_status !== "sent");
+  const allSelected = eligible.length > 0 && eligible.every(d => included[d.doctor_npi]);
+  const toggleAll = () => {
+    const next = !allSelected;
+    setIncluded(s => { const c = { ...s }; for (const d of eligible) c[d.doctor_npi] = next; return c; });
+  };
 
   return (
     <div className="pt-28 pb-24 max-w-3xl mx-auto px-4 sm:px-6">
@@ -127,6 +133,13 @@ function ReviewInner() {
         {order?.student_name ? `${order.student_name}, ` : ""}review each email, edit if you like, then send them all from your Gmail with one click.
         {sentCount > 0 && ` · ${sentCount} sent`}{queuedCount > 0 && ` · ${queuedCount} queued`}
       </p>
+
+      {eligible.length > 0 && (
+        <label className="flex items-center gap-2 text-sm text-gray-700 mb-4 cursor-pointer select-none">
+          <input type="checkbox" className="accent-blue-800" checked={allSelected} onChange={toggleAll} />
+          Select all ({eligible.length})
+        </label>
+      )}
 
       <div className="space-y-4">
         {drafts.map(d => {
