@@ -40,5 +40,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ses
     if (!error) queued++;
   }
 
+  // Kick the n8n Send Queue workflow immediately so queued drafts start
+  // sending right away (the workflow throttles internally between sends).
+  // Best-effort — a failed trigger must not fail the queue operation.
+  if (queued > 0) {
+    await fetch("https://n8n.imgoutreach.com/webhook/send-queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId }),
+    }).catch(() => null);
+  }
+
   return NextResponse.json({ queued });
 }
