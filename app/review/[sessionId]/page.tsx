@@ -7,7 +7,6 @@ type Draft = {
   doctor_npi: string;
   doctor_name: string;
   doctor_email: string;
-  specialty: string;
   subject: string;
   body: string;
   email_verified: boolean;
@@ -154,7 +153,7 @@ function ReviewInner() {
                       ? <span className="text-[11px] inline-flex items-center gap-1 text-amber-700"><AlertTriangle size={12} /> unverified{d.email_inferred ? " (best-guess address)" : ""}</span>
                       : <span className="text-[11px] text-red-600">no email found</span>}
                   </div>
-                  <p className="text-xs text-gray-400">{d.doctor_email || "—"} · {d.specialty}</p>
+                  <p className="text-xs text-gray-400">{d.doctor_email || "—"}</p>
                 </div>
               </div>
 

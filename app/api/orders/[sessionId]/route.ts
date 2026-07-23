@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ sess
   const { data: drafts, error } = await sb
     .from("email_drafts")
     .select(
-      "doctor_npi, doctor_name, doctor_email, specialty, subject, body, email_verified, email_inferred, quality_score, send_status, sent_at",
+      "doctor_npi, doctor_name, doctor_email, subject, body, email_verified, email_inferred, quality_score, send_status, sent_at",
     )
     .eq("stripe_session_id", sessionId)
     .order("quality_score", { ascending: false });
