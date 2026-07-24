@@ -56,7 +56,9 @@ function SignInInner() {
         redirectTo: `${window.location.origin}/signin?next=${encodeURIComponent(next)}`,
         // Ask for Gmail send permission in the same consent, and force offline +
         // consent so Google returns a refresh token we can use to send later.
-        scopes: "https://www.googleapis.com/auth/gmail.compose",
+        // gmail.send is the minimal SENSITIVE scope (no CASA assessment); it covers
+        // the messages.send call the Send Queue makes.
+        scopes: "https://www.googleapis.com/auth/gmail.send",
         queryParams: { access_type: "offline", prompt: "consent" },
       },
     });
