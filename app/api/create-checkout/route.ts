@@ -64,6 +64,8 @@ export async function POST(req: NextRequest) {
         tier: metadata.tier || plan.id,
         cv_url: (metadata.cv_url || "").slice(0, 490),
         extra_doc_urls: (metadata.extra_doc_urls || "").slice(0, 490),
+        cv_filename: (metadata.cv_filename || "").slice(0, 200),
+        extra_doc_names: (metadata.extra_doc_names || "").slice(0, 490),
         preauth_id: (metadata.preauth_id || "").slice(0, 490),
       },
     });
@@ -93,6 +95,8 @@ export async function POST(req: NextRequest) {
       student_offers: metadata.student_offers || "",
       cv_url: metadata.cv_url,
       extra_doc_urls: metadata.extra_doc_urls,
+      cv_filename: metadata.cv_filename || "",
+      extra_doc_names: metadata.extra_doc_names || "",
       preauth_id: metadata.preauth_id || "",
       physician_count: parseInt(metadata.physician_count || "25"),
       tier: metadata.tier || plan.id,

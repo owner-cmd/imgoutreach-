@@ -10,6 +10,10 @@ export type OrderRow = {
   physician_count: number;
   review_token: string | null;
   status: string | null;
+  cv_url?: string | null;
+  extra_doc_urls?: string | null;
+  cv_filename?: string | null;
+  extra_doc_names?: string | null;
 };
 
 /**

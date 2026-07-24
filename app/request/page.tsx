@@ -193,9 +193,26 @@ function RequestForm() {
     const sb = supabaseBrowser();
     sb.auth.getSession().then(async ({ data }) => {
       const accessToken = data.session?.access_token ?? null;
-      setAuthEmail(data.session?.user?.email ?? null);
+      const u = data.session?.user;
+      const acctEmail = u?.email ?? null;
+      setAuthEmail(acctEmail);
       setAuthToken(accessToken);
       setAuthReady(true);
+      // Prefill from the signed-in Google account. Email is bound to the account
+      // (it sends the outreach and receives the review link, so it can't diverge).
+      // Name is prefilled from the Google profile but stays editable.
+      if (u) {
+        const md = (u.user_metadata || {}) as Record<string, string>;
+        const full = (md.full_name || md.name || "").trim();
+        const gFirst = md.given_name || full.split(" ")[0] || "";
+        const gLast = md.family_name || full.split(" ").slice(1).join(" ") || "";
+        setForm(prev => ({
+          ...prev,
+          email: acctEmail ?? prev.email,
+          firstName: prev.firstName || gFirst,
+          lastName: prev.lastName || gLast,
+        }));
+      }
       // If this account already used its free trial, hide the trial option and
       // make paid the only choice.
       if (accessToken) {
@@ -328,11 +345,28 @@ function RequestForm() {
     try {
       const studentFolder = `students/${form.email.replace(/[^a-z0-9]/gi, "_")}_${Date.now()}`;
 
+      // Preserve the file's real name in storage (so the attachment the physician
+      // receives is e.g. "Omar_Saad_CV.pdf", not "cv.pdf"). Sanitize for URL-safety
+      // and de-dupe within this submission so a duplicate name can't overwrite.
+      const usedNames = new Set<string>();
+      const safeName = (name: string, fallback: string) => {
+        let base = (name || fallback).normalize("NFKD").replace(/[^\w.\-]+/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
+        if (!base) base = fallback;
+        let candidate = base, n = 1;
+        while (usedNames.has(candidate.toLowerCase())) {
+          const dot = base.lastIndexOf(".");
+          candidate = dot > 0 ? `${base.slice(0, dot)}_${n}${base.slice(dot)}` : `${base}_${n}`;
+          n++;
+        }
+        usedNames.add(candidate.toLowerCase());
+        return candidate;
+      };
+
       const cvData = new FormData();
       cvData.append("file", form.cvFile!);
       cvData.append("bucket", "cvs");
       cvData.append("folder", studentFolder);
-      cvData.append("filename", "cv." + (form.cvFile!.name.split(".").pop() || "pdf"));
+      cvData.append("filename", safeName(form.cvFile!.name, "CV.pdf"));
       const cvRes = await fetch("/api/upload", { method: "POST", body: cvData });
       if (!cvRes.ok) throw new Error("CV upload failed");
       const { url: cvUrl } = await cvRes.json();
@@ -344,7 +378,7 @@ function RequestForm() {
         fd.append("file", f);
         fd.append("bucket", "cvs");
         fd.append("folder", studentFolder);
-        fd.append("filename", `doc_${i + 1}.${f.name.split(".").pop() || "pdf"}`);
+        fd.append("filename", safeName(f.name, `doc_${i + 1}.pdf`));
         const r = await fetch("/api/upload", { method: "POST", body: fd });
         if (r.ok) { const { url } = await r.json(); extraUrls.push(url); }
       }
@@ -374,6 +408,10 @@ function RequestForm() {
               .join(", "),
             cv_url: cvUrl,
             extra_doc_urls: extraUrls.join(",").slice(0, 490),
+            // Real uploaded filenames (storage renames files to cv.pdf/doc_N.pdf),
+            // kept so the review page can show students exactly which files attach.
+            cv_filename: (form.cvFile!.name || "CV").slice(0, 200),
+            extra_doc_names: form.extraFiles.map(f => f.name).join(",").slice(0, 490),
             physician_count: String(selectedPlan.count),
             tier: form.plan,
             amount_paid: String(selectedPlan.price * 100),
@@ -662,9 +700,14 @@ function RequestForm() {
                 </div>
               </div>
               <div>
-                <label className="label">Email address <span className="text-red-500">*</span></label>
-                <input className="input" type="email" placeholder="you@example.com" value={form.email} onChange={e => set("email", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">Personal or school email — either is fine. Your drafts are sent here when ready.</p>
+                <label className="label">Email address</label>
+                <div className="input flex items-center justify-between bg-gray-50 text-gray-600 cursor-not-allowed select-none">
+                  <span className="truncate">{form.email || authEmail || "Your Google account"}</span>
+                  <span className="text-[11px] text-gray-400 shrink-0 ml-2 inline-flex items-center gap-1">
+                    <Check size={12} className="text-emerald-600" /> from your Google sign-in
+                  </span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">We&apos;ll send your review link and updates here — and your outreach emails send from this same Google account.</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

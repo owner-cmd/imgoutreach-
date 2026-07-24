@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Loader2, Send, Sparkles, Check, ShieldCheck } from "lucide-react";
+import { Loader2, Send, Sparkles, Check, ShieldCheck, Paperclip } from "lucide-react";
 
 type Draft = {
   doctor_npi: string;
@@ -16,7 +16,8 @@ type Draft = {
   sent_at: string | null;
 };
 
-type OrderInfo = { student_name: string; tier: string; isPaid: boolean; physician_count: number };
+type Attachment = { label: string; name: string };
+type OrderInfo = { student_name: string; tier: string; isPaid: boolean; physician_count: number; attachments?: Attachment[] };
 
 function ReviewInner() {
   const params = useParams();
@@ -133,6 +134,27 @@ function ReviewInner() {
         {order?.student_name ? `${order.student_name}, ` : ""}review each email, edit if you like, then send them all from your Gmail with one click.
         {sentCount > 0 && ` · ${sentCount} sent`}{queuedCount > 0 && ` · ${queuedCount} queued`}
       </p>
+
+      {order?.attachments && order.attachments.length > 0 && (
+        <div className="card p-4 mb-4 bg-blue-50/50 border-blue-100">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <Paperclip size={13} /> Attached to every email
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {order.attachments.map((a, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1.5 text-sm bg-white border border-gray-200 rounded-full pl-2.5 pr-3 py-1"
+                title={a.name}
+              >
+                <Paperclip size={12} className="text-blue-700 shrink-0" />
+                <span className="text-gray-400 text-xs">{a.label}:</span>
+                <span className="font-medium text-gray-800 truncate max-w-[220px]">{a.name}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {eligible.length > 0 && (
         <label className="flex items-center gap-2 text-sm text-gray-700 mb-4 cursor-pointer select-none">

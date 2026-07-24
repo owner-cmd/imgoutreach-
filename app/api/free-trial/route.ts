@@ -79,6 +79,8 @@ export async function POST(req: NextRequest) {
     student_offers: m.student_offers || "",
     cv_url: m.cv_url || "",
     extra_doc_urls: m.extra_doc_urls || "",
+    cv_filename: m.cv_filename || "",
+    extra_doc_names: m.extra_doc_names || "",
     physician_count: TRIAL_COUNT,
     tier: "trial",
     amount_paid: 0,

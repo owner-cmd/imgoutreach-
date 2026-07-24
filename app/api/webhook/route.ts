@@ -60,6 +60,8 @@ export async function POST(req: NextRequest) {
     student_offers: pending.student_offers || "",
     cv_url: pending.cv_url,
     extra_doc_urls: pending.extra_doc_urls,
+    cv_filename: pending.cv_filename || "",
+    extra_doc_names: pending.extra_doc_names || "",
     physician_count: pending.physician_count,
     tier: pending.tier,
     amount_paid: session.amount_total ?? pending.amount_paid,

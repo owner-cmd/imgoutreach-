@@ -8,11 +8,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ sess
   const order = await authorizeOrder(sessionId, token);
   if (!order) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Build the attachment list (same for every email in the order): the CV plus
+  // any extra docs, paired with their real uploaded filenames for display.
+  const cvName = (order.cv_filename || "").trim();
+  const extraNames = (order.extra_doc_names || "").split(",").map((s: string) => s.trim()).filter(Boolean);
+  const extraUrls = (order.extra_doc_urls || "").split(",").map((s: string) => s.trim()).filter(Boolean);
+  const attachments: Array<{ label: string; name: string }> = [];
+  if (order.cv_url) attachments.push({ label: "CV", name: cvName || "CV" });
+  extraUrls.forEach((_: string, i: number) => {
+    attachments.push({ label: "Document", name: extraNames[i] || `Document ${i + 1}` });
+  });
+
   const orderInfo = {
     student_name: order.student_name,
     tier: order.tier,
     isPaid: order.tier !== "trial",
     physician_count: order.physician_count,
+    attachments,
   };
 
   // Drafts are only shown to the student after the admin reviews and releases
