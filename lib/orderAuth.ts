@@ -26,7 +26,7 @@ export async function authorizeOrder(sessionId: string, token: string | null): P
   const sb = adminClient();
   const { data } = await sb
     .from("student_submissions")
-    .select("stripe_session_id, student_name, tier, physician_count, review_token, status")
+    .select("stripe_session_id, student_name, tier, physician_count, review_token, status, cv_url, cv_filename, extra_doc_urls, extra_doc_names")
     .eq("stripe_session_id", sessionId)
     .single();
   if (!data || !data.review_token || data.review_token !== token) return null;

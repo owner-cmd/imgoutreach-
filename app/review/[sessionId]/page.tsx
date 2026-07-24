@@ -135,26 +135,6 @@ function ReviewInner() {
         {sentCount > 0 && ` · ${sentCount} sent`}{queuedCount > 0 && ` · ${queuedCount} queued`}
       </p>
 
-      {order?.attachments && order.attachments.length > 0 && (
-        <div className="mb-4">
-          <p className="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-            <Paperclip size={12} /> Attached to every email
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {order.attachments.map((a, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1"
-                title={a.name}
-              >
-                <Paperclip size={11} />
-                {a.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {eligible.length > 0 && (
         <label className="flex items-center gap-2 text-sm text-gray-700 mb-4 cursor-pointer select-none">
           <input type="checkbox" className="accent-blue-800" checked={allSelected} onChange={toggleAll} />
@@ -203,6 +183,22 @@ function ReviewInner() {
                 disabled={locked}
                 onChange={e => editField(d.doctor_npi, "body", e.target.value)}
               />
+
+              {/* Attachments included with this email (same for every draft in the order). */}
+              {order?.attachments && order.attachments.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {order.attachments.map((a, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1"
+                      title={a.name}
+                    >
+                      <Paperclip size={11} />
+                      {a.name}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* AI tweak — paid only */}
               {!locked && (

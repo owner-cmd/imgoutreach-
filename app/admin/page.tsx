@@ -48,11 +48,11 @@ const STATUS_COLORS: Record<string, string> = {
   sent: "bg-emerald-100 text-emerald-800",
 };
 
-// Small colored square next to the price, by tier: trial (gray), standard/200 (blue), pro/500 (amber).
-const TIER_SQUARE: Record<string, string> = {
-  trial: "bg-gray-300",
-  standard: "bg-blue-500",
-  pro: "bg-amber-500",
+// Tier-tinted background behind the price/drafts block: trial (gray), standard/200 (blue), pro/500 (amber).
+const TIER_BG: Record<string, string> = {
+  trial: "bg-gray-100",
+  standard: "bg-blue-50",
+  pro: "bg-amber-50",
 };
 
 export default function AdminPage() {
@@ -204,7 +204,7 @@ export default function AdminPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-6">
-                    <div className="text-right hidden sm:block">
+                    <div className={`text-right hidden sm:block rounded-lg px-3 py-1.5 ${TIER_BG[order.tier] || "bg-gray-100"}`}>
                       <p className="text-sm font-medium text-gray-900">{order.drafts_completed} / {order.physician_count} drafts</p>
                       <p className="text-xs text-gray-400">
                         {drafts[order.stripe_session_id]?.filter(hasReplied).length > 0 && (
@@ -212,7 +212,6 @@ export default function AdminPage() {
                             {drafts[order.stripe_session_id].filter(hasReplied).length} repl{drafts[order.stripe_session_id].filter(hasReplied).length === 1 ? "y" : "ies"}
                           </span>
                         )}
-                        <span className={`inline-block w-2.5 h-2.5 rounded-sm align-middle mr-1 ${TIER_SQUARE[order.tier] || "bg-gray-300"}`} />
                         ${(order.amount_paid / 100).toFixed(0)} · {order.tier}
                       </p>
                     </div>
