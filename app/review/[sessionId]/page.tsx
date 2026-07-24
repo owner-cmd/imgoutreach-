@@ -136,20 +136,19 @@ function ReviewInner() {
       </p>
 
       {order?.attachments && order.attachments.length > 0 && (
-        <div className="card p-4 mb-4 bg-blue-50/50 border-blue-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
-            <Paperclip size={13} /> Attached to every email
+        <div className="mb-4">
+          <p className="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+            <Paperclip size={12} /> Attached to every email
           </p>
           <div className="flex flex-wrap gap-2">
             {order.attachments.map((a, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-1.5 text-sm bg-white border border-gray-200 rounded-full pl-2.5 pr-3 py-1"
+                className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1"
                 title={a.name}
               >
-                <Paperclip size={12} className="text-blue-700 shrink-0" />
-                <span className="text-gray-400 text-xs">{a.label}:</span>
-                <span className="font-medium text-gray-800 truncate max-w-[220px]">{a.name}</span>
+                <Paperclip size={11} />
+                {a.name}
               </span>
             ))}
           </div>

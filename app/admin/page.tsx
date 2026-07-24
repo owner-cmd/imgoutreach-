@@ -48,6 +48,13 @@ const STATUS_COLORS: Record<string, string> = {
   sent: "bg-emerald-100 text-emerald-800",
 };
 
+// Small colored square next to the price, by tier: trial (gray), standard/200 (blue), pro/500 (amber).
+const TIER_SQUARE: Record<string, string> = {
+  trial: "bg-gray-300",
+  standard: "bg-blue-500",
+  pro: "bg-amber-500",
+};
+
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
@@ -205,6 +212,7 @@ export default function AdminPage() {
                             {drafts[order.stripe_session_id].filter(hasReplied).length} repl{drafts[order.stripe_session_id].filter(hasReplied).length === 1 ? "y" : "ies"}
                           </span>
                         )}
+                        <span className={`inline-block w-2.5 h-2.5 rounded-sm align-middle mr-1 ${TIER_SQUARE[order.tier] || "bg-gray-300"}`} />
                         ${(order.amount_paid / 100).toFixed(0)} · {order.tier}
                       </p>
                     </div>

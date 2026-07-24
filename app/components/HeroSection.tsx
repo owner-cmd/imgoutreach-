@@ -76,6 +76,7 @@ export default function HeroSection() {
               "Up to 500 physicians",
               "Ready within 24 hours",
               "Sent from your Gmail",
+              "Spam-prevention filter",
             ].map(p => (
               <span key={p} className="text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full px-3.5 py-1.5">{p}</span>
             ))}
