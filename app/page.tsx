@@ -156,22 +156,21 @@ export default function Home() {
             </div>
           </div>
           <div className="card p-8 space-y-5">
-            <h3 className="font-semibold text-gray-900">Estimated reply rates</h3>
+            <h3 className="font-semibold text-gray-900">What you actually get</h3>
             <div className="space-y-4 text-sm">
-              <div className="flex justify-between items-center border-b border-gray-100 pb-4">
-                <span className="text-gray-600">Generic template emails</span>
-                <span className="text-red-600 font-semibold">&lt; 2%</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-gray-100 pb-4">
-                <span className="text-gray-600">Self-written cold emails</span>
-                <span className="text-yellow-700 font-semibold">5–8%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-900 font-semibold">IMG Outreach personalized drafts</span>
-                <span className="text-blue-800 font-bold">15–25%</span>
-              </div>
+              {[
+                "1.1M+ physicians in the source data, filtered to your specialty and location",
+                "Every email names a specific paper by that physician",
+                "You read and edit every draft before anything is sent",
+                "25 free drafts, no card required",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-blue-800 flex-shrink-0 mt-0.5" />
+                  <p className="text-gray-700 leading-relaxed">{item}</p>
+                </div>
+              ))}
             </div>
-            <p className="text-xs text-gray-500">Based on student-reported outcomes. Results vary by specialty and location.</p>
+            <p className="text-xs text-gray-500">We&apos;re new, so we don&apos;t publish a reply rate &mdash; we won&apos;t quote a number we haven&apos;t measured.</p>
           </div>
         </div>
       </section>

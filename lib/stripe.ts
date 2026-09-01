@@ -29,7 +29,7 @@ export const PLANS = [
     count: 500,
     price: 549,
     priceId: "price_1ToQYaDpKP2Si5NAP9BlwI3t",
-    description: "Maximum coverage — highest reply rate",
+    description: "Maximum coverage — the most physicians reached",
     popular: true,
   },
 ];

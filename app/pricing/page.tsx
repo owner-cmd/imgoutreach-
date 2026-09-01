@@ -132,7 +132,7 @@ export default function PricingPage() {
               },
               {
                 q: "Will the emails make false claims about me?",
-                a: "No. Every claim comes from what you wrote, or is something you can make true before you meet the physician (e.g. reading the paper an email mentions). We never fabricate experiences or credentials.",
+                a: "Every claim is built only from what you wrote about yourself, or is something you can make true before you meet the physician (e.g. reading the paper an email mentions) — we do not add experiences or credentials of our own. You also read every draft on your review page before anything is sent, so nothing goes out in your name that you have not seen.",
               },
               {
                 q: "I'm an IMG — does this work for me?",
